@@ -52,6 +52,46 @@
                         <!-- MP4, WebM, and Ogg -->
                     <video controls src="My website when it was old and teching.mp4" width="500">
                         <img src="Screenshot 2024-05-15 154602.png" height="100" title="Roblox Azhafuddin"></img>
+                        /*
+    HTML VIDEO AS BACKGROUND:
+    I updated code from Dudley Storey  
+*/
+.twp-video-background {
+    background: #000;
+    position: absolute;
+    top: 0; 
+    right: 0; 
+    bottom: 0; 
+    left: 0;
+    overflow: hidden;
+    box-sizing: border-box; 
+}
+.twp-video-foreground,
+.twp-video-background video{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    box-sizing: border-box;
+    object-fit: cover; 
+}
+
+.twp-video-foreground{
+    padding-bottom: 56.25%;
+    box-sizing: border-box; 
+}
+
+.twp-video-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: blue;
+    opacity: 0.5;
+    box-sizing: border-box; 
+}
+                    
     </form>        
     </p>
     </h1>
