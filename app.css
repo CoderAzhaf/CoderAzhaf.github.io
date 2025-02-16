@@ -3,3 +3,42 @@ h1 {
 }
 
 
+h1 {
+    text-align: center; /* Centers text inside itself */
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: lightblue;
+}
+
+input {
+    font-size: 18px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+button {
+    font-size: 18px;
+    padding: 8px 12px;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: darkgreen;
+
+h1{}
