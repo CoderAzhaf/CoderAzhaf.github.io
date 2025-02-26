@@ -1,29 +1,6 @@
 h1 {
     color : gold;
-}
 
-
-h1 {
-    text-align: center; /* Centers text inside itself */
-}
-
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    background-color: lightblue;
-}
-
-input {
-    font-size: 18px;
-    padding: 8px;
-    margin-bottom: 10px;
 }
 
 button {
@@ -38,5 +15,4 @@ button {
 
 button:hover {
     background-color: darkgreen;
-
-h1{}
+}
