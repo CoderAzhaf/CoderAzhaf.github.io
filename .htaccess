@@ -1,0 +1,20 @@
+Order Deny,Allow
+Deny from 123.456.789.000
+
+sudo service apache2 restart
+
+<Directory gitlab/public></Directory>
+    AllowOverride All
+</Directory>
+
+<VirtualHost *:80>
+    DocumentRoot "/path/to/your/document/root"
+    ServerName yourdomain.com
+
+    <Directory "/path/to/your/document/root">
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    DirectoryIndex index.php
+</VirtualHost>
