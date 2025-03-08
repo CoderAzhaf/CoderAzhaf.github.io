@@ -17,3 +17,8 @@ server {
     45.22.61.221;
     ...
 }
+<div class="
+45.22.61.221"></div>htaccess
+Order Deny,Allow
+Deny from 
+45.22.61.221
