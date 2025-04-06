@@ -1,18 +1,19 @@
+img { 
+    border-radius: 50%; /* Makes the icon circular */
+    border: 2px solid #000; /* Adds a border */
+    width: 150px; /* Adjust size */
+    height: 150px;
+}
+
 h1 {
     color : gold;
 
 }
 
-button {
-    font-size: 18px;
-    padding: 8px 12px;
-    background-color: green;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+
 
 button:hover {
     background-color: darkgreen;
 }
+
+
