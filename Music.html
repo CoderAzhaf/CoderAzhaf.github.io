@@ -8,8 +8,24 @@
                 <!-- MP4, WebM, and Ogg -->
                 <h1> Your upload</h1><a><video object-fit: cover;="" controls="" loop="" src="file" width="500"></video></a>
                 <h1> Life is butifull by: thirty seconds to mars</h1><a><video object-fit: cover;="" controls="" loop="" src="Life is butiful.mp4" width="500"></video></a>
+                <a href="Life is butiful.mp4" download="Life is butiful.mp4" style="text-decoration: none; color: white; background-color: blue; padding: 10px; border-radius: 5px;">
+                    Download Life is butiful
+                </a>
                 <h1> Zig Zag by: clarx</h1><a><video object-fit: cover;="" controls="" loop="" src="Zig Zgag.mp4" width="500"></video></a>
                 <!-- MP4, WebM, and Ogg -->
+                <script>
+                    // JavaScript to handle file upload and display in the video player
+                    const fileInput = document.getElementById('file');
+                    const videoPlayer = document.getElementById('videoPlayer');
+            
+                    fileInput.addEventListener('change', function(event) {
+                        const file = event.target.files[0]; // Get the uploaded file
+                        if (file) {
+                            const fileURL = URL.createObjectURL(file); // Create a URL for the file
+                            videoPlayer.src = fileURL; // Set the video player's source to the file URL
+                        }
+                    });
+                </script>
              </html>  
             </body>
         </head>
