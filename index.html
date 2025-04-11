@@ -1,53 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-         <title>AZHA LanchPad</title>
-         <link rel="icon" href="Azha LanchPad Icon..png" type="image/x-icon">
-    </head>
-    <body background="100_0066.jpg" lang="en"></body>
+    <title>AZHA LanchPad</title>
+    <link rel="icon" href="Azha LanchPad Icon..png" type="image/x-icon">
+    <link rel="stylesheet" href="app.css">
+    <script src="app.js"></script>
+    <script>
+        var password;
+        var pass1 = "AZHA = AZ MOH";
+        var pass2 = "JayRay";
+        var pass3 = "JeshPro";
+        password = prompt('Please enter the password to enter the website', '');
+        if (password != pass1) {
+            if (password != pass2)
+                if (password != pass3)
+                    window.location = "unauthorized.html";
+        }
+    </script>
+</head>
+<body background="100_0066.jpg">
     <img src="Azha LanchPad Icon..png" alt="Icon" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-          <h1>CoderAzhaf       
-            <p>
-                <h1>Websites
-         </h1>
-         <a href="https://www.google.com">         <button style="background-color: rgb(69, 67, 15);color: aquamarine ;">Go To Google!</button>
-         </a>
-         <a href="https://launchpad.classlink.com/?_gl=1*dffrra*_ga*NTgxODI4MjExLjE3MTY4NTgzNzQ.*_ga_XR4VK1WY86*MTcxNjg1ODM3My4xLjAuMTcxNjg1ODM3My4wLjAuMA..">
-         <button style="background-color: rgb(131, 127, 29);color: rgb(38, 207, 151) ; border-radius:5px ;">Go to classlink!</button>
-         <a href="coderazhaf.github.io/Pro-Open/">
-         <button style="background-color: green;color: aquamarine ; border-radius:5px ;">Go to my other website!</button>
+    <h1>CoderAzhaf</h1>
+    
+    <h1>Websites</h1>
+    <div class="nav-center">
+        <a href="https://www.google.com">
+            <button style="background-color: rgb(69, 67, 15);color: aquamarine;">Go To Google!</button>
         </a>
-         </a>
-         <link rel="stylesheet" href="app.css">
-         <button onClick="alertbutton()">Be Welcomed!</button>
-         <script src="app.js"></script>
-         <p>
-           <h1> Games Websites
-         <p>
-          <img src="Minecraft.gif" height="100" title="Minecraft">
-          <a href="https://www.minecraft.net/en-us">
+        <a href="https://launchpad.classlink.com/">
+            <button style="background-color: rgb(131, 127, 29);color: rgb(38, 207, 151);">Go to classlink!</button>
+        </a>
+    </div>
+
+    <h1>Games Websites</h1>
+    <div class="nav-center">
+        <a href="https://www.minecraft.net/en-us">
+            <img src="Minecraft.gif" height="100" title="Minecraft">
+        </a>
         <a href="https://www.roblox.com">
-        <img src="tenor.gif" height="100" title="Roblox">
+            <img src="tenor.gif" height="100" title="Roblox">
+        </a>
         <a href="https://www.fortnite.com/">
-        <img src="tenor 2.gif" height="100" title="Fortnite">
+            <img src="tenor 2.gif" height="100" title="Fortnite">
+        </a>
         <a href="https://amogus.io/">
-       <img src="tenor 3.gif" height="100" title="Among Us">
+            <img src="tenor 3.gif" height="100" title="Among Us">
+        </a>
+    </div>
 
+    <h1>Coder azhaf Website Video</h1>
+    <video controls loop src="Azhaf video web ..mp4" width="500" style="object-fit: cover;"></video>
 
-      
-        <a><h1>Coder azhaf Website Video</h1></a>
-
-                    <!-- MP4, WebM, and Ogg -->
-                    <a><video object-fit: cover;="" controls="" loop="" src="Azhaf video web ..mp4" width="500"></video></a>
-                        <!-- MP4, WebM, and Ogg -->
-
-                        <h1><Button><a href="contact.html">Info Of website</a></Button></h1>
-                        <Button><a href="Getin.html">Sign up or Log in</a></Button>
-                        <Button><a href="Minecraft.gif"download>Download Minecraft Gif</a></Button>
-                      <Button><a href="tenor.gif" download>Download Roblox Gif</a></Button>
-                      <Button><a href="tenor 2.gif" download>Download Fortnite Gif</a></Button>
-                      <Button><a href="tenor 3.gif" download>Download Among Us Gif</a></Button>
-                    </head>
-                      
+    <div class="nav-center">
+        <button><a href="contact.html">Info Of website</a></button>
+        <button><a href="Getin.html">Sign up or Log in</a></button>
+        <button><a href="Download.html">Download</a></button>
+    </div>
+</body>
+</html>

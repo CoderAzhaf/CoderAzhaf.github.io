@@ -1,35 +1,59 @@
-img { 
-    border-radius: 50%; /* Makes the icon circular */
-    border: 2px solid #000; /* Adds a border */
-    width: 150px; /* Adjust size */
-    height: 150px;
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
 }
 
+/* Header styles */
 h1 {
-    color : gold;
-
+    color: rgb(255, 255, 255);
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+/* Navigation center styles */
+.nav-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 20px auto;
+}
+
+/* Button styles */
 button {
-    font-size: 18px;
-    padding: 8px 12px;
-    background-color: rgb(0, 217, 255);
-    color: gold
-    border none;
+    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    transition: transform 0.2s;
+    text-align: center;
 }
 
 button:hover {
-    background-color: darkblue;
-}
-button:active {
-    background-color: navy;
+    transform: scale(1.1);
 }
 
-button {color: gold;}
+/* Game images styles */
+img[src$=".gif"] {
+    border-radius: 10px;
+    margin: 10px;
+    transition: transform 0.3s;
+}
 
+img[src$=".gif"]:hover {
+    transform: scale(1.2);
+}
 
+/* Video player styles */
+video {
+    border-radius: 15px;
+    margin: 20px auto;
+    display: block;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
 
-
-
+/* Icon styles */
+img[alt="Icon"] {
+    border: 3px solid white;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
