@@ -8,15 +8,31 @@
     <link rel="stylesheet" href="app.css">
     <script src="app.js"></script>
     <script>
-        var password;
         var pass1 = "AZHA = AZ MOH";
         var pass2 = "JayRay";
         var pass3 = "JeshPro";
-        password = prompt('Please enter the password to enter the website', '');
-        if (password != pass1) {
-            if (password != pass2)
-                if (password != pass3)
-                    window.location = "unauthorized.html";
+        var pass4 = "zidan";
+        
+        function checkAccess() {
+            var password = prompt('Please enter the password to enter the website', '');
+            if (password === null || password === '') {
+            location.reload(); 
+            return false;
+        }
+
+            if (password === pass1 || password === pass1 || 
+                password === pass3 || password === pass2 ||
+                password === pass4) {
+                return true;
+            } else {
+                alert('Incorrect password!');
+                window.location.href = "";
+                return false;
+            }
+        }
+    
+        if (!checkAccess()) {
+            window.location.href = "";
         }
     </script>
 </head>
