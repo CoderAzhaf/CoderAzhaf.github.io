@@ -4,31 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AZHA LanchPad</title>
-    <link rel="icon" href="Azha LanchPad Icon..png" type="image/x-icon">
+    <!-- Fix icon implementation -->
+    <link rel="icon" type="image/png" href="Azha LanchPad Icon..png">
     <link rel="stylesheet" href="app.css">
     <script src="app.js"></script>
-    <script>
-        // Password validation function
+</head>
+<body background="100_0066.jpg">
+    <img src="Azha LanchPad Icon..png" alt="Icon" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+   
+        <script>
         function checkAccess() {
             const pass1 = "AZHA = AZ MOH";
-            const pass2 = "JayRay";
-            const pass3 = "JeshPro";
+            const pass2 = "Jay Raps";
+            const pass3 = "Jesh Pro";
             const pass4 = "zidan";
             const pass5 = "UNHP";
+            
 
             var password = prompt('Please enter the password to enter the website', '');
             
-            if (password === null || password === '') {
-                location.reload();
-                return false;
-            }
-
-            if (password === pass1 || password === pass2 || 
-                password === pass3 || password === pass4 || 
-                password === pass5) {
-                alert('Welcome to the website!');
-                return true;
-            }
+            if (password === "AZHA = AZ MOH") {
+            alert('Welcome to the website Azhafuddin Mohammed!');
+            return true;
+        }
+        if (password === "Jay Raps") {
+            alert('Welcome to the website Jay Rayapudi!');
+            return true;
+        }
+        if (password === "Jesh Pro") {
+            alert('Welcome to the website Jeshrun Tappeta!');
+            return true;
+        }
+        if (password === "zidan") {
+            alert('Welcome to the website Zidanuddin Mohammed!');
+            return true;
+        }
+        if (password === "UNHP") {
+            alert('Welcome to the website UNHP Panther!');
+            return true;
+        }
             
             alert('Incorrect password!');
             location.reload();
@@ -45,7 +59,6 @@
                 
 <head>
 <body background="100_0066.jpg">
-    <img src="Azha LanchPad Icon..png" alt="Icon" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"></img>
     <h1>CoderAzhaf</h1>
     
     <h1>Websites</h1>
