@@ -4,6 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Download Files</title>
+    <script>
+        function checkAccess() {
+            const pass1 = "AZHA = AZ MOH";
+            const pass2 = "Jay Raps";
+            const pass3 = "Jesh Pro";
+            const pass4 = "zidan";
+            const pass5 = "UNHP";
+            
+
+            var password = prompt('Please enter the password to enter the website', '');
+            
+            if (password === "AZHA = AZ MOH") {
+            alert('Welcome to the website Azhafuddin Mohammed!');
+            return true;
+        }
+        if (password === "Jay Raps") {
+            alert('Welcome to the website Jay Rayapudi!');
+            return true;
+        }
+        if (password === "Jesh Pro") {
+            alert('Welcome to the website Jeshrun Tappeta!');
+            return true;
+        }
+        if (password === "zidan") {
+            alert('Welcome to the website Zidanuddin Mohammed!');
+            return true;
+        }
+        if (password === "UNHP") {
+            alert('Welcome to the website UNHP Panther!');
+            return true;
+        }
+            
+            alert('Incorrect password!');
+            location.reload();
+            return false;
+        }
+
+        // Call the function when page loads
+        window.onload = function() {
+            if (!checkAccess()) {
+                document.body.style.display = 'none';
+            }
+        }
+    </script>
     <style>
         .download-container {
             display: flex;
