@@ -1,53 +1,11 @@
+Copy\DownloadFile.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Download Files</title>
-    <script>
-        function checkAccess() {
-            const pass1 = "AZHA = AZ MOH";
-            const pass2 = "Jay Raps";
-            const pass3 = "Jesh Pro";
-            const pass4 = "zidan";
-            const pass5 = "UNHP";
-            
-
-            var password = prompt('Please enter the password to enter the website', '');
-            
-            if (password === "AZHA = AZ MOH") {
-            alert('Welcome to the website Azhafuddin Mohammed!');
-            return true;
-        }
-        if (password === "Jay Raps") {
-            alert('Welcome to the website Jay Rayapudi!');
-            return true;
-        }
-        if (password === "Jesh Pro") {
-            alert('Welcome to the website Jeshrun Tappeta!');
-            return true;
-        }
-        if (password === "zidan") {
-            alert('Welcome to the website Zidanuddin Mohammed!');
-            return true;
-        }
-        if (password === "UNHP") {
-            alert('Welcome to the website UNHP Panther!');
-            return true;
-        }
-            
-            alert('Incorrect password!');
-            location.reload();
-            return false;
-        }
-
-        // Call the function when page loads
-        window.onload = function() {
-            if (!checkAccess()) {
-                document.body.style.display = 'none';
-            }
-        }
-    </script>
+    <link rel="icon" href="Azha LanchPad Icon..png" type="image/x-icon">
     <style>
         .download-container {
             display: flex;
@@ -65,27 +23,50 @@
             border: none;
             border-radius: 5px;
             width: 200px;
+            transition: transform 0.2s;
         }
         button:hover {
             background-color: #45a049;
+            transform: scale(1.05);
+        }
+        .system-info {
+            background: rgba(240, 240, 240, 0.9);
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        h1, h3 {
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .system-info h3 {
+            color: #333;
+            text-shadow: none;
         }
     </style>
+    
 </head>
-<body>
+<body background="100_0066.jpg">
     <div class="download-container">
         <h1>Download Files</h1>
+        <!-- Download buttons for HTML files -->
         <a href="index.html" download><button>Download index.html</button></a>
         <a href="app.css" download><button>Download app.css</button></a>
         <a href="app.js" download><button>Download app.js</button></a>
+        <a href="contact.html" download><button>Download contact.html</button></a>
+        <a href="Getin.html" download><button>Download Getin.html</button></a>
+        <a href="Music.html" download><button>Download Music.html</button></a>
+        
+        <!-- Download buttons for images and GIFs -->
         <a href="Azha LanchPad Icon..png" download><button>Download Icon</button></a>
         <a href="100_0066.jpg" download><button>Download Background</button></a>
         <a href="Minecraft.gif" download><button>Download Minecraft GIF</button></a>
         <a href="tenor.gif" download><button>Download Roblox GIF</button></a>
         <a href="tenor 2.gif" download><button>Download Fortnite GIF</button></a>
         <a href="tenor 3.gif" download><button>Download Among Us GIF</button></a>
-        <a href="contact.html" download><button>Download contact.html</button></a>
-        <a href="Getin.html" download><button>Download Getin.html</button></a>
-        <a href="Music.html" download><button>Download Music.html</button></a>
     </div>
 </body>
 </html>

@@ -1,16 +1,9 @@
 body {
-    font-family: Arial, sans-serif;
     margin: 20px;
+    color: darkgreen;
+    font-family: Arial, sans-serif;
 }
 
-/* Header styles */
-h1 {
-    color: rgb(255, 255, 255);
-    text-align: center;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-/* Navigation center styles */
 .nav-center {
     display: flex;
     justify-content: center;
@@ -18,43 +11,72 @@ h1 {
     gap: 20px;
     flex-wrap: wrap;
     margin: 20px auto;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* Button styles */
+.system-info {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.system-info h3 {
+    color: darkgreen;
+    margin-top: 0;
+}
+
+.system-info p {
+    color: darkgreen;
+    margin: 5px 0;
+}
+
+h1, h3 {
+    color: darkgreen;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 10px;
+    margin: 20px auto;
+    max-width: 600px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.game-container img {
+    transition: transform 0.3s;
+}
+
+.game-container img:hover {
+    transform: scale(1.1);
+}
+
+video {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px auto;
+    display: block;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
 button {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
     transition: transform 0.2s;
-    text-align: center;
 }
 
 button:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
-/* Game images styles */
-img[src$=".gif"] {
-    border-radius: 10px;
-    margin: 10px;
-    transition: transform 0.3s;
+a {
+    text-decoration: none;
+    color: inherit;
 }
-
-img[src$=".gif"]:hover {
-    transform: scale(1.2);
-}
-
-/* Video player styles */
-video {
-    border-radius: 15px;
-    margin: 20px auto;
-    display: block;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Icon styles */
-img[alt="Icon"] {
-    border: 3px solid white;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
