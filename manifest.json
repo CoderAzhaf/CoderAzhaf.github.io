@@ -1,6 +1,5 @@
 {
     "name": "AZHA LanchPad",
-    "short_name": "AZHA",
     "description": "A gaming and educational platform by CoderAzhaf",
     "start_url": "/index.html",
     "display": "standalone",
