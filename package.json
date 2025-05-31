@@ -1,0 +1,19 @@
+{
+  "name": "azha-lanchpad",
+  "version": "1.0.0",
+  "main": "server.js",
+  "description": "A gaming and educational platform by CoderAzhaf",
+  "author": "Azhafuddin Mohammed",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/azha-lanchpad"
+  }
+}
+

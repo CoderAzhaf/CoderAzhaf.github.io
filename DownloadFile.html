@@ -1,4 +1,3 @@
-Copy\DownloadFile.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,11 +7,23 @@ Copy\DownloadFile.html
     <link rel="icon" href="Azha LanchPad Icon..png" type="image/x-icon">
     <style>
         .download-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
+        }
+        .file-section {
+            background: rgba(255, 255, 255, 0.9);
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .section-title {
+            color: darkgreen;
+            margin: 15px 0;
+            font-size: 24px;
         }
         button {
             padding: 10px 20px;
@@ -22,51 +33,69 @@ Copy\DownloadFile.html
             color: white;
             border: none;
             border-radius: 5px;
-            width: 200px;
             transition: transform 0.2s;
         }
         button:hover {
-            background-color: #45a049;
             transform: scale(1.05);
+            background-color: #45a049;
         }
-        .system-info {
-            background: rgba(240, 240, 240, 0.9);
-            padding: 20px;
-            margin: 10px;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 600px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        h1, h3 {
+        h1 {
             color: white;
+            text-align: center;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
-        .system-info h3 {
-            color: #333;
-            text-shadow: none;
-        }
     </style>
-    
 </head>
 <body background="100_0066.jpg">
     <div class="download-container">
         <h1>Download Files</h1>
-        <!-- Download buttons for HTML files -->
-        <a href="index.html" download><button>Download index.html</button></a>
-        <a href="app.css" download><button>Download app.css</button></a>
-        <a href="app.js" download><button>Download app.js</button></a>
-        <a href="contact.html" download><button>Download contact.html</button></a>
-        <a href="Getin.html" download><button>Download Getin.html</button></a>
-        <a href="Music.html" download><button>Download Music.html</button></a>
-        
-        <!-- Download buttons for images and GIFs -->
-        <a href="Azha LanchPad Icon..png" download><button>Download Icon</button></a>
-        <a href="100_0066.jpg" download><button>Download Background</button></a>
-        <a href="Minecraft.gif" download><button>Download Minecraft GIF</button></a>
-        <a href="tenor.gif" download><button>Download Roblox GIF</button></a>
-        <a href="tenor 2.gif" download><button>Download Fortnite GIF</button></a>
-        <a href="tenor 3.gif" download><button>Download Among Us GIF</button></a>
+
+        <!-- Main Files -->
+        <div class="file-section">
+            <h2 class="section-title">Main Files</h2>
+            <a href="index.html" download><button>Download index.html</button></a>
+            <a href="manifest.json" download><button>Download manifest.json</button></a>
+            <a href="server.js" download><button>Download server.js</button></a>
+            <a href="package.json" download><button>Download package.json</button></a>
+        </div>
+
+        <!-- Style and Script Files -->
+        <div class="file-section">
+            <h2 class="section-title">Styles and Scripts</h2>
+            <a href="app.css" download><button>Download app.css</button></a>
+            <a href="app.js" download><button>Download app.js</button></a>
+        </div>
+
+        <!-- HTML Pages -->
+        <div class="file-section">
+            <h2 class="section-title">HTML Pages</h2>
+            <a href="contact.html" download><button>Download contact.html</button></a>
+            <a href="Getin.html" download><button>Download Getin.html</button></a>
+            <a href="Music.html" download><button>Download Music.html</button></a>
+            <a href="Download.html" download><button>Download Download.html</button></a>
+        </div>
+
+        <!-- Images -->
+        <div class="file-section">
+            <h2 class="section-title">Images and Icons</h2>
+            <a href="Azha LanchPad Icon..png" download><button>Download Icon</button></a>
+            <a href="100_0066.jpg" download><button>Download Background</button></a>
+        </div>
+
+        <!-- GIFs -->
+        <div class="file-section">
+            <h2 class="section-title">Game GIFs</h2>
+            <a href="Minecraft.gif" download><button>Download Minecraft GIF</button></a>
+            <a href="tenor.gif" download><button>Download Roblox GIF</button></a>
+            <a href="tenor 2.gif" download><button>Download Fortnite GIF</button></a>
+            <a href="tenor 3.gif" download><button>Download Among Us GIF</button></a>
+        </div>
+
+        <!-- Video Files -->
+        <div class="file-section">
+            <h2 class="section-title">Videos</h2>
+            <a href="Azhaf video web ..mp4" download><button>Download Website Video</button></a>
+        </div>
     </div>
 </body>
 </html>
