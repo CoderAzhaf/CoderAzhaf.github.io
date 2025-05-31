@@ -1,21 +1,16 @@
 {
     "name": "AZHA LanchPad",
+    "short_name": "AZHA",
     "description": "A gaming and educational platform by CoderAzhaf",
-    "start_url": "/index.html",
+    "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#000000",
     "orientation": "portrait-primary",
     "icons": [
         {
-            "src": "Azha LanchPad Icon..png",
+            "src": "./Azha LanchPad Icon..png",
             "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "Azha LanchPad Icon..png",
-            "sizes": "512x512",
             "type": "image/png",
             "purpose": "any maskable"
         }

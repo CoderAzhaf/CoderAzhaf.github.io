@@ -1,12 +1,32 @@
-npm install
-npm start 
-
 @echo off
-REM Install dependencies
-call npm install
+cls
+echo ===================================
+echo      AZHA LanchPad Server Setup
+echo ===================================
+echo.
 
-REM Start the server
-call npm start
+echo Installing dependencies...
+call npm install express
+if errorlevel 1 (
+    echo Error installing dependencies!
+    pause
+    exit /b 1
+)
 
-REM Keep window open if there's an error
+echo.
+echo Starting server...
+echo.
+node server.js
+
+if errorlevel 1 (
+    echo.
+    echo Error starting server!
+    pause
+    exit /b 1
+)
+
+echo.
+echo Server is running at http://localhost:3000
+echo Press Ctrl+C to stop the server
+echo.
 pause
