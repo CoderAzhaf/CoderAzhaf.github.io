@@ -1,18 +1,50 @@
 {
     "name": "AZHA LanchPad",
     "short_name": "AZHA",
-    "description": "A gaming and educational platform by CoderAzhaf",
+    "description": "A Lanchpad platform by CoderAzhaf",
+    "version": "1.0.0",
     "start_url": "./index.html",
+    "scope": "./",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#000000",
     "orientation": "portrait-primary",
+    "categories": ["games", "education"],
+    "screenshots": [
+        {
+            "src": "./screenshot1.png",
+            "sizes": "1280x720",
+            "type": "image/png"
+        }
+    ],
     "icons": [
         {
             "src": "./Azha LanchPad Icon..png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any maskable"
+        },
+        {
+            "src": "./Azha LanchPad Icon..png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
         }
-    ]
+    ],
+    "shortcuts": [
+        {
+            "name": "Games",
+            "url": "./index.html#games",
+            "description": "View games section"
+        },
+        {
+            "name": "Download",
+            "url": "./Download.html",
+            "description": "Download files"
+        }
+    ],
+    "related_applications": [],
+    "prefer_related_applications": false,
+    "lang": "en-US",
+    "dir": "ltr"
 }

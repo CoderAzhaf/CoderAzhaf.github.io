@@ -45,3 +45,7 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
+
+npm install express
+
+node server.js
