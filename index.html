@@ -271,49 +271,34 @@
 
             document.body.appendChild(infoDiv);
         };
-        function checkAccess() {
+ function checkAccess() {
     const currentUser = localStorage.getItem('currentUser');
     const isLoggedIn = localStorage.getItem('isLoggedIn');
 
     if (isLoggedIn && currentUser) {
         document.getElementById('username').textContent = `Welcome back, ${currentUser}!`;
         document.querySelector('.logout-button').style.display = 'inline-block';
-        // Show the main content
+        document.querySelector('.delete-button').style.display = 'inline-block';
         document.body.style.display = 'block';
         return true;
     } else {
-        // Hide main content and redirect
         document.body.style.display = 'none';
         window.location.href = 'Getin.html';
         return false;
     }
 }
 
-// Update window.onload to properly show content
-window.onload = async function() {
-    if (checkAccess()) {
-        const systemInfo = await getSystemInfo();
-        const infoDiv = document.createElement('div');
-        infoDiv.className = 'system-info';
-        infoDiv.innerHTML = `
-            <h3>Your System Info:</h3>
-            <p>Operating System: ${systemInfo.os}</p>
-            <p>Browser: ${systemInfo.browser}</p>
-            <p>Language: ${systemInfo.language}</p>
-            <p>Screen Size: ${systemInfo.screenSize}</p>
-            <p>Timezone: ${systemInfo.timezone}</p>
-            <p>Cookies: ${systemInfo.cookies}</p>
-            <p>IP Address: ${systemInfo.ip}</p>
-        `;
-        document.body.appendChild(infoDiv);
-    }
-};
 function logout() {
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentUsername');
     localStorage.removeItem('isLoggedIn');
     document.getElementById('username').textContent = '';
     document.querySelector('.logout-button').style.display = 'none';
-    function deleteAccount() {
+    document.querySelector('.delete-button').style.display = 'none';
+    window.location.href = 'Getin.html';
+}
+
+function deleteAccount() {
     const currentUsername = localStorage.getItem('currentUsername');
     
     if (!currentUsername) {
@@ -345,43 +330,6 @@ function logout() {
             alert('Account not found!');
         }
     }
-}
-
-// Update the checkAccess function to also show delete button
-function checkAccess() {
-    const currentUser = localStorage.getItem('currentUser');
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-
-    if (isLoggedIn && currentUser) {
-        document.getElementById('username').textContent = `Welcome back, ${currentUser}!`;
-        document.querySelector('.logout-button').style.display = 'inline-block';
-        document.querySelector('.delete-button').style.display = 'inline-block';
-        document.body.style.display = 'block';
-        return true;
-    } else {
-        document.body.style.display = 'none';
-        window.location.href = 'Getin.html';
-        return false;
-    }
-}
-
-// Update the logout function to also hide delete button
-function logout() {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('currentUsername');
-    localStorage.removeItem('isLoggedIn');
-    document.getElementById('username').textContent = '';
-    document.querySelector('.logout-button').style.display = 'none';
-    document.querySelector('.delete-button').style.display = 'none';
-    window.location.href = 'Getin.html';
-}
-    <div class="nav-center">
-    <div id="username" class="username-display"></div>
-    <button onclick="logout()" class="logout-button" style="display: none;">Logout</button>
-    <button onclick="deleteAccount()" class="delete-button" style="display: none;">Delete Account</button>
-</div>
-    // In index.html, redirect to Getin.html on logout
-    window.location.href = 'Getin.html';
 }
     </script>
 </body>
