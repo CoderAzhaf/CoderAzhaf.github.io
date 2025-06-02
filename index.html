@@ -47,6 +47,22 @@
             cursor: pointer;
             transition: all 0.3s;
         }
+        .delete-button {
+    background: #dc3545 !important;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.delete-button:hover {
+    background: #c82333 !important;
+    transform: scale(1.05);
+}
 
         .logout-button:hover {
             background: #ff0000 !important;
@@ -296,6 +312,73 @@ function logout() {
     localStorage.removeItem('isLoggedIn');
     document.getElementById('username').textContent = '';
     document.querySelector('.logout-button').style.display = 'none';
+    function deleteAccount() {
+    const currentUsername = localStorage.getItem('currentUsername');
+    
+    if (!currentUsername) {
+        alert('No account found!');
+        return;
+    }
+
+    const confirmation = confirm('Are you sure you want to delete your account? This cannot be undone!');
+    
+    if (confirmation) {
+        // Get current accounts
+        let accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+        
+        // Delete the account
+        if (accounts[currentUsername]) {
+            delete accounts[currentUsername];
+            
+            // Save updated accounts
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+            
+            // Clear user session
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentUsername');
+            localStorage.removeItem('isLoggedIn');
+            
+            alert('Your account has been deleted successfully.');
+            window.location.href = 'Getin.html';
+        } else {
+            alert('Account not found!');
+        }
+    }
+}
+
+// Update the checkAccess function to also show delete button
+function checkAccess() {
+    const currentUser = localStorage.getItem('currentUser');
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+    if (isLoggedIn && currentUser) {
+        document.getElementById('username').textContent = `Welcome back, ${currentUser}!`;
+        document.querySelector('.logout-button').style.display = 'inline-block';
+        document.querySelector('.delete-button').style.display = 'inline-block';
+        document.body.style.display = 'block';
+        return true;
+    } else {
+        document.body.style.display = 'none';
+        window.location.href = 'Getin.html';
+        return false;
+    }
+}
+
+// Update the logout function to also hide delete button
+function logout() {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentUsername');
+    localStorage.removeItem('isLoggedIn');
+    document.getElementById('username').textContent = '';
+    document.querySelector('.logout-button').style.display = 'none';
+    document.querySelector('.delete-button').style.display = 'none';
+    window.location.href = 'Getin.html';
+}
+    <div class="nav-center">
+    <div id="username" class="username-display"></div>
+    <button onclick="logout()" class="logout-button" style="display: none;">Logout</button>
+    <button onclick="deleteAccount()" class="delete-button" style="display: none;">Delete Account</button>
+</div>
     // In index.html, redirect to Getin.html on logout
     window.location.href = 'Getin.html';
 }
