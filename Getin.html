@@ -1,23 +1,141 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <body background="Untitled.png">
-        <link rel="icon" href="Azha LanchPad Icon..png" type="image/x-icon">
-        <html>
-            <title>Sign up or Log in</title>
-            <a><h1>Here log in or sign up!</h1></a>
-            <h1>Welcome<br><button> Sign up<button>Log in</button>
-                <input  type="text" id="textimput" placeholder="Username">
-                    <input type="text" id="textimput" placeholder="Password" id="myText" type="password" class="whsOnd zHQkBf" jsname="YPqjbf" autocomplete="current-password" spellcheck="false" tabindex="0" aria-label="Enter your password" name="Passwd" aria-disabled="false" autocapitalize="off" dir="ltr" data-initial-dir="ltr" data-initial-value=""  action="/login" method="POST"><br><br><br>
-    
-                   <label> Sign up <br>
-                    <input  type="text" id="textInput"placeholder="Create Username">
-    
-                    
-                    <input type="text" id="textInput" placeholder="Create Password" id="myText" id="myText" type="password" class="whsOnd zHQkBf" jsname="YPqjbf" autocomplete="current-password" spellcheck="false" tabindex="0" aria-label="Enter your password" name="Passwd" aria-disabled="false" autocapitalize="off" dir="ltr" data-initial-dir="ltr" data-initial-value="" action="/login" method="POST"><br>
-                    <Button style="background-color: rgb(18, 167, 167);color: rgba(33, 165, 21, 0.568) ; border-radius:5px "><a href="index.html"> Go back </a></Button>
-                    <div class="container">
-                        
-                
-        </html>
-    </body>
+    <link rel="icon" type="image/png" href="Azha LanchPad Icon..png">
+    <!-- Remove this line -->
+    <!-- <link rel="account" href="accounts.js"> -->
 </head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZHA LanchPad - Login/Signup</title>
+    <link rel="icon" type="image/png" href="Azha LanchPad Icon..png">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            background-image: url('100_0066.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            color: white;
+        }
+
+        .nav-center {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .account-form {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: 20px auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            background: #45a049;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .success { 
+            background: rgba(76, 175, 80, 0.3); 
+            border: 1px solid #4CAF50;
+        }
+        
+        .error { 
+            background: rgba(244, 67, 54, 0.3);
+            border: 1px solid #f44336;
+        }
+        
+         .message {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 15px 30px;
+        border-radius: 5px;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .username-display {
+        font-size: 1.2em;
+        margin: 10px 0;
+        color: #4CAF50;
+    }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+   <div class="nav-center">
+    <img src="Azha LanchPad Icon..png" alt="Icon" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+    <h1>Account</h1>
+    <div id="username" class="username-display"></div>
+    <button onclick="logout()" class="logout-button" style="display: none;">Logout</button>
+</div>
+
+<div id="login-form" class="account-form">
+    <h2>Login</h2>
+    <input type="text" id="login-username" placeholder="Enter username">
+    <input type="password" id="login-password" placeholder="Enter password">
+    <button onclick="login()">Login</button>
+    <p style="text-align: center; margin-top: 10px;">
+        Don't have an account? <a href="#" onclick="showSignup()" style="color: #4CAF50;">Sign up</a>
+    </p>
+</div>
+
+<div id="signup-form" class="account-form" style="display: none;">
+    <h2>Sign Up</h2>
+    <input type="text" id="signup-username" placeholder="Choose username">
+    <input type="password" id="signup-password" placeholder="Choose password">
+    <input type="text" id="signup-fullname" placeholder="Enter your full name">
+    <button onclick="signup()">Sign Up</button>
+    <p style="text-align: center; margin-top: 10px;">
+        Already have an account? <a href="#" onclick="showLogin()" style="color: #4CAF50;">Login</a>
+    </p>
+</div>
+<body>
+    
+    <!-- Add script before closing body tag -->
+    <script src="accounts.js"></script>
+</body>

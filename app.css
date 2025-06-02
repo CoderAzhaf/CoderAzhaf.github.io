@@ -4,7 +4,7 @@ body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-size: cover;
             background-attachment: fixed;
-            color: white;
+            color: rgba(255, 255, 255, 0);
         }
 
         .nav-center {
@@ -37,14 +37,14 @@ body {
         }
 
         .system-info {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgb(203, 213, 14);
             padding: 20px;
             margin: 20px auto;
             border-radius: 10px;
             width: 80%;
             max-width: 600px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            color: darkgreen;
+            color: rgb(0, 47, 100);
             animation: slideIn 0.5s ease-out;
         }
 
@@ -74,7 +74,7 @@ body {
 
         h1 {
             text-align: center;
-            color: white;
+            color: rgb(195, 201, 31);
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
             margin: 30px 0;
             font-size: 2.5rem;
