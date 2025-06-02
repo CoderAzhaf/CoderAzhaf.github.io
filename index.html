@@ -213,7 +213,7 @@
             const userAgent = navigator.userAgent.toLowerCase();
             if (userAgent.includes("android")) return "Android";
             if (userAgent.includes("win")) return "Microsoft Windows";
-            if (userAgent.includes("mac")) return "Apple MacBook OS";
+            if (userAgent.includes("mac")) return "Apple OS";
             if (userAgent.includes("linux")) return "Linux";
             if (userAgent.includes("iphone") || userAgent.includes("ipad")) return "Apple iOS";
             return "Unknown OS";
@@ -279,58 +279,40 @@
         document.getElementById('username').textContent = `Welcome back, ${currentUser}!`;
         document.querySelector('.logout-button').style.display = 'inline-block';
         document.querySelector('.delete-button').style.display = 'inline-block';
-        document.body.style.display = 'block';
         return true;
-    } else {
-        document.body.style.display = 'none';
-        window.location.href = 'Getin.html';
-        return false;
     }
-}
-
-function logout() {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('currentUsername');
-    localStorage.removeItem('isLoggedIn');
-    document.getElementById('username').textContent = '';
-    document.querySelector('.logout-button').style.display = 'none';
-    document.querySelector('.delete-button').style.display = 'none';
-    window.location.href = 'Getin.html';
-}
-
-function deleteAccount() {
-    const currentUsername = localStorage.getItem('currentUsername');
     
-    if (!currentUsername) {
-        alert('No account found!');
-        return;
+    // Don't redirect, just return false
+    return false;
+}
+
+// Update window.onload
+window.onload = async function() {
+    const isLoggedIn = checkAccess();
+    
+    // Show login button if not logged in
+    if (!isLoggedIn) {
+        document.querySelector('.nav-center').innerHTML += `
+            <button onclick="window.location.href='Getin.html'">Login / Sign Up</button>
+        `;
     }
 
-    const confirmation = confirm('Are you sure you want to delete your account? This cannot be undone!');
-    
-    if (confirmation) {
-        // Get current accounts
-        let accounts = JSON.parse(localStorage.getItem('accounts')) || {};
-        
-        // Delete the account
-        if (accounts[currentUsername]) {
-            delete accounts[currentUsername];
-            
-            // Save updated accounts
-            localStorage.setItem('accounts', JSON.stringify(accounts));
-            
-            // Clear user session
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('currentUsername');
-            localStorage.removeItem('isLoggedIn');
-            
-            alert('Your account has been deleted successfully.');
-            window.location.href = 'Getin.html';
-        } else {
-            alert('Account not found!');
-        }
-    }
-}
+    // Always show system info
+    const systemInfo = await getSystemInfo();
+    const infoDiv = document.createElement('div');
+    infoDiv.className = 'system-info';
+    infoDiv.innerHTML = `
+        <h3>Your System Info:</h3>
+        <p>Operating System: ${systemInfo.os}</p>
+        <p>Browser: ${systemInfo.browser}</p>
+        <p>Language: ${systemInfo.language}</p>
+        <p>Screen Size: ${systemInfo.screenSize}</p>
+        <p>Timezone: ${systemInfo.timezone}</p>
+        <p>Cookies: ${systemInfo.cookies}</p>
+        <p>IP Address: ${systemInfo.ip}</p>
+    `;
+    document.body.appendChild(infoDiv);
+};
     </script>
 </body>
 </html>
