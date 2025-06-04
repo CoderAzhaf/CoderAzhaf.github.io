@@ -68,9 +68,13 @@ function signup() {
     // ...existing code...
 }
 
-function login() {
-    const username = document.getElementById('login-username').value.toLowerCase();
-    const password = document.getElementById('login-password').value;
+function logout() {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentUsername');
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('isAdmin');
+    window.location.href = 'Getin.html';
+}
     
     const account = accounts[username];
     if (account && account.password === password) {
@@ -80,18 +84,15 @@ function login() {
         }
         
         localStorage.setItem('currentUser', account.fullName);
-        localStorage.setItem('currentUsername', account.username);
+        localStorage.setItem('currentUsername', username);
         localStorage.setItem('isLoggedIn', 'true');
-        
-        if (account.isAdmin) {
-            showAdminPanel();
-        }
+        localStorage.setItem('isAdmin', account.isAdmin);
         
         window.location.href = 'index.html';
     } else {
         showMessage('Invalid username or password', false);
     }
-}
+
 // Initialize on page load
 window.addEventListener('DOMContentLoaded', () => {
     const currentUser = localStorage.getItem('currentUser');

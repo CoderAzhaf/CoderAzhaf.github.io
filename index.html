@@ -321,31 +321,22 @@
 }
 
 // Update window.onload
-window.onload = async function() {
-    const isLoggedIn = checkAccess();
-    
-    // Show login button if not logged in
-    if (!isLoggedIn) {
-        document.querySelector('.nav-center').innerHTML += `
-            <button onclick="window.location.href='Getin.html'">Login / Sign Up</button>
-        `;
-    }
+window.onload = function() {
+    const currentUser = localStorage.getItem('currentUser');
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
-    // Always show system info
-    const systemInfo = await getSystemInfo();
-    const infoDiv = document.createElement('div');
-    infoDiv.className = 'system-info';
-    infoDiv.innerHTML = `
-        <h3>Your System Info:</h3>
-        <p>Operating System: ${systemInfo.os}</p>
-        <p>Browser: ${systemInfo.browser}</p>
-        <p>Language: ${systemInfo.language}</p>
-        <p>Screen Size: ${systemInfo.screenSize}</p>
-        <p>Timezone: ${systemInfo.timezone}</p>
-        <p>Cookies: ${systemInfo.cookies}</p>
-        <p>IP Address: ${systemInfo.ip}</p>
-    `;
-    document.body.appendChild(infoDiv);
+    if (isLoggedIn && currentUser) {
+        document.getElementById('username').textContent = `Welcome back, ${currentUser}!`;
+        document.querySelector('.logout-button').style.display = 'inline-block';
+        document.querySelector('.delete-button').style.display = 'inline-block';
+        
+        if (isAdmin) {
+            showAdminPanel();
+        }
+    } else {
+        window.location.href = 'Getin.html';
+    }
 };
 // Add after your existing functions
 function showAdminPanel() {
@@ -439,6 +430,11 @@ function checkAccess() {
 }
     </script>
    <!-- Add this after your nav-center div -->
+<div class="nav-center">
+    <!-- ...existing nav content... -->
+</div>
+
+<!-- Add this admin panel section -->
 <div id="adminPanel" class="admin-panel" style="display: none;">
     <h2 class="section-title">Admin Panel</h2>
     <div class="nav-center">
@@ -448,13 +444,6 @@ function checkAccess() {
         </div>
     </div>
 </div>
-
-    <script src="accounts.js"></script>
-    <script>
-        // Show admin panel if user is logged in and is an admin
-        if (checkAccess()) {
-            showAdminPanel();
-        }
     </script>
 </body>
 </html>
