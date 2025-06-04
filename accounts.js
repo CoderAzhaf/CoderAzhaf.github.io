@@ -1,24 +1,37 @@
 // Default accounts
 let accounts = JSON.parse(localStorage.getItem('accounts')) || {
-    "azhafuddin": {
-        username: "azhafuddin",
+
+     "azhafuddin": {
+        username: "AZHAFUDDiN",
         password: "AZ MOH",
-        fullName: "Azhafuddin Mohammed"
+        fullName: "Azhafuddin Mohammed",
+        isAdmin: true,
+        warnings: 0,
+        status: "active"
     },
     "jayrayapudi": {
         username: "jayrayapudi",
         password: "Jay Raps",
-        fullName: "Jay Rayapudi"
+        fullName: "Jay Rayapudi",
+        isAdmin: false,
+        warnings: 0,
+        status: "active"
     },
     "jeshrunt": {
         username: "jeshrun",
         password: "Jesh Pro",
-        fullName: "Jeshrun Tappeta"
+        fullName: "Jeshrun Tappeta",
+        isAdmin: true,
+        warnings: 0,
+        status: "active"
     },
     "zidanm": {
         username: "zidanm",
         password: "zidan123",
-        fullName: "Zidanuddin Mohammed"
+        fullName: "Zidanuddin Mohammed",
+        isAdmin: false,
+        warnings: 0,
+        status: "active"
     }
 };
 
