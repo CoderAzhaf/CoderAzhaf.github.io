@@ -438,7 +438,8 @@ function checkAccess() {
     return false;
 }
     </script>
-    <div id="adminPanel" class="admin-panel" style="display: none;">
+   <!-- Add this after your nav-center div -->
+<div id="adminPanel" class="admin-panel" style="display: none;">
     <h2 class="section-title">Admin Panel</h2>
     <div class="nav-center">
         <div class="account-list">
@@ -447,5 +448,13 @@ function checkAccess() {
         </div>
     </div>
 </div>
+
+    <script src="accounts.js"></script>
+    <script>
+        // Show admin panel if user is logged in and is an admin
+        if (checkAccess()) {
+            showAdminPanel();
+        }
+    </script>
 </body>
 </html>

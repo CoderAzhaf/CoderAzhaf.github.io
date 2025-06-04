@@ -54,46 +54,18 @@ function showSignup() {
 }
 
 function signup() {
-    const username = document.getElementById('signup-username').value.toLowerCase();
-    const password = document.getElementById('signup-password').value;
-    const fullName = document.getElementById('signup-fullname').value;
-
-    if (!username || !password || !fullName) {
-        showMessage('Please fill in all fields', false);
-        return;
-    }
-
-    if (accounts[username]) {
-        showMessage('Username already exists', false);
-        return;
-    }
-
-    // Username requirements
-    if (username.length < 4) {
-        showMessage('Username must be at least 4 characters', false);
-        return;
-    }
-
-    // Password requirements
-    if (password.length < 6) {
-        showMessage('Password must be at least 6 characters', false);
-        return;
-    }
+    // ...existing validation code...
 
     accounts[username] = {
         username: username,
         password: password,
-        fullName: fullName
+        fullName: fullName,
+        isAdmin: false, // New accounts are not admins by default
+        warnings: 0,
+        status: "active"
     };
 
-    localStorage.setItem('accounts', JSON.stringify(accounts));
-    showMessage('Account created successfully!', true);
-    
-    // Clear form
-    document.getElementById('signup-username').value = '';
-    document.getElementById('signup-password').value = '';
-    document.getElementById('signup-fullname').value = '';
-    setTimeout(showLogin, 1500);
+    // ...existing code...
 }
 
 function login() {
@@ -102,28 +74,24 @@ function login() {
     
     const account = accounts[username];
     if (account && account.password === password) {
+        if (account.status === 'banned') {
+            showMessage('This account has been banned.', false);
+            return;
+        }
+        
         localStorage.setItem('currentUser', account.fullName);
         localStorage.setItem('currentUsername', account.username);
         localStorage.setItem('isLoggedIn', 'true');
         
-        // Redirect to index.html after successful login
+        if (account.isAdmin) {
+            showAdminPanel();
+        }
+        
         window.location.href = 'index.html';
     } else {
         showMessage('Invalid username or password', false);
     }
 }
-
-function logout() {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('currentUsername');
-    localStorage.removeItem('isLoggedIn');
-    document.getElementById('username').textContent = '';
-    document.querySelector('.logout-button').style.display = 'none';
-    document.getElementById('login-form').style.display = 'block';
-    document.getElementById('login-username').value = '';
-    document.getElementById('login-password').value = '';
-}
-
 // Initialize on page load
 window.addEventListener('DOMContentLoaded', () => {
     const currentUser = localStorage.getItem('currentUser');
@@ -138,3 +106,65 @@ window.addEventListener('DOMContentLoaded', () => {
         showLogin();
     }
 });
+
+function showAdminPanel() {
+    const currentUsername = localStorage.getItem('currentUsername');
+    const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+    
+    if (accounts[currentUsername]?.isAdmin) {
+        const adminPanel = document.getElementById('adminPanel');
+        const accountsList = document.getElementById('accountsList');
+        
+        if (adminPanel && accountsList) {
+            adminPanel.style.display = 'block';
+            accountsList.innerHTML = '';
+            
+            Object.entries(accounts).forEach(([username, account]) => {
+                if (username !== currentUsername) {
+                    const accountDiv = document.createElement('div');
+                    accountDiv.className = 'account-item';
+                    accountDiv.innerHTML = `
+                        <div>
+                            <strong>${account.fullName}</strong> (${username})
+                            ${account.warnings > 0 ? `<span class="warning">Warnings: ${account.warnings}</span>` : ''}
+                            ${account.status === 'banned' ? '<span class="banned">BANNED</span>' : ''}
+                        </div>
+                        <div class="admin-controls">
+                            <button onclick="warnUser('${username}')">Warn</button>
+                            <button onclick="toggleBan('${username}')">${account.status === 'banned' ? 'Unban' : 'Ban'}</button>
+                            <button onclick="deleteUserAccount('${username}')">Delete</button>
+                        </div>
+                    `;
+                    accountsList.appendChild(accountDiv);
+                }
+            });
+        }
+    }
+}
+
+function warnUser(username) {
+    const accounts = JSON.parse(localStorage.getItem('accounts'));
+    if (accounts[username]) {
+        accounts[username].warnings = (accounts[username].warnings || 0) + 1;
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+        showAdminPanel();
+    }
+}
+
+function toggleBan(username) {
+    const accounts = JSON.parse(localStorage.getItem('accounts'));
+    if (accounts[username]) {
+        accounts[username].status = accounts[username].status === 'banned' ? 'active' : 'banned';
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+        showAdminPanel();
+    }
+}
+
+function deleteUserAccount(username) {
+    if (confirm(`Are you sure you want to delete ${username}'s account?`)) {
+        const accounts = JSON.parse(localStorage.getItem('accounts'));
+        delete accounts[username];
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+        showAdminPanel();
+    }
+}
