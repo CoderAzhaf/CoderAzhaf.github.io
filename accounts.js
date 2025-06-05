@@ -1,39 +1,21 @@
-// Default accounts
-let accounts = JSON.parse(localStorage.getItem('accounts')) || {
+// Initialize default accounts if none exist
+if (!localStorage.getItem('accounts')) {
+    const defaultAccounts = {
+       "AZHA": {
+            username: "AZHA",
+            password: "AZ MOH",
+            fullName: "AZHAFUDDiN MOHAMMED",
+            isAdmin: true,
+            warnings: 0,
+            status: "active"
+        }
+    };
+    
+    localStorage.setItem('accounts', JSON.stringify(defaultAccounts));
+}
 
-     "azhafuddin": {
-        username: "AZHAFUDDiN",
-        password: "AZ MOH",
-        fullName: "Azhafuddin Mohammed",
-        isAdmin: true,
-        warnings: 0,
-        status: "active"
-    },
-    "jayrayapudi": {
-        username: "jayrayapudi",
-        password: "Jay Raps",
-        fullName: "Jay Rayapudi",
-        isAdmin: false,
-        warnings: 0,
-        status: "active"
-    },
-    "jeshrunt": {
-        username: "jeshrun",
-        password: "Jesh Pro",
-        fullName: "Jeshrun Tappeta",
-        isAdmin: true,
-        warnings: 0,
-        status: "active"
-    },
-    "zidanm": {
-        username: "zidanm",
-        password: "zidan123",
-        fullName: "Zidanuddin Mohammed",
-        isAdmin: false,
-        warnings: 0,
-        status: "active"
-    }
-};
+// Get accounts from localStorage
+let accounts = JSON.parse(localStorage.getItem('accounts'));
 
 function showMessage(message, isSuccess) {
     const div = document.createElement('div');
@@ -46,38 +28,34 @@ function showMessage(message, isSuccess) {
 function login() {
     const username = document.getElementById('login-username').value;
     const password = document.getElementById('login-password').value;
-    
+
+    if (!username || !password) {
+        showMessage('Please enter both username and password', false);
+        return;
+    }
+
+    // Reload accounts from localStorage to ensure latest data
+    accounts = JSON.parse(localStorage.getItem('accounts'));
+
     const account = accounts[username];
     if (account && account.password === password) {
-        localStorage.setItem('currentUser', account.fullName);
+        if (account.status === 'banned') {
+            showMessage('This account has been banned.', false);
+            return;
+        }
+
+        localStorage.setItem('currentUser', account.fullName); // <---- Make sure this line is present
         localStorage.setItem('currentUsername', username);
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('isAdmin', account.isAdmin);
-        
-        // Update this line to use your GitHub Pages URL
-        window.location.href = 'https://coderazhaf.github.io/index.html';
+
+        showMessage('Login successful! Redirecting...', true);
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1500);
     } else {
         showMessage('Invalid username or password', false);
     }
-}
-
-function showSignup() {
-    document.getElementById('login-form').style.display = 'none';
-    document.getElementById('signup-form').style.display = 'block';
-}
-
-function showLogin() {
-    document.getElementById('signup-form').style.display = 'none';
-    document.getElementById('login-form').style.display = 'block';
-}
-
-function logout() {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('currentUsername');
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('isAdmin');
-    // Update this line to use your GitHub Pages URL
-    window.location.href = 'https://coderazhaf.github.io/Getin.html';
 }
 
 function showLogin() {
@@ -91,20 +69,35 @@ function showSignup() {
 }
 
 function signup() {
-    // ...existing validation code...
+    const username = document.getElementById('signup-username').value;
+    const password = document.getElementById('signup-password').value;
+    const fullName = document.getElementById('signup-fullname').value;
+
+    if (!username || !password || !fullName) {
+        showMessage('Please fill in all fields', false);
+        return;
+    }
+
+    if (accounts[username]) {
+        showMessage('Username already exists', false);
+        return;
+    }
 
     accounts[username] = {
         username: username,
         password: password,
         fullName: fullName,
-        isAdmin: false, // New accounts are not admins by default
+        isAdmin: false,
         warnings: 0,
         status: "active"
     };
 
-    // ...existing code...`
+    localStorage.setItem('accounts', JSON.stringify(accounts));
+    showMessage('Account created successfully! You can now login.', true);
+    showLogin();
 }
 
+// Update logout function
 function logout() {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentUsername');
@@ -112,60 +105,36 @@ function logout() {
     localStorage.removeItem('isAdmin');
     window.location.href = 'Getin.html';
 }
-    
-    const account = accounts[username];
-    if (account && account.password === password) {
-        if (account.status === 'banned') {
-            showMessage('This account has been banned.', false);
-            return;
-        }
-        
-        localStorage.setItem('currentUser', account.fullName);
-        localStorage.setItem('currentUsername', username);
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('isAdmin', account.isAdmin);
-        
-        window.location.href = 'index.html';
-    } else {
-        showMessage('Invalid username or password', false);
+function makeAdmin(username) {
+    const accounts = JSON.parse(localStorage.getItem('accounts'));
+    if (accounts[username]) {
+        accounts[username].isAdmin = true;
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+        showAdminPanel(); // Refresh the admin panel
     }
-
-// Initialize on page load
-window.addEventListener('DOMContentLoaded', () => {
-    const currentUser = localStorage.getItem('currentUser');
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-
-    if (isLoggedIn && currentUser) {
-        document.getElementById('username').textContent = `Welcome back, ${currentUser}!`;
-        document.querySelector('.logout-button').style.display = 'inline-block';
-        document.getElementById('login-form').style.display = 'none';
-        document.getElementById('signup-form').style.display = 'none';
-    } else {
-        showLogin();
-    }
-});
-
+}
 function showAdminPanel() {
     const currentUsername = localStorage.getItem('currentUsername');
     const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
-    
+
     if (accounts[currentUsername]?.isAdmin) {
         const adminPanel = document.getElementById('adminPanel');
         const accountsList = document.getElementById('accountsList');
-        
+
         if (adminPanel && accountsList) {
             adminPanel.style.display = 'block';
             accountsList.innerHTML = '';
-            
+
             Object.entries(accounts).forEach(([username, account]) => {
                 if (username !== currentUsername) {
+                    console.log("Adding account:", username); // ADD THIS LINE
                     const accountDiv = document.createElement('div');
                     accountDiv.className = 'account-item';
                     accountDiv.innerHTML = `
                         <div>
                             <strong>${account.fullName}</strong> (${username})
                             ${account.warnings > 0 ? `<span class="warning">Warnings: ${account.warnings}</span>` : ''}
-                            ${account.status === 'banned' ? '<span class="banned">BANNED</span>' : ''}
+                            ${account.status === 'banned' ? `<span class="banned">BANNED</span>` : ''}
                         </div>
                         <div class="admin-controls">
                             <button onclick="warnUser('${username}')">Warn</button>
@@ -179,30 +148,15 @@ function showAdminPanel() {
         }
     }
 }
-
-function warnUser(username) {
-    const accounts = JSON.parse(localStorage.getItem('accounts'));
-    if (accounts[username]) {
-        accounts[username].warnings = (accounts[username].warnings || 0) + 1;
-        localStorage.setItem('accounts', JSON.stringify(accounts));
-        showAdminPanel();
+// Add event listener for Enter key on login form
+window.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        const loginPassword = document.getElementById('login-password');
+        loginPassword.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
     }
-}
-
-function toggleBan(username) {
-    const accounts = JSON.parse(localStorage.getItem('accounts'));
-    if (accounts[username]) {
-        accounts[username].status = accounts[username].status === 'banned' ? 'active' : 'banned';
-        localStorage.setItem('accounts', JSON.stringify(accounts));
-        showAdminPanel();
-    }
-}
-
-function deleteUserAccount(username) {
-    if (confirm(`Are you sure you want to delete ${username}'s account?`)) {
-        const accounts = JSON.parse(localStorage.getItem('accounts'));
-        delete accounts[username];
-        localStorage.setItem('accounts', JSON.stringify(accounts));
-        showAdminPanel();
-    }
-}
+});
