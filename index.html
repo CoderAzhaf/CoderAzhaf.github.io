@@ -138,26 +138,21 @@
 
     .nav-center button {
         margin: 5px;
-        transition: transform 0.2s, background-color 0.2s;
+        transition: transform 0.2s, backround 0.2s;
     }
 
     .nav-center button:hover {
         transform: scale(1.05);
     }
 
-    .admin-panel {
-    margin: 20px auto;
-    max-width: 800px;
-}
-
-.account-list {
-    text-align: left;
-    padding: 15px;
+    /* Add to your existing style section */
+.admin-panel {
+    margin-top: 20px;
 }
 
 .account-item {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 10px;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 15px;
     margin: 10px 0;
     border-radius: 5px;
     display: flex;
@@ -165,24 +160,31 @@
     align-items: center;
 }
 
-.admin-controls button {
-    padding: 5px 10px;
-    margin: 0 5px;
-    font-size: 0.8rem;
-}
-
 .warning {
     color: #ffc107;
+    margin-left: 10px;
 }
 
 .banned {
     color: #dc3545;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.admin-controls button {
+    margin: 0 5px;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    color: white;
 }
 </style>
 </head>
 
 <body background="100_0066.jpg">
     <div class="nav-center">
+</div>
     <img src="Azha LanchPad Icon..png" alt="Icon" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
     <h1 style="margin: 0;">CoderAzhaf</h1>
     <div id="username" class="username-display"></div>
@@ -302,7 +304,96 @@
                 <p>Cookies: ${systemInfo.cookies}</p>
                 <p>IP Address: ${systemInfo.ip}</p>
             `;
+             // Update window.onload function
+window.onload = async function() {
+    const isLoggedIn = checkAccess();
+    
+    // Show login button if not logged in
+    if (!isLoggedIn) {
+        document.querySelector('.nav-center').innerHTML += `
+            <button onclick="window.location.href='Getin.html'">Login / Sign Up</button>
+        `;
+    }
 
+    // Always show system info
+    const systemInfo = await getSystemInfo();
+    const infoDiv = document.createElement('div');
+    infoDiv.className = 'system-info';
+    infoDiv.innerHTML = `
+        <h3>Your System Info:</h3>
+        <p>Operating System: ${systemInfo.os}</p>
+        <p>Browser: ${systemInfo.browser}</p>
+        <p>Language: ${systemInfo.language}</p>
+        <p>Screen Size: ${systemInfo.screenSize}</p>
+        <p>Timezone: ${systemInfo.timezone}</p>
+        <p>Cookies: ${systemInfo.cookies}</p>
+        <p>IP Address: ${systemInfo.ip}</p>
+    `;
+    document.body.appendChild(infoDiv);
+
+    // Add admin panel after system info if user is admin
+    const currentUsername = localStorage.getItem('currentUsername');
+    const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+    
+    if (accounts[currentUsername]?.isAdmin) {
+        const adminDiv = document.createElement('div');
+        adminDiv.className = 'system-info admin-panel';
+        adminDiv.innerHTML = `
+            <h3>Admin Panel</h3>
+            <div id="accountsList"></div>
+        `;
+        document.body.appendChild(adminDiv);
+        
+        const accountsList = document.getElementById('accountsList');
+        Object.entries(accounts).forEach(([username, account]) => {
+            if (username !== currentUsername) {
+                const accountDiv = document.createElement('div');
+                accountDiv.className = 'account-item';
+                accountDiv.innerHTML = `
+                    <div>
+                        <strong>${account.fullName}</strong> (${username})
+                        ${account.warnings ? `<span class="warning">Warnings: ${account.warnings}</span>` : ''}
+                        ${account.status === 'banned' ? '<span class="banned">BANNED</span>' : ''}
+                    </div>
+                    <div class="admin-controls">
+                        <button onclick="warnUser('${username}')">Warn</button>
+                        <button onclick="toggleBan('${username}')">${account.status === 'banned' ? 'Unban' : 'Ban'}</button>
+                        <button onclick="deleteUserAccount('${username}')">Delete</button>
+                    </div>
+                `;
+                accountsList.appendChild(accountDiv);
+            }
+        });
+    }
+};
+
+// Add these admin functions after your existing functions
+function warnUser(username) {
+    const accounts = JSON.parse(localStorage.getItem('accounts'));
+    if (accounts[username]) {
+        accounts[username].warnings = (accounts[username].warnings || 0) + 1;
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+        window.location.reload();
+    }
+}
+
+function toggleBan(username) {
+    const accounts = JSON.parse(localStorage.getItem('accounts'));
+    if (accounts[username]) {
+        accounts[username].status = accounts[username].status === 'banned' ? 'active' : 'banned';
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+        window.location.reload();
+    }
+}
+
+function deleteUserAccount(username) {
+    if (confirm(`Are you sure you want to delete ${username}'s account?`)) {
+        const accounts = JSON.parse(localStorage.getItem('accounts'));
+        delete accounts[username];
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+        window.location.reload();
+    }
+}
             document.body.appendChild(infoDiv);
         };
  function checkAccess() {
@@ -321,129 +412,49 @@
 }
 
 // Update window.onload
-window.onload = function() {
-    const currentUser = localStorage.getItem('currentUser');
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    const isAdmin = localStorage.getItem('isAdmin') === 'true';
-
-    if (isLoggedIn && currentUser) {
-        document.getElementById('username').textContent = `Welcome back, ${currentUser}!`;
-        document.querySelector('.logout-button').style.display = 'inline-block';
-        document.querySelector('.delete-button').style.display = 'inline-block';
-        
-        if (isAdmin) {
-            showAdminPanel();
-        }
-    } else {
-        window.location.href = 'Getin.html';
-    }
-};
-// Add after your existing functions
-function showAdminPanel() {
-    const currentUser = localStorage.getItem('currentUsername');
-    const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+window.onload = async function() {
+    const isLoggedIn = checkAccess();
     
-    if (accounts[currentUser]?.isAdmin) {
-        const adminPanel = document.getElementById('adminPanel');
-        const accountsList = document.getElementById('accountsList');
-        adminPanel.style.display = 'block';
-        
-        // Clear existing list
-        accountsList.innerHTML = '';
-        
-        // Show all accounts except admin
-        Object.entries(accounts).forEach(([username, account]) => {
-            if (username !== currentUser) {
-                const accountDiv = document.createElement('div');
-                accountDiv.className = 'account-item';
-                accountDiv.innerHTML = `
-                    <div>
-                        <strong>${account.fullName}</strong> (${username})
-                        ${account.warnings > 0 ? `<span class="warning">Warnings: ${account.warnings}</span>` : ''}
-                        ${account.status === 'banned' ? '<span class="banned">BANNED</span>' : ''}
-                    </div>
-                    <div class="admin-controls">
-                        <button onclick="warnUser('${username}')">Warn</button>
-                        <button onclick="toggleBan('${username}')">${account.status === 'banned' ? 'Unban' : 'Ban'}</button>
-                        <button onclick="deleteUserAccount('${username}')">Delete</button>
-                    </div>
-                `;
-                accountsList.appendChild(accountDiv);
+    // Show login button if not logged in
+    if (!isLoggedIn) {
+        document.querySelector('.nav-center').innerHTML += `
+            <button onclick="window.location.href='Getin.html'">Login / Sign Up</button>
+        `;
+    }
+
+    // Always show system info
+    const systemInfo = await getSystemInfo();
+    const infoDiv = document.createElement('div');
+    infoDiv.className = 'system-info';
+    infoDiv.innerHTML = `
+        <h3>Your System Info:</h3>
+        <p>Operating System: ${systemInfo.os}</p>
+        <p>Browser: ${systemInfo.browser}</p>
+        <p>Language: ${systemInfo.language}</p>
+        <p>Screen Size: ${systemInfo.screenSize}</p>
+        <p>Timezone: ${systemInfo.timezone}</p>
+        <p>Cookies: ${systemInfo.cookies}</p>
+        <p>IP Address: ${systemInfo.ip}</p>
+    `;
+    document.body.appendChild(infoDiv);
+};
+        function logout() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('isLoggedIn');
+            window.location.href = 'Getin.html';
+        }
+
+        function deleteAccount() {
+            if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+                const currentUser = localStorage.getItem('currentUser');
+                const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+                delete accounts[currentUser];
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                logout();
             }
-        });
-    }
-}
-
-function warnUser(username) {
-    const accounts = JSON.parse(localStorage.getItem('accounts'));
-    if (accounts[username]) {
-        accounts[username].warnings = (accounts[username].warnings || 0) + 1;
-        localStorage.setItem('accounts', JSON.stringify(accounts));
-        showAdminPanel(); // Refresh the panel
-    }
-}
-
-function toggleBan(username) {
-    const accounts = JSON.parse(localStorage.getItem('accounts'));
-    if (accounts[username]) {
-        accounts[username].status = accounts[username].status === 'banned' ? 'active' : 'banned';
-        localStorage.setItem('accounts', JSON.stringify(accounts));
-        showAdminPanel(); // Refresh the panel
-    }
-}
-
-function deleteUserAccount(username) {
-    if (confirm(`Are you sure you want to delete ${username}'s account?`)) {
-        const accounts = JSON.parse(localStorage.getItem('accounts'));
-        delete accounts[username];
-        localStorage.setItem('accounts', JSON.stringify(accounts));
-        showAdminPanel(); // Refresh the panel
-    }
-}
-
-// Update your checkAccess function
-function checkAccess() {
-    const currentUser = localStorage.getItem('currentUsername');
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
-
-    if (isLoggedIn && currentUser && accounts[currentUser]) {
-        // Check if user is banned
-        if (accounts[currentUser].status === 'banned') {
-            alert('Your account has been banned.');
-            logout();
-            return false;
-        }
-
-        document.getElementById('username').textContent = `Welcome back, ${accounts[currentUser].fullName}!`;
-        document.querySelector('.logout-button').style.display = 'inline-block';
-        document.querySelector('.delete-button').style.display = 'inline-block';
-        
-        // Show admin panel if admin
-        if (accounts[currentUser].isAdmin) {
-            showAdminPanel();
-        }
-        
-        return true;
-    }
-    return false;
-}
+        }       
     </script>
-   <!-- Add this after your nav-center div -->
-<div class="nav-center">
-    <!-- ...existing nav content... -->
-</div>
-
-<!-- Add this admin panel section -->
-<div id="adminPanel" class="admin-panel" style="display: none;">
-    <h2 class="section-title">Admin Panel</h2>
-    <div class="nav-center">
-        <div class="account-list">
-            <h3>Manage Accounts</h3>
-            <div id="accountsList"></div>
-        </div>
-    </div>
-</div>
-    </script>
+    
+        
 </body>
 </html>

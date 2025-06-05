@@ -43,6 +43,43 @@ function showMessage(message, isSuccess) {
     setTimeout(() => div.remove(), 3000);
 }
 
+function login() {
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
+    
+    const account = accounts[username];
+    if (account && account.password === password) {
+        localStorage.setItem('currentUser', account.fullName);
+        localStorage.setItem('currentUsername', username);
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('isAdmin', account.isAdmin);
+        
+        // Update this line to use your GitHub Pages URL
+        window.location.href = 'https://coderazhaf.github.io/index.html';
+    } else {
+        showMessage('Invalid username or password', false);
+    }
+}
+
+function showSignup() {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('signup-form').style.display = 'block';
+}
+
+function showLogin() {
+    document.getElementById('signup-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'block';
+}
+
+function logout() {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentUsername');
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('isAdmin');
+    // Update this line to use your GitHub Pages URL
+    window.location.href = 'https://coderazhaf.github.io/Getin.html';
+}
+
 function showLogin() {
     document.getElementById('signup-form').style.display = 'none';
     document.getElementById('login-form').style.display = 'block';
@@ -65,7 +102,7 @@ function signup() {
         status: "active"
     };
 
-    // ...existing code...
+    // ...existing code...`
 }
 
 function logout() {
