@@ -503,6 +503,131 @@
             updateBalanceDisplay();
         });
     </script>
+// ...existing code...
+    <!-- Messaging UI -->
+    <div id="messagingPanel" style="max-width:800px;margin:20px auto;display:none;">
+        <h2>Messages</h2>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:240px;">
+                <h3>Compose</h3>
+                <select id="msgRecipient" style="width:100%;padding:8px;margin-bottom:8px;"></select>
+                <textarea id="msgText" placeholder="Write message..." style="width:100%;height:80px;padding:8px;"></textarea>
+                <button id="sendMsgBtn" style="margin-top:8px;">Send</button>
+            </div>
+            <div style="flex:2;min-width:300px;">
+                <h3>Inbox</h3>
+                <div id="inboxList" style="max-height:220px;overflow:auto;background:rgba(0,0,0,0.5);padding:8px;border-radius:6px;"></div>
+                <h3 style="margin-top:12px;">Sent</h3>
+                <div id="sentList" style="max-height:160px;overflow:auto;background:rgba(0,0,0,0.5);padding:8px;border-radius:6px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // messaging UI logic
+    function openMessaging() {
+        const panel = document.getElementById('messagingPanel');
+        panel.style.display = 'block';
+        populateRecipients();
+        renderMessages();
+    }
+
+    function closeMessaging() {
+        const panel = document.getElementById('messagingPanel');
+        panel.style.display = 'none';
+    }
+
+    function populateRecipients() {
+        const select = document.getElementById('msgRecipient');
+        select.innerHTML = '';
+        const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+        const current = localStorage.getItem('currentUsername');
+        Object.keys(accounts).forEach(u => {
+            if (u === current) return; // don't send to self
+            const opt = document.createElement('option');
+            opt.value = u;
+            opt.textContent = `${accounts[u].fullName} (${u})`;
+            select.appendChild(opt);
+        });
+    }
+
+    function renderMessages() {
+        const current = localStorage.getItem('currentUsername');
+        const inbox = getInbox(current) || [];
+        const sent = getSent(current) || [];
+
+        const inboxEl = document.getElementById('inboxList');
+        inboxEl.innerHTML = inbox.length ? '' : '<em>No messages</em>';
+        inbox.forEach(m => {
+            const div = document.createElement('div');
+            div.style.padding = '6px';
+            div.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            div.innerHTML = `<strong>${m.from}</strong> <small>${new Date(m.timestamp).toLocaleString()}</small>
+                             <p style="margin:6px 0;color:#ddd">${escapeHtml(m.text)}</p>
+                             <button onclick="markAndRefresh('${m.id}')">Mark Read</button>
+                             <button onclick="deleteAndRefresh('${m.id}')">Delete</button>
+                             ${m.read ? '<span style="color:lightgreen;margin-left:8px">Read</span>' : '<span style="color:yellow;margin-left:8px">Unread</span>'}`;
+            inboxEl.appendChild(div);
+        });
+
+        const sentEl = document.getElementById('sentList');
+        sentEl.innerHTML = sent.length ? '' : '<em>No sent messages</em>';
+        sent.forEach(m => {
+            const div = document.createElement('div');
+            div.style.padding = '6px';
+            div.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            div.innerHTML = `<strong>To: ${m.to}</strong> <small>${new Date(m.timestamp).toLocaleString()}</small>
+                             <p style="margin:6px 0;color:#ddd">${escapeHtml(m.text)}</p>
+                             <button onclick="deleteAndRefresh('${m.id}')">Delete</button>`;
+            sentEl.appendChild(div);
+        });
+    }
+
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
+    }
+
+    function markAndRefresh(id) {
+        const current = localStorage.getItem('currentUsername');
+        if (markMessageRead(id, current)) renderMessages();
+    }
+
+    function deleteAndRefresh(id) {
+        const current = localStorage.getItem('currentUsername');
+        if (deleteMessage(id, current)) renderMessages();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const sendBtn = document.getElementById('sendMsgBtn');
+        if (sendBtn) {
+            sendBtn.addEventListener('click', () => {
+                const to = document.getElementById('msgRecipient').value;
+                const text = document.getElementById('msgText').value.trim();
+                const from = localStorage.getItem('currentUsername');
+                if (!from) { showMessage('You must be logged in to send messages.', false); return; }
+                if (!to || !text) { showMessage('Choose recipient and enter a message.', false); return; }
+                const ok = sendMessage(from, to, text);
+                if (ok) {
+                    document.getElementById('msgText').value = '';
+                    renderMessages();
+                    showMessage('Message sent.', true);
+                } else {
+                    showMessage('Failed to send message.', false);
+                }
+            });
+        }
+
+        // optional: add a quick open button in header
+        const header = document.querySelector('.nav-center');
+        if (header) {
+            const btn = document.createElement('button');
+            btn.textContent = 'Messages';
+            btn.style.marginLeft = '8px';
+            btn.onclick = openMessaging;
+            header.appendChild(btn);
+        }
+    });
+    </script>
 
 </body>
 </html>

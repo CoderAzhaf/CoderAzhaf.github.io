@@ -303,3 +303,73 @@ function giveAZINC(targetUsername, amount) {
     fullNameInput.value = '';
     showLogin(); // Automatically switch to the login form
 // ...existing code...
+// ...existing code...
+
+// Initialize messages storage
+if (!localStorage.getItem('messages')) {
+    localStorage.setItem('messages', JSON.stringify([]));
+}
+
+/**
+ * Send a message from "fromUsername" to "toUsername"
+ * returns true on success, false on failure
+ */
+function sendMessage(fromUsername, toUsername, text) {
+    if (!fromUsername || !toUsername || !text) return false;
+    const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+    if (!accounts[toUsername]) return false; // recipient must exist
+    const messages = JSON.parse(localStorage.getItem('messages')) || [];
+    const msg = {
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2,8),
+        from: fromUsername,
+        to: toUsername,
+        text: String(text),
+        timestamp: new Date().toISOString(),
+        read: false
+    };
+    messages.push(msg);
+    localStorage.setItem('messages', JSON.stringify(messages));
+    return true;
+}
+
+/**
+ * Get inbox messages for a user (sorted newest first)
+ */
+function getInbox(username) {
+    const messages = JSON.parse(localStorage.getItem('messages')) || [];
+    return messages.filter(m => m.to === username).sort((a,b) => b.timestamp.localeCompare(a.timestamp));
+}
+
+/**
+ * Get sent messages for a user (sorted newest first)
+ */
+function getSent(username) {
+    const messages = JSON.parse(localStorage.getItem('messages')) || [];
+    return messages.filter(m => m.from === username).sort((a,b) => b.timestamp.localeCompare(a.timestamp));
+}
+
+/**
+ * Mark a message read (only recipient can mark)
+ */
+function markMessageRead(messageId, username) {
+    const messages = JSON.parse(localStorage.getItem('messages')) || [];
+    const idx = messages.findIndex(m => m.id === messageId && m.to === username);
+    if (idx === -1) return false;
+    messages[idx].read = true;
+    localStorage.setItem('messages', JSON.stringify(messages));
+    return true;
+}
+
+/**
+ * Delete a message (sender or recipient can delete)
+ */
+function deleteMessage(messageId, username) {
+    let messages = JSON.parse(localStorage.getItem('messages')) || [];
+    const idx = messages.findIndex(m => m.id === messageId && (m.to === username || m.from === username));
+    if (idx === -1) return false;
+    messages.splice(idx, 1);
+    localStorage.setItem('messages', JSON.stringify(messages));
+    return true;
+}
+
+// ...existing code...
