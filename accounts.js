@@ -24,6 +24,14 @@ if (!localStorage.getItem('accounts')) {
             isAdmin: true,
             warnings: 0,
             status: "active"
+        },
+        "Hacker": {
+            username: "Hacker",
+            password: "Hacker",
+            fullName: "Hacker",
+            isAdmin: false,
+            warnings: 0,
+            status: "active"
         }
     };
     localStorage.setItem('accounts', JSON.stringify(defaultAccounts));
