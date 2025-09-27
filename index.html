@@ -673,6 +673,7 @@
         }
     });
     </script>
+```
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
@@ -757,7 +758,169 @@ window.deleteMessage = async function(messageId, username) {
     console.error("deleteMessage error", err);
     return false;
   }
-};
+}
 </script>
+
+    <!-- Entrance Overlay + Animations -->
+   
+
+
+    
+<style>
+/* Entrance overlay + animations */
+#entranceOverlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg, rgba(0,0,0,0.95), rgba(0,0,0,0.7));
+    z-index:2500;
+    opacity:1;
+    transition:opacity 600ms ease, transform 600ms ease;
+    pointer-events:auto;
+}
+#entranceOverlay.hidden{
+    opacity:0;
+    pointer-events:none;
+    transform:scale(1.02);
+}
+#entranceContent{
+    text-align:center;
+    color:#fff;
+    transform:translateY(6px);
+    opacity:0;
+    animation: entranceText 700ms ease forwards 200ms;
+}
+#entranceContent .logo{
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    margin:0 auto 12px;
+    background:url('Azha LanchPad Icon..png') center/cover no-repeat;
+    box-shadow:0 8px 30px rgba(0,0,0,0.6),0 2px 6px rgba(0,0,0,0.4);
+    transform:scale(.86);
+    animation: logoPop 700ms cubic-bezier(.2,.9,.2,1) forwards;
+}
+#entranceContent h1{
+    margin:0;
+    font-size:1.6rem;
+    letter-spacing:0.6px;
+}
+@keyframes logoPop{
+    from{ transform: scale(.6); opacity:0 }
+    to{ transform: scale(1); opacity:1 }
+}
+@keyframes entranceText{
+    from{ transform: translateY(8px); opacity:0 }
+    to{ transform: translateY(0); opacity:1 }
+}
+
+/* animate-in class for page elements */
+.animate-in .nav-center, .animate-in .admin-panel, .animate-in .game-container {
+    transform: translateY(0);
+    opacity: 1;
+}
+.nav-center, .admin-panel, .game-container {
+    transform: translateY(10px);
+    opacity: 0;
+    transition: transform 520ms ease, opacity 520ms ease;
+}
+</style>
+<head>
+    ...existing code...
+    <style>
+    /* Entrance overlay + animations */
+    #entranceOverlay{
+        position:fixed;
+        inset:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background:linear-gradient(135deg, rgba(0,0,0,0.95), rgba(0,0,0,0.7));
+        z-index:2500;
+        opacity:1;
+        transition:opacity 600ms ease, transform 600ms ease;
+        pointer-events:auto;
+    }
+    #entranceOverlay.hidden{
+        opacity:0;
+        pointer-events:none;
+        transform:scale(1.02);
+    }
+    #entranceContent{
+        text-align:center;
+        color:#fff;
+        transform:translateY(6px);
+        opacity:0;
+        animation: entranceText 700ms ease forwards 200ms;
+    }
+    #entranceContent .logo{
+        width:110px;
+        height:110px;
+        border-radius:50%;
+        margin:0 auto 12px;
+        background:url('Azha LanchPad Icon..png') center/cover no-repeat;
+        box-shadow:0 8px 30px rgba(0,0,0,0.6),0 2px 6px rgba(0,0,0,0.4);
+        transform:scale(.86);
+        animation: logoPop 700ms cubic-bezier(.2,.9,.2,1) forwards;
+    }
+    #entranceContent h1{
+        margin:0;
+        font-size:1.6rem;
+        letter-spacing:0.6px;
+    }
+    @keyframes logoPop{
+        from{ transform: scale(.6); opacity:0 }
+        to{ transform: scale(1); opacity:1 }
+    }
+    @keyframes entranceText{
+        from{ transform: translateY(8px); opacity:0 }
+        to{ transform: translateY(0); opacity:1 }
+    }
+
+    /* animate-in class for page elements */
+    .animate-in .nav-center, .animate-in .admin-panel, .animate-in .game-container {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    .nav-center, .admin-panel, .game-container {
+        transform: translateY(10px);
+        opacity: 0;
+        transition: transform 520ms ease, opacity 520ms ease;
+    }
+    </style>
+
+    <body>
+ 
+
+    <!-- Entrance overlay (insert right after <body>) -->
+    <div id="entranceOverlay" aria-hidden="true">
+        <div id="entranceContent" role="img" aria-label="Welcome">
+            <div class="logo" aria-hidden="true"></div>
+            <h1>Welcome to CoderAzhaf</h1>
+        </div>
+    </div>
+
+</head>
+ <script>
+    // Entrance overlay logic: hide after animation and enable page animations
+    document.addEventListener('DOMContentLoaded', () => {
+        const overlay = document.getElementById('entranceOverlay');
+        // small delay so users see it briefly
+        const showTime = 900; // ms (adjust)
+        setTimeout(() => {
+            if (!overlay) return;
+            overlay.classList.add('hidden');
+            // remove from DOM after transition to avoid blocking interactions
+            overlay.addEventListener('transitionend', () => {
+                if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            }, { once: true });
+            // add animate-in class to body so sections fade/slide in
+            document.documentElement.classList.add('animate-in');
+        }, showTime);
+    });
+    </script>
+
 </body>
 </html>
