@@ -3,14 +3,11 @@
 
 <head>
     <link rel="icon" type="image/png" href="Azha LanchPad Icon..png">
-    <!-- Remove this line -->
-    <!-- <link rel="account" href="accounts.js"> -->
-    </head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AZHA LanchPad</title>
-    <link rel="icon" type="image/png" href="Azha LanchPad Icon..png">
     <link rel="stylesheet" href="app.css">
+    <title>AZHA LanchPad - Login/Signup</title>
+    <link rel="icon" type="image/png" href="Azha LanchPad Icon..png">
 
     <style>
         body {
@@ -48,23 +45,26 @@
             border-radius: 5px;
             background: rgba(255, 255, 255, 0.9);
             box-sizing: border-box;
+            color: black; /* Ensure text is visible */
         }
 
-        .button {
-  background-color: #4CAF50;
-  color: white;
-  padding: 12px 24px; /* Increased padding */
-  font-size: 16px;    /* Increased font size */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  text-decoration: none;
-}
+        button {
+            width: 50%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background: #000000;
+            color: gold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
 
-
-.button:hover {
-  background-color: #45a049;
-}
+        button:hover {
+            transform: scale(1.02);
+            background: #45a049;
+        }
 
         .message {
             padding: 10px;
@@ -72,6 +72,12 @@
             border-radius: 5px;
             text-align: center;
             animation: fadeIn 0.3s ease-out;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .success {
@@ -82,16 +88,6 @@
         .error {
             background: rgba(244, 67, 54, 0.3);
             border: 1px solid #f44336;
-        }
-        .message {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 15px 30px;
-            border-radius: 5px;
-            z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .username-display {
@@ -105,7 +101,6 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -117,6 +112,7 @@
             background: rgba(0, 0, 0, 0.8);
             padding: 20px;
             border-radius: 10px;
+            max-width: 800px;
             margin: 20px auto;
             color: white;
         }
@@ -133,6 +129,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .account-item > div {
+            margin: 5px 0;
         }
 
         .admin-controls button {
@@ -143,191 +144,295 @@
             border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s;
+            margin-left: 5px;
+            width: auto;
         }
-        
-        .admin-controls {
-    display: flex; /* or block, inline-block, etc. */
-    justify-content: space-around; /* or other alignment */
-    align-items: center;
-}
-.admin {
-    color: green;
-    font-weight: bold;
-}
+
+        .admin-controls button:hover {
+            opacity: 0.9;
+        }
+
         .warning {
             color: yellow;
+            margin-left: 10px;
         }
 
         .banned {
             color: red;
+            margin-left: 10px;
+        }
+
+        .admin {
+            color: green;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .search-bar {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: black;
+        }
+
+        .search-bar button {
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+        }
+
+        .logout-button, .delete-button {
+            background-color: #f44336;
+            color: white;
+            width: auto;
+            margin-left: 10px;
+        }
+
+        .logout-button:hover, .delete-button:hover {
+            background-color: #d32f2f;
+        }
+
+        .nav-center button {
+            width: auto;
+            margin: 5px;
         }
     </style>
-    </head>
+</head>
 
-    <body background="100_0066.jpg">
-        <div class="nav-center">
-            <img src="Azha LanchPad Icon..png" alt="Icon"
-                style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-            <h1>CoderAzhaf</h1>
-            <div id="username" class="username-display"></div>
-            <button onclick="logout()" class="logout-button" style="display: none;">Logout</button>
-            <button onclick="deleteAccount()" class="delete-button" style="display: none;">Delete Account</button>
+<body>
+    <div class="nav-center">
+        <img src="Azha LanchPad Icon..png" alt="Icon"
+            style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+        <h1>CoderAzhaf</h1>
+        <div id="username" class="username-display"></div>
+        <button onclick="logout()" class="logout-button" style="display: none;">Logout</button>
+        <button onclick="deleteAccount()" class="delete-button" style="display: none;">Delete Account</button>
+    </div>
+
+    <h1 class="section-title">Websites</h1>
+    <div class="nav-center">
+        <a href="https://www.google.com" target="_blank">
+            <button style="background-color: rgb(69, 67, 15);color: aquamarine;">Go To Google!</button>
+        </a>
+        <a href="https://launchpad.classlink.com/" target="_blank">
+            <button style="background-color: rgb(131, 127, 29);color: rgb(38, 207, 151);">Go to Classlink!</button>
+        </a>
+    </div>
+
+    <h1 class="section-title">Games</h1>
+    <div class="nav-center game-container">
+        <a href="https://www.minecraft.net/en-us" target="_blank">
+            <img src="Minecraft.gif" height="100" title="Minecraft" alt="Minecraft">
+        </a>
+        <a href="https://www.roblox.com" target="_blank">
+            <img src="tenor.gif" height="100" title="Roblox" alt="Roblox">
+        </a>
+        <a href="https://www.fortnite.com/" target="_blank">
+            <img src="tenor 2.gif" height="100" title="Fortnite" alt="Fortnite">
+        </a>
+        <a href="https://amogus.io/" target="_blank">
+            <img src="tenor 3.gif" height="100" title="Among Us" alt="Among Us">
+        </a>
+    </div>
+
+    <h1 class="section-title">Coder azhaf Website Video</h1>
+    <div class="nav-center">
+        <video controls loop src="Azhaf video web ..mp4" width="500"
+            style="display: block; margin: 20px auto; border-radius: 10px;"></video>
+    </div>
+
+    <div class="nav-center">
+        <button><a href="contact.html">Info Of website</a></button>
+        <button><a href="Getin.html">Sign up or Log in</a></button>
+        <button><a href="Download.html">Download</a></button>
+    </div>
+
+    <div id="adminPanel" class="admin-panel" style="display: none;">
+        <h2>Admin Panel</h2>
+        <div class="search-bar">
+            <input type="text" id="searchUsername" placeholder="Search by username">
+            <button onclick="searchUsers()">Search</button>
         </div>
-
-        <h1 class="section-title">Websites</h1>
-        <div class="nav-center">
-            <a href="https://www.google.com" target="_blank">
-                <button style="background-color: rgb(69, 67, 15);color: aquamarine;">Go To Google!</button>
-            </a>
-            <a href="https://launchpad.classlink.com/" target="_blank">
-                <button style="background-color: rgb(131, 127, 29);color: rgb(38, 207, 151);">Go to classlink!</button>
-            </a>
+        <div class="account-list">
+            <h3>Manage User Accounts</h3>
+            <div id="accountsList"></div>
         </div>
+    </div>
 
-        <h1 class="section-title">Games</h1>
-        <div class="nav-center game-container">
-            <a href="https://www.minecraft.net/en-us" target="_blank">
-                <img src="Minecraft.gif" height="100" title="Minecraft" alt="Minecraft">
-            </a>
-            <a href="https://www.roblox.com" target="_blank">
-                <img src="tenor.gif" height="100" title="Roblox" alt="Roblox">
-            </a>
-            <a href="https://www.fortnite.com/" target="_blank">
-                <img src="tenor 2.gif" height="100" title="Fortnite" alt="Fortnite">
-            </a>
-            <a href="https://amogus.io/" target="_blank">
-                <img src="tenor 3.gif" height="100" title="Among Us" alt="Among Us">
-            </a>
-        </div>
+    <script>
+        // These functions (showMessage, checkLogin, logout) are now centrally defined in accounts.js
+        // and are available because accounts.js is loaded later.
+        // We avoid duplicating them here.
 
-        <h1 class="section-title">Coder azhaf Website Video</h1>
-        <div class="nav-center">
-            <video controls loop src="Azhaf video web ..mp4" width="500"
-                style="display: block; margin: 20px auto; border-radius: 10px;"></video>
-        </div>
+        function makeAdmin(username) {
+            const accounts = JSON.parse(localStorage.getItem('accounts'));
+            if (accounts[username]) {
+                accounts[username].isAdmin = true;
+                localStorage.setItem('accounts', JSON.stringify(accounts));
 
-        <div class="nav-center">
-            <button><a href="contact.html">Info Of website</a></button>
-            <button><a href="Getin.html">Sign up or Log in</a></button>
-            <button><a href="Download.html">Download</a></button>
-        </div>
+                // Refresh the admin panel to show the updated status
+                showAdminPanel(); // Calling showAdminPanel will re-fetch all users and display them
 
-        <!-- Admin Panel -->
-        <div id="adminPanel" class="admin-panel" style="display: none;">
-            <h2>Admin Panel</h2>
-            <div class="account-list">
-                <h3>Manage User Accounts</h3>
-                <div id="accountsList"></div>
-            </div>
-        </div>
-
-        <script>
-            function showMessage(message, isSuccess) {
-                const div = document.createElement('div');
-                div.textContent = message;
-                div.className = `message ${isSuccess ? 'success' : 'error'}`;
-                document.body.appendChild(div);
-                setTimeout(() => div.remove(), 3000);
+                showMessage(`${username} is now an admin!`, true);
             }
+        }
 
-            function showAdminPanel() {
-                const currentUsername = localStorage.getItem('currentUsername');
-                const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+        function showAdminPanel() {
+            const currentUsername = localStorage.getItem('currentUsername');
+            const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
 
-                if (accounts[currentUsername]?.isAdmin) {
-                    const adminPanel = document.getElementById('adminPanel');
-                    const accountsList = document.getElementById('accountsList');
+            if (accounts[currentUsername]?.isAdmin) {
+                const adminPanel = document.getElementById('adminPanel');
+                if (adminPanel) {
+                    adminPanel.style.display = 'block';
 
-                    if (adminPanel && accountsList) {
-                        adminPanel.style.display = 'block';
-                        accountsList.innerHTML = '';
+                    // Get all accounts as an array, excluding the current admin
+                    const allAccountsArray = Object.entries(accounts).filter(([u, acc]) => u !== currentUsername);
+                    displayAccounts(allAccountsArray); // Display all accounts initially
 
-                        Object.entries(accounts).forEach(([username, account]) => {
-                            if (username !== currentUsername) {
-                                const accountDiv = document.createElement('div');
-                                accountDiv.className = 'account-item';
-                                accountDiv.innerHTML = `
-                                    <div>
-                                        <strong>${account.fullName}</strong> (${username})
-                                        ${account.isAdmin ? `<span class="admin">ADMIN</span>` : ''}
-                                        ${account.warnings > 0 ? `<span class="warning">Warnings: ${account.warnings}</span>` : ''}
-                                        ${account.status === 'banned' ? `<span class="banned">BANNED</span>` : ''}
-                                    </div>
-                                    <div class="admin-controls">
-                                        <button onclick="warnUser('${username}')">Warn</button>
-                                        <button onclick="toggleBan('${username}')">${account.status === 'banned' ? 'Unban' : 'Ban'}</button>
-                                        <button onclick="deleteUserAccount('${username}')">Delete</button>
-                                        <button onclick="makeAdmin('${username}')">Make Admin</button>
-                                    </div>
-                                `;
-                                accountsList.appendChild(accountDiv);
-                            }
-                        });
-                    }
+                    // Add event listener for Enter key in search bar
+                    const searchInput = document.getElementById('searchUsername');
+                    searchInput.addEventListener('keypress', (event) => {
+                        if (event.key === 'Enter') {
+                            searchUsers();
+                        }
+                    });
+                }
+            } else {
+                const adminPanel = document.getElementById('adminPanel');
+                if (adminPanel) {
+                    adminPanel.style.display = 'none';
                 }
             }
+        }
 
-            function makeAdmin(username) {
+        function searchUsers() {
+            const searchTerm = document.getElementById('searchUsername').value.toLowerCase();
+            const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+            const currentUsername = localStorage.getItem('currentUsername');
+
+            // Filter accounts that are not the current admin and match the search term
+            const filteredAccounts = Object.entries(accounts).filter(([username, account]) =>
+                username !== currentUsername && username.toLowerCase().includes(searchTerm)
+            );
+            displayAccounts(filteredAccounts);
+        }
+
+        function displayAccounts(accountsToDisplay) {
+            const accountsList = document.getElementById('accountsList');
+            accountsList.innerHTML = ''; // Clear the previous list
+
+            if (accountsToDisplay.length === 0) {
+                accountsList.innerHTML = '<p>No accounts found matching your search or no other users.</p>';
+                return;
+            }
+
+            accountsToDisplay.forEach(([username, account]) => {
+                const accountDiv = document.createElement('div');
+                accountDiv.className = 'account-item';
+                accountDiv.innerHTML = `
+                    <div>
+                        <strong>${account.fullName}</strong> (${username})
+                        ${account.isAdmin ? `<span class="admin">ADMIN</span>` : ''}
+                        ${account.warnings > 0 ? `<span class="warning">Warnings: ${account.warnings}</span>` : ''}
+                        ${account.status === 'banned' ? `<span class="banned">BANNED</span>` : ''}
+                    </div>
+                    <div class="admin-controls">
+                        <button onclick="warnUser('${username}')">Warn</button>
+                        <button onclick="toggleBan('${username}')">${account.status === 'banned' ? 'Unban' : 'Ban'}</button>
+                        <button onclick="deleteUserAccount('${username}')">Delete</button>
+                        ${!account.isAdmin ? `<button onclick="makeAdmin('${username}')">Make Admin</button>` : ''}
+                    </div>
+                `;
+                accountsList.appendChild(accountDiv);
+            });
+        }
+
+        function warnUser(username) {
+            const accounts = JSON.parse(localStorage.getItem('accounts'));
+            if (accounts[username]) {
+                accounts[username].warnings = (accounts[username].warnings || 0) + 1;
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                // Re-display all accounts after warning
+                showAdminPanel();
+                showMessage(`Warning issued to ${username}. Total warnings: ${accounts[username].warnings}`, true);
+            }
+        }
+
+        function toggleBan(username) {
+            const accounts = JSON.parse(localStorage.getItem('accounts'));
+            if (accounts[username]) {
+                const newStatus = accounts[username].status === 'banned' ? 'active' : 'banned';
+                accounts[username].status = newStatus;
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                // Re-display all accounts after banning/unbanning
+                showAdminPanel();
+                showMessage(`${username} has been ${newStatus}.`, true);
+            }
+        }
+
+        function deleteUserAccount(username) {
+            if (confirm(`Are you sure you want to delete ${username}'s account? This cannot be undone.`)) {
                 const accounts = JSON.parse(localStorage.getItem('accounts'));
-                if (accounts[username]) {
-                    accounts[username].isAdmin = true;
-                    localStorage.setItem('accounts', JSON.stringify(accounts));
-                    showAdminPanel(); // Refresh the admin panel
-                }
+                delete accounts[username];
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                // Re-display all accounts after deletion
+                showAdminPanel();
+                showMessage(`${username}'s account has been deleted.`, true);
             }
+        }
 
-            function warnUser(username) {
+        // Add a delete account function for the currently logged-in user
+        function deleteAccount() {
+            const currentUsername = localStorage.getItem('currentUsername');
+            if (confirm(`Are you sure you want to delete your account (${currentUsername})? This cannot be undone.`)) {
                 const accounts = JSON.parse(localStorage.getItem('accounts'));
-                if (accounts[username]) {
-                    accounts[username].warnings = (accounts[username].warnings || 0) + 1;
-                    localStorage.setItem('accounts', JSON.stringify(accounts));
-                    showAdminPanel();
-                }
+                delete accounts[currentUsername];
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                showMessage('Your account has been deleted. Redirecting...', true);
+                setTimeout(() => {
+                    logout(); // Log out after deleting the account
+                }, 1500);
+            }
+        }
+
+        // Call checkLogin and then potentially showAdminPanel on load
+        window.onload = function () {
+            // Check if user is logged in. If not, checkLogin will redirect.
+            if (!checkLogin()) {
+                return;
             }
 
-            function toggleBan(username) {
-                const accounts = JSON.parse(localStorage.getItem('accounts'));
-                if (accounts[username]) {
-                    accounts[username].status = accounts[username].status === 'banned' ? 'active' : 'banned';
-                    localStorage.setItem('accounts', JSON.stringify(accounts));
-                    showAdminPanel();
-                }
+            const currentUsername = localStorage.getItem('currentUsername');
+            const currentUserFullName = localStorage.getItem('currentUser');
+            const isAdmin = localStorage.getItem('isAdmin') === 'true'; // Get isAdmin status
+
+            // Display welcome message
+            if (currentUserFullName) {
+                document.getElementById('username').textContent = `Welcome back, ${currentUserFullName}!`;
+                // Show logout and delete account buttons if logged in
+                document.querySelector('.logout-button').style.display = 'inline-block';
+                document.querySelector('.delete-button').style.display = 'inline-block';
             }
 
-            function deleteUserAccount(username) {
-                if (confirm(`Are you sure you want to delete ${username}'s account?`)) {
-                    const accounts = JSON.parse(localStorage.getItem('accounts'));
-                    delete accounts[username];
-                    localStorage.setItem('accounts', JSON.stringify(accounts));
-                    showAdminPanel();
-                }
+            // Only show admin panel if the current user is an admin
+            if (isAdmin) {
+                showAdminPanel();
             }
-
-            function checkLogin() {
-                const isLoggedIn = localStorage.getItem('isLoggedIn');
-                if (!isLoggedIn) {
-                    window.location.href = 'Getin.html';
-                    return false;
-                }
-                return true;
-            }
-
-            window.onload = function () {
-                if (!checkLogin()) return;
-
-                const currentUsername = localStorage.getItem('currentUsername');
-                const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
-
-                if (accounts[currentUsername]?.isAdmin) {
-                    showAdminPanel();
-                }
-                // Display welcome message
-                const currentUser = localStorage.getItem('currentUser');
-                if (currentUser) {
-                    document.getElementById('username').textContent = `Welcome back, ${currentUser}!`;
-                }
-            }
-        </script>
-    </body>
+        };
+    </script>
+    <script src="accounts.js"></script>
+</body>
 
 </html>

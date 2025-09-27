@@ -1,33 +1,63 @@
 // Initialize default accounts if none exist
 if (!localStorage.getItem('accounts')) {
     const defaultAccounts = {
-       "AZHA": {
+        "AZHA": {
             username: "AZHA",
             password: "AZ MOH",
             fullName: "AZHAFUDDiN MOHAMMED",
             isAdmin: true,
             warnings: 0,
             status: "active"
+        },
+        "Vivvan Dash": {
+            username: "Vivvan Dash",
+            password: "dashpro",
+            fullName: "Vivvan Dash",
+            isAdmin: false,
+            warnings: 0,
+            status: "active"
         }
     };
-    
     localStorage.setItem('accounts', JSON.stringify(defaultAccounts));
 }
-
-// Get accounts from localStorage
+// Global accounts variable (will be reloaded in functions for freshness)
 let accounts = JSON.parse(localStorage.getItem('accounts'));
-
+         
+/**
+ * Displays a temporary message (success or error) on the screen.
+ * @param {string} message - The message to display.
+ * @param {boolean} isSuccess - True for a success message, false for an error message.
+ */
 function showMessage(message, isSuccess) {
     const div = document.createElement('div');
     div.textContent = message;
     div.className = `message ${isSuccess ? 'success' : 'error'}`;
     document.body.appendChild(div);
-    setTimeout(() => div.remove(), 3000);
+    setTimeout(() => div.remove(), 3000); // Remove message after 3 seconds
 }
 
+/**
+ * Checks if the user is currently logged in. If not, redirects to Getin.html.
+ * @returns {boolean} True if logged in, false otherwise (after redirect).
+ */
+function checkLogin() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (isLoggedIn !== 'true') { // Check for explicit 'true' string
+        window.location.href = 'Getin.html';
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Handles the user login process.
+ */
 function login() {
-    const username = document.getElementById('login-username').value;
-    const password = document.getElementById('login-password').value;
+    const usernameInput = document.getElementById('login-username');
+    const passwordInput = document.getElementById('login-password');
+
+    const username = usernameInput.value;
+    const password = passwordInput.value;
 
     if (!username || !password) {
         showMessage('Please enter both username and password', false);
@@ -44,12 +74,15 @@ function login() {
             return;
         }
 
-        localStorage.setItem('currentUser', account.fullName); // <---- Make sure this line is present
+        localStorage.setItem('currentUser', account.fullName);
         localStorage.setItem('currentUsername', username);
         localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('isAdmin', account.isAdmin);
+        localStorage.setItem('isAdmin', account.isAdmin ? 'true' : 'false'); // Store isAdmin status as a string
 
         showMessage('Login successful! Redirecting...', true);
+        // Clear input fields after successful login
+        usernameInput.value = '';
+        passwordInput.value = '';
         setTimeout(() => {
             window.location.href = 'index.html';
         }, 1500);
@@ -58,105 +91,119 @@ function login() {
     }
 }
 
+/**
+ * Shows the login form and hides the signup form.
+ */
 function showLogin() {
     document.getElementById('signup-form').style.display = 'none';
     document.getElementById('login-form').style.display = 'block';
+    // Clear signup fields when switching to login
+    document.getElementById('signup-username').value = '';
+    document.getElementById('signup-password').value = '';
+    document.getElementById('signup-fullname').value = '';
 }
 
+/**
+ * Shows the signup form and hides the login form.
+ */
 function showSignup() {
     document.getElementById('login-form').style.display = 'none';
     document.getElementById('signup-form').style.display = 'block';
+    // Clear login fields when switching to signup
+    document.getElementById('login-username').value = '';
+    document.getElementById('login-password').value = '';
 }
 
+/**
+ * Handles the user signup process.
+ * NOTE: This is a client-side only implementation using localStorage.
+ * For a real application, you need a backend server and a database for security.
+ */
 function signup() {
-    const username = document.getElementById('signup-username').value;
-    const password = document.getElementById('signup-password').value;
-    const fullName = document.getElementById('signup-fullname').value;
+    const usernameInput = document.getElementById('signup-username');
+    const passwordInput = document.getElementById('signup-password');
+    const fullNameInput = document.getElementById('signup-fullname');
+
+    const username = usernameInput.value;
+    const password = passwordInput.value;
+    const fullName = fullNameInput.value;
 
     if (!username || !password || !fullName) {
         showMessage('Please fill in all fields', false);
         return;
     }
 
+    // Reload accounts to get the most current state before checking/adding
+    accounts = JSON.parse(localStorage.getItem('accounts'));
+
     if (accounts[username]) {
-        showMessage('Username already exists', false);
+        showMessage('Username already exists. Please choose a different one.', false);
         return;
     }
 
+    // Add new account to the accounts object
     accounts[username] = {
         username: username,
-        password: password,
+        password: password, // In a real app, hash this password!
         fullName: fullName,
-        isAdmin: false,
+        isAdmin: false, // New users are not admins by default
         warnings: 0,
-        status: "active"
+        status: "active" // Default status
     };
 
+    // Save the updated accounts object back to localStorage
     localStorage.setItem('accounts', JSON.stringify(accounts));
+
     showMessage('Account created successfully! You can now login.', true);
-    showLogin();
+    // Clear signup fields after successful signup
+    usernameInput.value = '';
+    passwordInput.value = '';
+    fullNameInput.value = '';
+    showLogin(); // Automatically switch to the login form
 }
 
-// Update logout function
+/**
+ * Logs out the current user and redirects to Getin.html.
+ */
 function logout() {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentUsername');
     localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('isAdmin');
-    window.location.href = 'Getin.html';
+    localStorage.removeItem('isAdmin'); // Clear admin status on logout
+    showMessage('Logged out successfully. Redirecting...', true);
+    setTimeout(() => {
+        window.location.href = 'Getin.html';
+    }, 1000);
 }
-function makeAdmin(username) {
-    const accounts = JSON.parse(localStorage.getItem('accounts'));
-    if (accounts[username]) {
-        accounts[username].isAdmin = true;
-        localStorage.setItem('accounts', JSON.stringify(accounts));
-        showAdminPanel(); // Refresh the admin panel
-    }
-}
-function showAdminPanel() {
-    const currentUsername = localStorage.getItem('currentUsername');
-    const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
 
-    if (accounts[currentUsername]?.isAdmin) {
-        const adminPanel = document.getElementById('adminPanel');
-        const accountsList = document.getElementById('accountsList');
 
-        if (adminPanel && accountsList) {
-            adminPanel.style.display = 'block';
-            accountsList.innerHTML = '';
+// Event listener for when the DOM content is fully loaded
+window.addEventListener('DOMContentLoaded', () => {
+    // Logic specific to Getin.html: If already logged in, redirect to index.html
+    if (window.location.pathname.endsWith('Getin.html')) {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if (isLoggedIn === 'true') {
+            window.location.href = 'index.html';
+        }
 
-            Object.entries(accounts).forEach(([username, account]) => {
-                if (username !== currentUsername) {
-                    console.log("Adding account:", username); // ADD THIS LINE
-                    const accountDiv = document.createElement('div');
-                    accountDiv.className = 'account-item';
-                    accountDiv.innerHTML = `
-                        <div>
-                            <strong>${account.fullName}</strong> (${username})
-                            ${account.warnings > 0 ? `<span class="warning">Warnings: ${account.warnings}</span>` : ''}
-                            ${account.status === 'banned' ? `<span class="banned">BANNED</span>` : ''}
-                        </div>
-                        <div class="admin-controls">
-                            <button onclick="warnUser('${username}')">Warn</button>
-                            <button onclick="toggleBan('${username}')">${account.status === 'banned' ? 'Unban' : 'Ban'}</button>
-                            <button onclick="deleteUserAccount('${username}')">Delete</button>
-                        </div>
-                    `;
-                    accountsList.appendChild(accountDiv);
+        // Add event listener for Enter key on login password field
+        const loginPassword = document.getElementById('login-password');
+        if (loginPassword) {
+            loginPassword.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    login();
                 }
             });
         }
-    }
-}
-// Add event listener for Enter key on login form
-window.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        const loginPassword = document.getElementById('login-password');
-        loginPassword.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                login();
-            }
-        });
+
+        // Add event listener for Enter key on signup full name field
+        const signupFullName = document.getElementById('signup-fullname');
+        if (signupFullName) {
+            signupFullName.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    signup();
+                }
+            });
+        }
     }
 });
