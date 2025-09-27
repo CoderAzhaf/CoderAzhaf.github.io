@@ -285,3 +285,21 @@ function giveAZINC(targetUsername, amount) {
     showMessage(`Gave ${amount} AZINC to ${targetUsername}.`, true);
     return true;
 }
+// ...existing code...
+    // Save the updated accounts object back to localStorage
+    localStorage.setItem('accounts', JSON.stringify(accounts));
+
+    // ensure new user has a balance entry (0) so giveAZINC works
+    const balances = JSON.parse(localStorage.getItem('balances')) || {};
+    if (balances[username] === undefined) {
+        balances[username] = 0;
+        localStorage.setItem('balances', JSON.stringify(balances));
+    }
+
+    showMessage('Account created successfully! You can now login.', true);
+    // Clear signup fields after successful signup
+    usernameInput.value = '';
+    passwordInput.value = '';
+    fullNameInput.value = '';
+    showLogin(); // Automatically switch to the login form
+// ...existing code...
