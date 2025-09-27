@@ -252,3 +252,36 @@ function deleteUserAccount(username) {
         showMessage(`${username}'s account has been deleted.`, true);
     }
 }
+// ...existing code...
+// Initialize balances if none exist
+if (!localStorage.getItem('balances')) {
+    const defaultBalances = { "AZHA": "INF" };
+    localStorage.setItem('balances', JSON.stringify(defaultBalances));
+}
+
+function getBalance(username) {
+    const balances = JSON.parse(localStorage.getItem('balances')) || {};
+    const b = balances[username];
+    return b === "INF" ? "INF" : Number(b || 0);
+}
+
+function setBalance(username, value) {
+    const balances = JSON.parse(localStorage.getItem('balances')) || {};
+    if (username === "AZHA") balances["AZHA"] = "INF";
+    else balances[username] = Number(value) || 0;
+    localStorage.setItem('balances', JSON.stringify(balances));
+}
+
+function giveAZINC(targetUsername, amount) {
+    const current = localStorage.getItem('currentUsername');
+    if (current !== 'AZHA') { showMessage('Only AZHA can give AZINC.', false); return false; }
+    if (!targetUsername || isNaN(Number(amount)) || Number(amount) <= 0) { showMessage('Invalid amount.', false); return false; }
+    const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+    if (!accounts[targetUsername]) { showMessage('Target user does not exist.', false); return false; }
+    const balances = JSON.parse(localStorage.getItem('balances')) || {};
+    if (balances[targetUsername] === "INF") { showMessage(`${targetUsername} already has infinite AZINC.`, false); return false; }
+    balances[targetUsername] = (Number(balances[targetUsername] || 0) + Number(amount));
+    localStorage.setItem('balances', JSON.stringify(balances));
+    showMessage(`Gave ${amount} AZINC to ${targetUsername}.`, true);
+    return true;
+}
