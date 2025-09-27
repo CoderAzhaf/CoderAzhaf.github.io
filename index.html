@@ -468,6 +468,41 @@
         return true;
     }
     </script>
+    <script src="accounts.js"></script>
+
+    <script>
+        // update welcome + balance display
+        function updateBalanceDisplay() {
+            const currentUsername = localStorage.getItem('currentUsername');
+            const currentUserFullName = localStorage.getItem('currentUser') || currentUsername;
+            if (!currentUsername) return;
+            const bal = (typeof getBalance === 'function') ? getBalance(currentUsername) : 0;
+            const balDisplay = bal === "INF" ? '∞ AZINC' : `${bal} AZINC`;
+            const el = document.getElementById('username');
+            if (el) el.textContent = `Welcome back, ${currentUserFullName}! (${balDisplay})`;
+            const logoutBtn = document.querySelector('.logout-button');
+            const delBtn = document.querySelector('.delete-button');
+            if (logoutBtn) logoutBtn.style.display = 'inline-block';
+            if (delBtn) delBtn.style.display = 'inline-block';
+        }
+
+        function promptGiveAZINC(targetUsername) {
+            const current = localStorage.getItem('currentUsername');
+            if (current !== 'AZHA') { showMessage('Only AZHA can give AZINC.', false); return; }
+            const raw = prompt(`Enter AZINC amount to give to ${targetUsername}:`, "100");
+            if (raw === null) return;
+            const amt = Number(raw);
+            if (isNaN(amt) || amt <= 0) { showMessage('Invalid amount.', false); return; }
+            if (typeof giveAZINC === 'function' && giveAZINC(targetUsername, amt)) {
+                updateBalanceDisplay();
+                if (typeof showAdminPanel === 'function') showAdminPanel();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateBalanceDisplay();
+        });
+    </script>
 
 </body>
 </html>
