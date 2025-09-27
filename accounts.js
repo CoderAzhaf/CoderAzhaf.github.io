@@ -25,8 +25,6 @@ let accounts = JSON.parse(localStorage.getItem('accounts'));
          
 /**
  * Displays a temporary message (success or error) on the screen.
- * @param {string} message - The message to display.
- * @param {boolean} isSuccess - True for a success message, false for an error message.
  */
 function showMessage(message, isSuccess) {
     const div = document.createElement('div');
@@ -38,7 +36,6 @@ function showMessage(message, isSuccess) {
 
 /**
  * Checks if the user is currently logged in. If not, redirects to Getin.html.
- * @returns {boolean} True if logged in, false otherwise (after redirect).
  */
 function checkLogin() {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
@@ -53,11 +50,11 @@ function checkLogin() {
  * Handles the user login process.
  */
 function login() {
-    const usernameInput = document.getElementById('login-username');
-    const passwordInput = document.getElementById('login-password');
+    const usernameInput = document.getElementById('login-username').value;
+    const passwordInput = document.getElementById('login-password').value;
 
-    const username = usernameInput.value;
-    const password = passwordInput.value;
+    const username = usernameInput;
+    const password = passwordInput;
 
     if (!username || !password) {
         showMessage('Please enter both username and password', false);
@@ -81,8 +78,8 @@ function login() {
 
         showMessage('Login successful! Redirecting...', true);
         // Clear input fields after successful login
-        usernameInput.value = '';
-        passwordInput.value = '';
+        document.getElementById('login-username').value = '';
+        document.getElementById('login-password').value = '';
         setTimeout(() => {
             window.location.href = 'index.html';
         }, 1500);
@@ -207,3 +204,35 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+function toggleBan(username) {
+    if (username === "AZHA") {
+        showMessage("Cannot ban the AZHA account.", false);
+        return;
+    }
+
+    const accounts = JSON.parse(localStorage.getItem('accounts'));
+    if (accounts[username]) {
+        const newStatus = accounts[username].status === 'banned' ? 'active' : 'banned';
+        accounts[username].status = newStatus;
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+        // Re-display all accounts after banning/unbanning
+        showAdminPanel();
+        showMessage(`${username} has been ${newStatus}.`, true);
+    }
+}
+
+function deleteUserAccount(username) {
+    if (username === "AZHA") {
+        showMessage("Cannot delete the AZHA account.", false);
+        return;
+    }
+
+    if (confirm(`Are you sure you want to delete ${username}'s account? This cannot be undone.`)) {
+        const accounts = JSON.parse(localStorage.getItem('accounts'));
+        delete accounts[username];
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+        // Re-display all accounts after deletion
+        showAdminPanel();
+        showMessage(`${username}'s account has been deleted.`, true);
+    }
+}
