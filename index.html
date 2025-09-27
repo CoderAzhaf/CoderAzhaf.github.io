@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="app.css">
-    <title>AZHA LanchPad - Login/Signup</title>
+    <title>AZHA LanchPad</title>
     <link rel="icon" type="image/png" href="Azha LanchPad Icon..png">
 
     <style>
@@ -207,6 +207,23 @@
             width: auto;
             margin: 5px;
         }
+
+        .admin-toggle {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        background: #222;
+        color: #fff;
+        padding: 10px 14px;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        z-index: 1200;
+        cursor: pointer;
+        font-weight: bold;
+        display: none; /* shown via script for admins */
+    }
+    .admin-toggle:hover { opacity: 0.95; transform: translateY(-1px); }
     </style>
 </head>
 
@@ -254,6 +271,36 @@
         <button><a href="Getin.html">Sign up or Log in</a></button>
         <button><a href="Download.html">Download</a></button>
         <button><a href="Game.py">Game</a></button>
+         <!-- Admin Panel toggle button (fixed bottom-right) -->
+    <button id="adminToggleBtn" class="admin-toggle" title="Open Admin Panel">Admin Panel</button>
+
+    <script>
+    // show/hide and click behavior for Admin Panel button
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('adminToggleBtn');
+        if (!btn) return;
+
+        function updateAdminBtn() {
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            const loggedIn = !!localStorage.getItem('currentUsername');
+            btn.style.display = (isAdmin && loggedIn) ? 'block' : 'none';
+        }
+
+        btn.addEventListener('click', () => {
+            const current = localStorage.getItem('currentUsername');
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            if (!current) { if (typeof showMessage === 'function') showMessage('Please login first.', false); return; }
+            if (!isAdmin) { if (typeof showMessage === 'function') showMessage('You are not an admin.', false); return; }
+            if (typeof showAdminPanel === 'function') showAdminPanel();
+            const pane = document.getElementById('adminPanel');
+            if (pane) pane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        // update on load and when other tabs change login/admin status
+        updateAdminBtn();
+        window.addEventListener('storage', updateAdminBtn);
+    });
+    </script>
     </div>
 
     <div id="adminPanel" class="admin-panel" style="display: none;">

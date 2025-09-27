@@ -137,4 +137,19 @@ body {
     border-radius: 4px;
     cursor: pointer;
 }
-    
+    .admin-toggle {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        background: #222;
+        color: #fff;
+        padding: 10px 14px;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        z-index: 1200;
+        cursor: pointer;
+        font-weight: bold;
+        display: none; /* shown via script for admins */
+    }
+    .admin-toggle:hover { opacity: 0.95; transform: translateY(-1px); }
