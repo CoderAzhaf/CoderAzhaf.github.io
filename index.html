@@ -217,9 +217,6 @@
         <h1>CoderAzhaf</h1>
         <div id="username" class="username-display"></div>
         <button onclick="logout()" class="logout-button" style="display: none;">Logout</button>
-        <button onclick="deleteAccount()" class="delete-button" style="display: none;">Delete Account</button>
-    </div>
-
     <h1 class="section-title">Websites</h1>
     <div class="nav-center">
         <a href="https://www.google.com" target="_blank">
@@ -256,6 +253,7 @@
         <button><a href="contact.html">Info Of website</a></button>
         <button><a href="Getin.html">Sign up or Log in</a></button>
         <button><a href="Download.html">Download</a></button>
+        <button><a href="Game.py">Game</a></button>
     </div>
 
     <div id="adminPanel" class="admin-panel" style="display: none;">
@@ -628,6 +626,91 @@
         }
     });
     </script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, query, where, orderBy, getDocs, updateDoc, doc, deleteDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
+// TODO: replace with your Firebase config
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  // ...other fields from Firebase console
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const messagesCol = collection(db, "messages");
+
+// sendMessage(from, to, text) -> returns true/false
+window.sendMessage = async function(from, to, text) {
+  if (!from || !to || !text) return false;
+  try {
+    await addDoc(messagesCol, {
+      from,
+      to,
+      text: String(text),
+      timestamp: serverTimestamp(),
+      read: false
+    });
+    return true;
+  } catch (err) {
+    console.error("sendMessage error", err);
+    return false;
+  }
+};
+
+// getInbox(username) -> returns array of messages (newest first)
+window.getInbox = async function(username) {
+  if (!username) return [];
+  try {
+    const q = query(messagesCol, where("to", "==", username), orderBy("timestamp", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    console.error("getInbox error", err);
+    return [];
+  }
+};
+
+// getSent(username)
+window.getSent = async function(username) {
+  if (!username) return [];
+  try {
+    const q = query(messagesCol, where("from", "==", username), orderBy("timestamp", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    console.error("getSent error", err);
+    return [];
+  }
+};
+
+// markMessageRead(messageId, username)
+window.markMessageRead = async function(messageId, username) {
+  try {
+    const mDoc = doc(db, "messages", messageId);
+    await updateDoc(mDoc, { read: true });
+    return true;
+  } catch (err) {
+    console.error("markMessageRead error", err);
+    return false;
+  }
+};
+
+// deleteMessage(messageId, username)
+window.deleteMessage = async function(messageId, username) {
+  try {
+    const mDoc = doc(db, "messages", messageId);
+    await deleteDoc(mDoc);
+    return true;
+  } catch (err) {
+    console.error("deleteMessage error", err);
+    return false;
+  }
+};
+</script>
 </body>
 </html>
