@@ -13,7 +13,15 @@ if (!localStorage.getItem('accounts')) {
             username: "Vivvan Dash",
             password: "dashpro",
             fullName: "Vivvan Dash",
-            isAdmin: false,
+            isAdmin: true,
+            warnings: 0,
+            status: "active"
+        },
+        "Alyanuddin": {
+            username: "Alyanuddin",
+            password: "alyanpro",
+            fullName: "Alyanuddin Mohammed",
+            isAdmin: true,
             warnings: 0,
             status: "active"
         }
