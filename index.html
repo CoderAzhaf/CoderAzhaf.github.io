@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" type="image/png" href="Azha LanchPad Icon..png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="app.css">
+    <title>AZHA LanchPad</title>
+    <link rel="icon" type="image/png" href="Azha LanchPad Icon..png">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            background-image: url('100_0066.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            color: white;
+        }
+
+        .nav-center {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .account-form {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: 20px auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            box-sizing: border-box;
+            color: black; /* Ensure text is visible */
+        }
+
+        button {
+            width: 50%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background: #000000;
+            color: gold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            background: #45a049;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            animation: fadeIn 0.3s ease-out;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .success {
+            background: rgba(76, 175, 80, 0.3);
+            border: 1px solid #4CAF50;
+        }
+
+        .error {
+            background: rgba(244, 67, 54, 0.3);
+            border: 1px solid #f44336;
+        }
+
+        .username-display {
+            font-size: 1.2em;
+            margin: 10px 0;
+            color: #4CAF50;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Styles for the admin panel */
+        .admin-panel {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 20px auto;
+            color: white;
+        }
+
+        .account-list {
+            margin-top: 20px;
+        }
+
+        .account-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .account-item > div {
+            margin: 5px 0;
+        }
+
+        .admin-controls button {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 5px;
+            width: auto;
+        }
+
+        .admin-controls button:hover {
+            opacity: 0.9;
+        }
+
+        .warning {
+            color: yellow;
+            margin-left: 10px;
+        }
+
+        .banned {
+            color: red;
+            margin-left: 10px;
+        }
+
+        .admin {
+            color: green;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .search-bar {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: black;
+        }
+
+        .search-bar button {
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+        }
+
+        .logout-button, .delete-button {
+            background-color: #f44336;
+            color: white;
+            width: auto;
+            margin-left: 10px;
+        }
+
+        .logout-button:hover, .delete-button:hover {
+            background-color: #d32f2f;
+        }
+
+        .nav-center button {
+            width: auto;
+            margin: 5px;
+        }
+
+        .admin-toggle {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        background: #222;
+        color: #fff;
+        padding: 10px 14px;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        z-index: 1200;
+        cursor: pointer;
+        font-weight: bold;
+        display: none; /* shown via script for admins */
+    }
+    .admin-toggle:hover { opacity: 0.95; transform: translateY(-1px); }
+    </style>
+</head>
+
+<body>
+    <div class="nav-center">
+        <img src="Azha LanchPad Icon..png" alt="Icon"
+            style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+        <h1>CoderAzhaf</h1>
+        <div id="username" class="username-display"></div>
+        <button onclick="logout()" class="logout-button" style="display: none;">Logout</button>
+    <h1 class="section-title">Websites</h1>
+    <div class="nav-center">
+        <a href="https://www.google.com" target="_blank">
+            <button style="background-color: rgb(69, 67, 15);color: aquamarine;">Go To Google!</button>
+        </a>
+        <a href="https://launchpad.classlink.com/" target="_blank">
+            <button style="background-color: rgb(131, 127, 29);color: rgb(38, 207, 151);">Go to Classlink!</button>
+        </a>
+    </div>
+
+    <h1 class="section-title">Games</h1>
+    <div class="nav-center game-container">
+        <a href="https://www.minecraft.net/en-us" target="_blank">
+            <img src="Minecraft.gif" height="100" title="Minecraft" alt="Minecraft">
+        </a>
+        <a href="https://www.roblox.com" target="_blank">
+            <img src="tenor.gif" height="100" title="Roblox" alt="Roblox">
+        </a>
+        <a href="https://www.fortnite.com/" target="_blank">
+            <img src="tenor 2.gif" height="100" title="Fortnite" alt="Fortnite">
+        </a>
+        <a href="https://amogus.io/" target="_blank">
+            <img src="tenor 3.gif" height="100" title="Among Us" alt="Among Us">
+        </a>
+    </div>
+
+    <h1 class="section-title">Coder azhaf Website Video</h1>
+    <div class="nav-center">
+        <video controls loop src="Azhaf video web ..mp4" width="500"
+            style="display: block; margin: 20px auto; border-radius: 10px;"></video>
+    </div>
+
+    <div class="nav-center">
+        <button><a href="contact.html">Info Of website</a></button>
+        <button><a href="Getin.html">Sign up or Log in</a></button>
+        <button><a href="Download.html">Download</a></button>
+        <button><a href="Game.py">Game</a></button>
+         <!-- Admin Panel toggle button (fixed bottom-right) -->
+    <button id="adminToggleBtn" class="admin-toggle" title="Open Admin Panel">Admin Panel</button>
+
+    <script>
+    // show/hide and click behavior for Admin Panel button
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('adminToggleBtn');
+        if (!btn) return;
+
+        function updateAdminBtn() {
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            const loggedIn = !!localStorage.getItem('currentUsername');
+            btn.style.display = (isAdmin && loggedIn) ? 'block' : 'none';
+        }
+
+        btn.addEventListener('click', () => {
+            const current = localStorage.getItem('currentUsername');
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            if (!current) { if (typeof showMessage === 'function') showMessage('Please login first.', false); return; }
+            if (!isAdmin) { if (typeof showMessage === 'function') showMessage('You are not an admin.', false); return; }
+            if (typeof showAdminPanel === 'function') showAdminPanel();
+            const pane = document.getElementById('adminPanel');
+            if (pane) pane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        // update on load and when other tabs change login/admin status
+        updateAdminBtn();
+        window.addEventListener('storage', updateAdminBtn);
+    });
+    </script>
+    </div>
+
+    <div id="adminPanel" class="admin-panel" style="display: none;">
+        <h2>Admin Panel</h2>
+        <div class="search-bar">
+            <input type="text" id="searchUsername" placeholder="Search by username">
+            <button onclick="searchUsers()">Search</button>
+        </div>
+        <div class="account-list">
+            <h3>Manage User Accounts</h3>
+            <div id="accountsList"></div>
+        </div>
+    </div>
+
+    <script>
+        // These functions (showMessage, checkLogin, logout) are now centrally defined in accounts.js
+        // and are available because accounts.js is loaded later.
+        // We avoid duplicating them here.
+
+        function makeAdmin(username) {
+            const accounts = JSON.parse(localStorage.getItem('accounts'));
+            if (accounts[username]) {
+                accounts[username].isAdmin = true;
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+
+                // Refresh the admin panel to show the updated status
+                showAdminPanel(); // Calling showAdminPanel will re-fetch all users and display them
+
+                showMessage(`${username} is now an admin!`, true);
+            }
+        }
+
+        function showAdminPanel() {
+            const currentUsername = localStorage.getItem('currentUsername');
+            const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+
+            if (accounts[currentUsername]?.isAdmin) {
+                const adminPanel = document.getElementById('adminPanel');
+                if (adminPanel) {
+                    adminPanel.style.display = 'block';
+
+                    // Get all accounts as an array, excluding the current admin
+                    const allAccountsArray = Object.entries(accounts).filter(([u, acc]) => u !== currentUsername);
+                    displayAccounts(allAccountsArray); // Display all accounts initially
+
+                    // Add event listener for Enter key in search bar
+                    const searchInput = document.getElementById('searchUsername');
+                    searchInput.addEventListener('keypress', (event) => {
+                        if (event.key === 'Enter') {
+                            searchUsers();
+                        }
+                    });
+                }
+            } else {
+                const adminPanel = document.getElementById('adminPanel');
+                if (adminPanel) {
+                    adminPanel.style.display = 'none';
+                }
+            }
+        }
+
+        function searchUsers() {
+            const searchTerm = document.getElementById('searchUsername').value.toLowerCase();
+            const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+            const currentUsername = localStorage.getItem('currentUsername');
+
+            // Filter accounts that are not the current admin and match the search term
+            const filteredAccounts = Object.entries(accounts).filter(([username, account]) =>
+                username !== currentUsername && username.toLowerCase().includes(searchTerm)
+            );
+            displayAccounts(filteredAccounts);
+        }
+
+        function displayAccounts(accountsToDisplay) {
+            const accountsList = document.getElementById('accountsList');
+            accountsList.innerHTML = ''; // Clear the previous list
+
+            if (accountsToDisplay.length === 0) {
+                accountsList.innerHTML = '<p>No accounts found matching your search or no other users.</p>';
+                return;
+            }
+
+            accountsToDisplay.forEach(([username, account]) => {
+                const accountDiv = document.createElement('div');
+                accountDiv.className = 'account-item';
+                accountDiv.innerHTML = `
+                    <div>
+                        <strong>${account.fullName}</strong> (${username})
+                        ${account.isAdmin ? `<span class="admin">ADMIN</span>` : ''}
+                        ${account.warnings > 0 ? `<span class="warning">Warnings: ${account.warnings}</span>` : ''}
+                        ${account.status === 'banned' ? `<span class="banned">BANNED</span>` : ''}
+                    </div>
+                    <div class="admin-controls">
+                        <button onclick="warnUser('${username}')">Warn</button>
+                        <button onclick="toggleBan('${username}')">${account.status === 'banned' ? 'Unban' : 'Ban'}</button>
+                        <button onclick="deleteUserAccount('${username}')">Delete</button>
+                        ${!account.isAdmin ? `<button onclick="makeAdmin('${username}')">Make Admin</button>` : ''}
+                    </div>
+                `;
+                accountsList.appendChild(accountDiv);
+            });
+        }
+
+        function warnUser(username) {
+            const accounts = JSON.parse(localStorage.getItem('accounts'));
+            if (accounts[username]) {
+                accounts[username].warnings = (accounts[username].warnings || 0) + 1;
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                // Re-display all accounts after warning
+                showAdminPanel();
+                showMessage(`Warning issued to ${username}. Total warnings: ${accounts[username].warnings}`, true);
+            }
+        }
+
+        function toggleBan(username) {
+            const accounts = JSON.parse(localStorage.getItem('accounts'));
+            if (accounts[username]) {
+                const newStatus = accounts[username].status === 'banned' ? 'active' : 'banned';
+                accounts[username].status = newStatus;
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                // Re-display all accounts after banning/unbanning
+                showAdminPanel();
+                showMessage(`${username} has been ${newStatus}.`, true);
+            }
+        }
+
+        function deleteUserAccount(username) {
+            if (confirm(`Are you sure you want to delete ${username}'s account? This cannot be undone.`)) {
+                const accounts = JSON.parse(localStorage.getItem('accounts'));
+                delete accounts[username];
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                // Re-display all accounts after deletion
+                showAdminPanel();
+                showMessage(`${username}'s account has been deleted.`, true);
+            }
+        }
+
+        // Add a delete account function for the currently logged-in user
+        function deleteAccount() {
+            const currentUsername = localStorage.getItem('currentUsername');
+            if (confirm(`Are you sure you want to delete your account (${currentUsername})? This cannot be undone.`)) {
+                const accounts = JSON.parse(localStorage.getItem('accounts'));
+                delete accounts[currentUsername];
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                showMessage('Your account has been deleted. Redirecting...', true);
+                setTimeout(() => {
+                    logout(); // Log out after deleting the account
+                }, 1500);
+            }
+        }
+
+        // Call checkLogin and then potentially showAdminPanel on load
+        window.onload = function () {
+            // Check if user is logged in. If not, checkLogin will redirect.
+            if (!checkLogin()) {
+                return;
+            }
+
+            const currentUsername = localStorage.getItem('currentUsername');
+            const currentUserFullName = localStorage.getItem('currentUser');
+            const isAdmin = localStorage.getItem('isAdmin') === 'true'; // Get isAdmin status
+
+            // Display welcome message
+            if (currentUserFullName) {
+                document.getElementById('username').textContent = `Welcome back, ${currentUserFullName}!`;
+                // Show logout and delete account buttons if logged in
+                document.querySelector('.logout-button').style.display = 'inline-block';
+                document.querySelector('.delete-button').style.display = 'inline-block';
+            }
+
+            // Only show admin panel if the current user is an admin
+            if (isAdmin) {
+                showAdminPanel();
+            }
+        };
+    </script>
+    <script src="accounts.js"></script>
+
+    <script>
+    // Initialize balances if none exist
+    if (!localStorage.getItem('balances')) {
+        const defaultBalances = { "AZHA": "INF" };
+        localStorage.setItem('balances', JSON.stringify(defaultBalances));
+    }
+
+    function getBalance(username) {
+        const balances = JSON.parse(localStorage.getItem('balances')) || {};
+        const b = balances[username];
+        return b === "INF" ? "INF" : Number(b || 0);
+    }
+
+    function setBalance(username, value) {
+        const balances = JSON.parse(localStorage.getItem('balances')) || {};
+        if (username === "AZHA") balances["AZHA"] = "INF";
+        else balances[username] = Number(value) || 0;
+        localStorage.setItem('balances', JSON.stringify(balances));
+    }
+
+    function giveAZINC(targetUsername, amount) {
+        const current = localStorage.getItem('currentUsername');
+        if (current !== 'AZHA') { showMessage('Only AZHA can give AZINC.', false); return false; }
+        if (!targetUsername || isNaN(Number(amount)) || Number(amount) <= 0) { showMessage('Invalid amount.', false); return false; }
+        const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+        if (!accounts[targetUsername]) { showMessage('Target user does not exist.', false); return false; }
+        const balances = JSON.parse(localStorage.getItem('balances')) || {};
+        if (balances[targetUsername] === "INF") { showMessage(`${targetUsername} already has infinite AZINC.`, false); return false; }
+        balances[targetUsername] = (Number(balances[targetUsername] || 0) + Number(amount));
+        localStorage.setItem('balances', JSON.stringify(balances));
+        showMessage(`Gave ${amount} AZINC to ${targetUsername}.`, true);
+        return true;
+    }
+    </script>
+    <script src="accounts.js"></script>
+
+    <script>
+        // update welcome + balance display
+        function updateBalanceDisplay() {
+            const currentUsername = localStorage.getItem('currentUsername');
+            const currentUserFullName = localStorage.getItem('currentUser') || currentUsername;
+            if (!currentUsername) return;
+            const bal = (typeof getBalance === 'function') ? getBalance(currentUsername) : 0;
+            const balDisplay = bal === "INF" ? '∞ AZINC' : `${bal} AZINC`;
+            const el = document.getElementById('username');
+            if (el) el.textContent = `Welcome back, ${currentUserFullName}! (${balDisplay})`;
+            const logoutBtn = document.querySelector('.logout-button');
+            const delBtn = document.querySelector('.delete-button');
+            if (logoutBtn) logoutBtn.style.display = 'inline-block';
+            if (delBtn) delBtn.style.display = 'inline-block';
+        }
+
+        function promptGiveAZINC(targetUsername) {
+            const current = localStorage.getItem('currentUsername');
+            if (current !== 'AZHA') { showMessage('Only AZHA can give AZINC.', false); return; }
+            const raw = prompt(`Enter AZINC amount to give to ${targetUsername}:`, "100");
+            if (raw === null) return;
+            const amt = Number(raw);
+            if (isNaN(amt) || amt <= 0) { showMessage('Invalid amount.', false); return; }
+            if (typeof giveAZINC === 'function' && giveAZINC(targetUsername, amt)) {
+                updateBalanceDisplay();
+                if (typeof showAdminPanel === 'function') showAdminPanel();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateBalanceDisplay();
+        });
+    </script>
+// ...existing code...
+    <!-- Messaging UI -->
+    <div id="messagingPanel" style="max-width:800px;margin:20px auto;display:none;">
+        <h2>Messages</h2>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:240px;">
+                <h3>Compose</h3>
+                <select id="msgRecipient" style="width:100%;padding:8px;margin-bottom:8px;"></select>
+                <textarea id="msgText" placeholder="Write message..." style="width:100%;height:80px;padding:8px;"></textarea>
+                <button id="sendMsgBtn" style="margin-top:8px;">Send</button>
+            </div>
+            <div style="flex:2;min-width:300px;">
+                <h3>Inbox</h3>
+                <div id="inboxList" style="max-height:220px;overflow:auto;background:rgba(0,0,0,0.5);padding:8px;border-radius:6px;"></div>
+                <h3 style="margin-top:12px;">Sent</h3>
+                <div id="sentList" style="max-height:160px;overflow:auto;background:rgba(0,0,0,0.5);padding:8px;border-radius:6px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // messaging UI logic
+    function openMessaging() {
+        const panel = document.getElementById('messagingPanel');
+        panel.style.display = 'block';
+        populateRecipients();
+        renderMessages();
+    }
+
+    function closeMessaging() {
+        const panel = document.getElementById('messagingPanel');
+        panel.style.display = 'none';
+    }
+
+    function populateRecipients() {
+        const select = document.getElementById('msgRecipient');
+        select.innerHTML = '';
+        const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+        const current = localStorage.getItem('currentUsername');
+        Object.keys(accounts).forEach(u => {
+            if (u === current) return; // don't send to self
+            const opt = document.createElement('option');
+            opt.value = u;
+            opt.textContent = `${accounts[u].fullName} (${u})`;
+            select.appendChild(opt);
+        });
+    }
+
+    function renderMessages() {
+        const current = localStorage.getItem('currentUsername');
+        const inbox = getInbox(current) || [];
+        const sent = getSent(current) || [];
+
+        const inboxEl = document.getElementById('inboxList');
+        inboxEl.innerHTML = inbox.length ? '' : '<em>No messages</em>';
+        inbox.forEach(m => {
+            const div = document.createElement('div');
+            div.style.padding = '6px';
+            div.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            div.innerHTML = `<strong>${m.from}</strong> <small>${new Date(m.timestamp).toLocaleString()}</small>
+                             <p style="margin:6px 0;color:#ddd">${escapeHtml(m.text)}</p>
+                             <button onclick="markAndRefresh('${m.id}')">Mark Read</button>
+                             <button onclick="deleteAndRefresh('${m.id}')">Delete</button>
+                             ${m.read ? '<span style="color:lightgreen;margin-left:8px">Read</span>' : '<span style="color:yellow;margin-left:8px">Unread</span>'}`;
+            inboxEl.appendChild(div);
+        });
+
+        const sentEl = document.getElementById('sentList');
+        sentEl.innerHTML = sent.length ? '' : '<em>No sent messages</em>';
+        sent.forEach(m => {
+            const div = document.createElement('div');
+            div.style.padding = '6px';
+            div.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            div.innerHTML = `<strong>To: ${m.to}</strong> <small>${new Date(m.timestamp).toLocaleString()}</small>
+                             <p style="margin:6px 0;color:#ddd">${escapeHtml(m.text)}</p>
+                             <button onclick="deleteAndRefresh('${m.id}')">Delete</button>`;
+            sentEl.appendChild(div);
+        });
+    }
+
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
+    }
+
+    function markAndRefresh(id) {
+        const current = localStorage.getItem('currentUsername');
+        if (markMessageRead(id, current)) renderMessages();
+    }
+
+    function deleteAndRefresh(id) {
+        const current = localStorage.getItem('currentUsername');
+        if (deleteMessage(id, current)) renderMessages();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const sendBtn = document.getElementById('sendMsgBtn');
+        if (sendBtn) {
+            sendBtn.addEventListener('click', () => {
+                const to = document.getElementById('msgRecipient').value;
+                const text = document.getElementById('msgText').value.trim();
+                const from = localStorage.getItem('currentUsername');
+                if (!from) { showMessage('You must be logged in to send messages.', false); return; }
+                if (!to || !text) { showMessage('Choose recipient and enter a message.', false); return; }
+                const ok = sendMessage(from, to, text);
+                if (ok) {
+                    document.getElementById('msgText').value = '';
+                    renderMessages();
+                    showMessage('Message sent.', true);
+                } else {
+                    showMessage('Failed to send message.', false);
+                }
+            });
+        }
+
+        // optional: add a quick open button in header
+        const header = document.querySelector('.nav-center');
+        if (header) {
+            const btn = document.createElement('button');
+            btn.textContent = 'Messages';
+            btn.style.marginLeft = '8px';
+            btn.onclick = openMessaging;
+            header.appendChild(btn);
+        }
+    });
+    </script>
+```
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, query, where, orderBy, getDocs, updateDoc, doc, deleteDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+// TODO: replace with your Firebase config
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  // ...other fields from Firebase console
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const messagesCol = collection(db, "messages");
+
+// sendMessage(from, to, text) -> returns true/false
+window.sendMessage = async function(from, to, text) {
+  if (!from || !to || !text) return false;
+  try {
+    await addDoc(messagesCol, {
+      from,
+      to,
+      text: String(text),
+      timestamp: serverTimestamp(),
+      read: false
+    });
+    return true;
+  } catch (err) {
+    console.error("sendMessage error", err);
+    return false;
+  }
+};
+
+// getInbox(username) -> returns array of messages (newest first)
+window.getInbox = async function(username) {
+  if (!username) return [];
+  try {
+    const q = query(messagesCol, where("to", "==", username), orderBy("timestamp", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    console.error("getInbox error", err);
+    return [];
+  }
+};
+
+// getSent(username)
+window.getSent = async function(username) {
+  if (!username) return [];
+  try {
+    const q = query(messagesCol, where("from", "==", username), orderBy("timestamp", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    console.error("getSent error", err);
+    return [];
+  }
+};
+
+// markMessageRead(messageId, username)
+window.markMessageRead = async function(messageId, username) {
+  try {
+    const mDoc = doc(db, "messages", messageId);
+    await updateDoc(mDoc, { read: true });
+    return true;
+  } catch (err) {
+    console.error("markMessageRead error", err);
+    return false;
+  }
+};
+
+// deleteMessage(messageId, username)
+window.deleteMessage = async function(messageId, username) {
+  try {
+    const mDoc = doc(db, "messages", messageId);
+    await deleteDoc(mDoc);
+    return true;
+  } catch (err) {
+    console.error("deleteMessage error", err);
+    return false;
+  }
+}
+</script>
+
+    <!-- Entrance Overlay + Animations -->
+   
+
+
+    
+<style>
+/* Entrance overlay + animations */
+#entranceOverlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg, rgba(0,0,0,0.95), rgba(0,0,0,0.7));
+    z-index:2500;
+    opacity:1;
+    transition:opacity 600ms ease, transform 600ms ease;
+    pointer-events:auto;
+}
+#entranceOverlay.hidden{
+    opacity:0;
+    pointer-events:none;
+    transform:scale(1.02);
+}
+#entranceContent{
+    text-align:center;
+    color:#fff;
+    transform:translateY(6px);
+    opacity:0;
+    animation: entranceText 700ms ease forwards 200ms;
+}
+#entranceContent .logo{
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    margin:0 auto 12px;
+    background:url('Azha LanchPad Icon..png') center/cover no-repeat;
+    box-shadow:0 8px 30px rgba(0,0,0,0.6),0 2px 6px rgba(0,0,0,0.4);
+    transform:scale(.86);
+    animation: logoPop 700ms cubic-bezier(.2,.9,.2,1) forwards;
+}
+#entranceContent h1{
+    margin:0;
+    font-size:1.6rem;
+    letter-spacing:0.6px;
+}
+@keyframes logoPop{
+    from{ transform: scale(.6); opacity:0 }
+    to{ transform: scale(1); opacity:1 }
+}
+@keyframes entranceText{
+    from{ transform: translateY(8px); opacity:0 }
+    to{ transform: translateY(0); opacity:1 }
+}
+
+/* animate-in class for page elements */
+.animate-in .nav-center, .animate-in .admin-panel, .animate-in .game-container {
+    transform: translateY(0);
+    opacity: 1;
+}
+.nav-center, .admin-panel, .game-container {
+    transform: translateY(10px);
+    opacity: 0;
+    transition: transform 520ms ease, opacity 520ms ease;
+}
+</style>
+<head>
+    ...existing code...
+    <style>
+    /* Entrance overlay + animations */
+    #entranceOverlay{
+        position:fixed;
+        inset:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background:linear-gradient(135deg, rgba(0,0,0,0.95), rgba(0,0,0,0.7));
+        z-index:2500;
+        opacity:1;
+        transition:opacity 600ms ease, transform 600ms ease;
+        pointer-events:auto;
+    }
+    #entranceOverlay.hidden{
+        opacity:0;
+        pointer-events:none;
+        transform:scale(1.02);
+    }
+    #entranceContent{
+        text-align:center;
+        color:#fff;
+        transform:translateY(6px);
+        opacity:0;
+        animation: entranceText 700ms ease forwards 200ms;
+    }
+    #entranceContent .logo{
+        width:110px;
+        height:110px;
+        border-radius:50%;
+        margin:0 auto 12px;
+        background:url('Azha LanchPad Icon..png') center/cover no-repeat;
+        box-shadow:0 8px 30px rgba(0,0,0,0.6),0 2px 6px rgba(0,0,0,0.4);
+        transform:scale(.86);
+        animation: logoPop 700ms cubic-bezier(.2,.9,.2,1) forwards;
+    }
+    #entranceContent h1{
+        margin:0;
+        font-size:1.6rem;
+        letter-spacing:0.6px;
+    }
+    @keyframes logoPop{
+        from{ transform: scale(.6); opacity:0 }
+        to{ transform: scale(1); opacity:1 }
+    }
+    @keyframes entranceText{
+        from{ transform: translateY(8px); opacity:0 }
+        to{ transform: translateY(0); opacity:1 }
+    }
+
+    /* animate-in class for page elements */
+    .animate-in .nav-center, .animate-in .admin-panel, .animate-in .game-container {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    .nav-center, .admin-panel, .game-container {
+        transform: translateY(10px);
+        opacity: 0;
+        transition: transform 520ms ease, opacity 520ms ease;
+    }
+    </style>
+
+    <body>
+ 
+
+    <!-- Entrance overlay (insert right after <body>) -->
+    <div id="entranceOverlay" aria-hidden="true">
+        <div id="entranceContent" role="img" aria-label="Welcome">
+            <div class="logo" aria-hidden="true"></div>
+            <h1>Welcome to CoderAzhaf</h1>
+        </div>
+    </div>
+
+</head>
+ <script>
+    // Entrance overlay logic: hide after animation and enable page animations
+    document.addEventListener('DOMContentLoaded', () => {
+        const overlay = document.getElementById('entranceOverlay');
+        // small delay so users see it briefly
+        const showTime = 900; // ms (adjust)
+        setTimeout(() => {
+            if (!overlay) return;
+            overlay.classList.add('hidden');
+            // remove from DOM after transition to avoid blocking interactions
+            overlay.addEventListener('transitionend', () => {
+                if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            }, { once: true });
+            // add animate-in class to body so sections fade/slide in
+            document.documentElement.classList.add('animate-in');
+        }, showTime);
+    });
+    </script>
+
+</body>
+</html>
