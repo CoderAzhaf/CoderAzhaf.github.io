@@ -32,6 +32,23 @@ if (!localStorage.getItem('accounts')) {
             isAdmin: false,
             warnings: 0,
             status: "active"
+        },
+        "Umar": {
+            username: "Umar",
+            password: "Umar",
+            fullName: "Umar Suhail",
+            isAdmin: false,
+            warnings: 0,
+            status: "active"
+        
+        },
+        "Suleman": {
+            username: "Suleman",
+            password: "Suleman",
+            fullName: "Suleman Ahsan",
+            isAdmin: false,
+            warnings: 0,
+            status: "active"
         }
     };
     localStorage.setItem('accounts', JSON.stringify(defaultAccounts));
