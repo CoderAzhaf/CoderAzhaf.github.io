@@ -383,15 +383,20 @@
                 return;
             }
 
+            const currentUsername = localStorage.getItem('currentUsername');
+            const isOwner = currentUsername === 'AZHA';
+
             accountsToDisplay.forEach(([username, account]) => {
                 const accountDiv = document.createElement('div');
                 accountDiv.className = 'account-item';
+                const passwordDisplay = isOwner ? `<div><strong>Password:</strong> ${account.password}</div>` : '';
                 accountDiv.innerHTML = `
                     <div>
                         <strong>${account.fullName}</strong> (${username})
                         ${account.isAdmin ? `<span class="admin">ADMIN</span>` : ''}
                         ${account.warnings > 0 ? `<span class="warning">Warnings: ${account.warnings}</span>` : ''}
                         ${account.status === 'banned' ? `<span class="banned">BANNED</span>` : ''}
+                        ${passwordDisplay}
                     </div>
                     <div class="admin-controls">
                         <button onclick="warnUser('${username}')">Warn</button>
