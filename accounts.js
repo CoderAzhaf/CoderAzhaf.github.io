@@ -1,61 +1,5 @@
-// Initialize default accounts if none exist
-if (!localStorage.getItem('accounts')) {
-    const defaultAccounts = {
-        "AZHA": {
-            username: "AZHA",
-            password: "AZ MOH",
-            fullName: "AZHAFUDDiN MOHAMMED",
-            isAdmin: true,
-            warnings: 0,
-            status: "active"
-        },
-        "Vivvan Dash": {
-            username: "Vivvan Dash",
-            password: "dashpro",
-            fullName: "Vivvan Dash",
-            isAdmin: true,
-            warnings: 0,
-            status: "active"
-        },
-        "Alyanuddin": {
-            username: "Alyanuddin",
-            password: "alyanpro",
-            fullName: "Alyanuddin Mohammed",
-            isAdmin: true,
-            warnings: 0,
-            status: "active"
-        },
-        "Hacker": {
-            username: "Hacker",
-            password: "Hacker",
-            fullName: "Hacker",
-            isAdmin: false,
-            warnings: 0,
-            status: "active"
-        },
-        "Umar": {
-            username: "Umar",
-            password: "Umar",
-            fullName: "Umar Suhail",
-            isAdmin: false,
-            warnings: 0,
-            status: "active"
-        
-        },
-        "Suleman": {
-            username: "Suleman",
-            password: "Suleman",
-            fullName: "Suleman Ahsan",
-            isAdmin: false,
-            warnings: 0,
-            status: "active"
-        }
-    };
-    localStorage.setItem('accounts', JSON.stringify(defaultAccounts));
-}
-// Global accounts variable (will be reloaded in functions for freshness)
-let accounts = JSON.parse(localStorage.getItem('accounts'));
-         
+// accounts.js -- client helpers that interact with the backend API
+
 /**
  * Displays a temporary message (success or error) on the screen.
  */
@@ -64,7 +8,7 @@ function showMessage(message, isSuccess) {
     div.textContent = message;
     div.className = `message ${isSuccess ? 'success' : 'error'}`;
     document.body.appendChild(div);
-    setTimeout(() => div.remove(), 3000); // Remove message after 3 seconds
+    setTimeout(() => div.remove(), 3000);
 }
 
 /**
@@ -72,7 +16,7 @@ function showMessage(message, isSuccess) {
  */
 function checkLogin() {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
-    if (isLoggedIn !== 'true') { // Check for explicit 'true' string
+    if (isLoggedIn !== 'true') {
         window.location.href = 'Getin.html';
         return false;
     }
@@ -82,311 +26,224 @@ function checkLogin() {
 /**
  * Handles the user login process.
  */
-function login() {
-    const usernameInput = document.getElementById('login-username').value;
-    const passwordInput = document.getElementById('login-password').value;
-
-    const username = usernameInput;
-    const password = passwordInput;
-
+async function login() {
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
     if (!username || !password) {
         showMessage('Please enter both username and password', false);
         return;
     }
 
-    // Reload accounts from localStorage to ensure latest data
-    accounts = JSON.parse(localStorage.getItem('accounts'));
-
-    const account = accounts[username];
-    if (account && account.password === password) {
-        if (account.status === 'banned') {
-            showMessage('This account has been banned.', false);
-            return;
+    try {
+        const resp = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password }),
+        });
+        const data = await resp.json();
+        if (resp.ok) {
+            localStorage.setItem('currentUser', data.fullName);
+            localStorage.setItem('currentUsername', username);
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('isAdmin', data.isAdmin ? 'true' : 'false');
+            showMessage('Login successful! Redirecting...', true);
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+            setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+        } else {
+            showMessage(data.error, false);
         }
-
-        localStorage.setItem('currentUser', account.fullName);
-        localStorage.setItem('currentUsername', username);
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('isAdmin', account.isAdmin ? 'true' : 'false'); // Store isAdmin status as a string
-
-        showMessage('Login successful! Redirecting...', true);
-        // Clear input fields after successful login
-        document.getElementById('login-username').value = '';
-        document.getElementById('login-password').value = '';
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 1500);
-    } else {
-        showMessage('Invalid username or password', false);
+    } catch (err) {
+        console.error('Login error:', err);
+        showMessage('An error occurred during login', false);
     }
 }
 
 /**
- * Shows the login form and hides the signup form.
+ * Swap forms on Getin.html
  */
 function showLogin() {
     document.getElementById('signup-form').style.display = 'none';
     document.getElementById('login-form').style.display = 'block';
-    // Clear signup fields when switching to login
     document.getElementById('signup-username').value = '';
     document.getElementById('signup-password').value = '';
     document.getElementById('signup-fullname').value = '';
 }
-
-/**
- * Shows the signup form and hides the login form.
- */
 function showSignup() {
     document.getElementById('login-form').style.display = 'none';
     document.getElementById('signup-form').style.display = 'block';
-    // Clear login fields when switching to signup
     document.getElementById('login-username').value = '';
     document.getElementById('login-password').value = '';
 }
 
 /**
- * Handles the user signup process.
- * NOTE: This is a client-side only implementation using localStorage.
- * For a real application, you need a backend server and a database for security.
+ * Create new account via backend.
  */
-function signup() {
-    const usernameInput = document.getElementById('signup-username');
-    const passwordInput = document.getElementById('signup-password');
-    const fullNameInput = document.getElementById('signup-fullname');
-
-    const username = usernameInput.value;
-    const password = passwordInput.value;
-    const fullName = fullNameInput.value;
-
+async function signup() {
+    const username = document.getElementById('signup-username').value;
+    const password = document.getElementById('signup-password').value;
+    const fullName = document.getElementById('signup-fullname').value;
     if (!username || !password || !fullName) {
         showMessage('Please fill in all fields', false);
         return;
     }
-
-    // Reload accounts to get the most current state before checking/adding
-    accounts = JSON.parse(localStorage.getItem('accounts'));
-
-    if (accounts[username]) {
-        showMessage('Username already exists. Please choose a different one.', false);
-        return;
+    try {
+        const resp = await fetch('/api/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password, fullName }),
+        });
+        const data = await resp.json();
+        if (resp.ok) {
+            showMessage('Account created successfully! You can now login.', true);
+            document.getElementById('signup-username').value = '';
+            document.getElementById('signup-password').value = '';
+            document.getElementById('signup-fullname').value = '';
+            showLogin();
+        } else {
+            showMessage(data.error || 'Signup failed', false);
+        }
+    } catch (err) {
+        console.error('Signup error', err);
+        showMessage('An error occurred during signup', false);
     }
-
-    // Add new account to the accounts object
-    accounts[username] = {
-        username: username,
-        password: password, // In a real app, hash this password!
-        fullName: fullName,
-        isAdmin: false, // New users are not admins by default
-        warnings: 0,
-        status: "active" // Default status
-    };
-
-    // Save the updated accounts object back to localStorage
-    localStorage.setItem('accounts', JSON.stringify(accounts));
-
-    showMessage('Account created successfully! You can now login.', true);
-    // Clear signup fields after successful signup
-    usernameInput.value = '';
-    passwordInput.value = '';
-    fullNameInput.value = '';
-    showLogin(); // Automatically switch to the login form
 }
 
 /**
- * Logs out the current user and redirects to Getin.html.
+ * Logs out current user.
  */
 function logout() {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentUsername');
     localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('isAdmin'); // Clear admin status on logout
+    localStorage.removeItem('isAdmin');
     showMessage('Logged out successfully. Redirecting...', true);
-    setTimeout(() => {
-        window.location.href = 'Getin.html';
-    }, 1000);
+    setTimeout(() => { window.location.href = 'Getin.html'; }, 1000);
 }
 
-
-// Event listener for when the DOM content is fully loaded
-window.addEventListener('DOMContentLoaded', () => {
-    // Logic specific to Getin.html: If already logged in, redirect to index.html
-    if (window.location.pathname.endsWith('Getin.html')) {
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        if (isLoggedIn === 'true') {
-            window.location.href = 'index.html';
+// small helpers used by admin panel
+async function makeAdmin(username) {
+    const actor = localStorage.getItem('currentUsername');
+    try {
+        const resp = await fetch('/api/admin/makeadmin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ actor, username }),
+        });
+        if (resp.ok) {
+            showMessage(`${username} is now an admin!`, true);
+            if (typeof showAdminPanel === 'function') showAdminPanel();
+            return true;
+        } else {
+            const data = await resp.json().catch(() => ({}));
+            showMessage(data.error || 'Failed to make admin', false);
+            return false;
         }
+    } catch (err) {
+        console.error('makeAdmin error', err);
+        showMessage('Error making admin', false);
+        return false;
+    }
+}
 
-        // Add event listener for Enter key on login password field
-        const loginPassword = document.getElementById('login-password');
-        if (loginPassword) {
-            loginPassword.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    login();
-                }
-            });
+async function warnUser(username) {
+    const actor = localStorage.getItem('currentUsername');
+    try {
+        const resp = await fetch('/api/admin/warn', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ actor, username }),
+        });
+        if (resp.ok) {
+            const data = await resp.json().catch(() => ({}));
+            showMessage(`Warning issued to ${username}.`, true);
+            if (typeof showAdminPanel === 'function') showAdminPanel();
+            return true;
+        } else {
+            const data = await resp.json().catch(() => ({}));
+            showMessage(data.error || 'Failed to warn user', false);
+            return false;
         }
+    } catch (err) {
+        console.error('warnUser error', err);
+        showMessage('Error issuing warning', false);
+        return false;
+    }
+}
 
-        // Add event listener for Enter key on signup full name field
-        const signupFullName = document.getElementById('signup-fullname');
-        if (signupFullName) {
-            signupFullName.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    signup();
-                }
-            });
+async function toggleBan(username, action) {
+    const actor = localStorage.getItem('currentUsername');
+    try {
+        const resp = await fetch('/api/admin/ban', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ actor, username, action }),
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (resp.ok) {
+            showMessage(`${username} has been ${data.status}.`, true);
+            if (typeof showAdminPanel === 'function') showAdminPanel();
+            return true;
+        } else {
+            showMessage(data.error || 'Failed to change ban status', false);
+            return false;
         }
-    }
-});
-function toggleBan(username) {
-    if (username === "AZHA") {
-        showMessage("Cannot ban the AZHA account.", false);
-        return;
-    }
-
-    const accounts = JSON.parse(localStorage.getItem('accounts'));
-    if (accounts[username]) {
-        const newStatus = accounts[username].status === 'banned' ? 'active' : 'banned';
-        accounts[username].status = newStatus;
-        localStorage.setItem('accounts', JSON.stringify(accounts));
-        // Re-display all accounts after banning/unbanning
-        showAdminPanel();
-        showMessage(`${username} has been ${newStatus}.`, true);
+    } catch (err) {
+        console.error('toggleBan error', err);
+        showMessage('Error updating ban status', false);
+        return false;
     }
 }
 
-function deleteUserAccount(username) {
-    if (username === "AZHA") {
-        showMessage("Cannot delete the AZHA account.", false);
-        return;
+async function deleteUserAccount(username) {
+    const actor = localStorage.getItem('currentUsername');
+    try {
+        const resp = await fetch(`/api/users/${encodeURIComponent(username)}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ actor }),
+        });
+        if (resp.ok) {
+            showMessage(`Account ${username} deleted.`, true);
+            if (typeof showAdminPanel === 'function') showAdminPanel();
+            return true;
+        } else {
+            const data = await resp.json().catch(() => ({}));
+            showMessage(data.error || 'Failed to delete account', false);
+            return false;
+        }
+    } catch (err) {
+        console.error('deleteUserAccount error', err);
+        showMessage('Error deleting account', false);
+        return false;
     }
+}
 
-    if (confirm(`Are you sure you want to delete ${username}'s account? This cannot be undone.`)) {
-        const accounts = JSON.parse(localStorage.getItem('accounts'));
-        delete accounts[username];
-        localStorage.setItem('accounts', JSON.stringify(accounts));
-        // Re-display all accounts after deletion
-        showAdminPanel();
-        showMessage(`${username}'s account has been deleted.`, true);
+async function getBalance(username) {
+    try {
+        const resp = await fetch(`/api/balances?username=${encodeURIComponent(username)}`);
+        if (!resp.ok) return 0;
+        const data = await resp.json();
+        return data[username] || 0;
+    } catch (err) {
+        console.error('getBalance error', err);
+        return 0;
     }
 }
-// ...existing code...
-// Initialize balances if none exist
-if (!localStorage.getItem('balances')) {
-    const defaultBalances = { "AZHA": "INF" };
-    localStorage.setItem('balances', JSON.stringify(defaultBalances));
-}
 
-function getBalance(username) {
-    const balances = JSON.parse(localStorage.getItem('balances')) || {};
-    const b = balances[username];
-    return b === "INF" ? "INF" : Number(b || 0);
-}
-
-function setBalance(username, value) {
-    const balances = JSON.parse(localStorage.getItem('balances')) || {};
-    if (username === "AZHA") balances["AZHA"] = "INF";
-    else balances[username] = Number(value) || 0;
-    localStorage.setItem('balances', JSON.stringify(balances));
-}
-
-function giveAZINC(targetUsername, amount) {
-    const current = localStorage.getItem('currentUsername');
-    if (current !== 'AZHA') { showMessage('Only AZHA can give AZINC.', false); return false; }
-    if (!targetUsername || isNaN(Number(amount)) || Number(amount) <= 0) { showMessage('Invalid amount.', false); return false; }
-    const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
-    if (!accounts[targetUsername]) { showMessage('Target user does not exist.', false); return false; }
-    const balances = JSON.parse(localStorage.getItem('balances')) || {};
-    if (balances[targetUsername] === "INF") { showMessage(`${targetUsername} already has infinite AZINC.`, false); return false; }
-    balances[targetUsername] = (Number(balances[targetUsername] || 0) + Number(amount));
-    localStorage.setItem('balances', JSON.stringify(balances));
-    showMessage(`Gave ${amount} AZINC to ${targetUsername}.`, true);
-    return true;
-}
-// ...existing code...
-    // Save the updated accounts object back to localStorage
-    localStorage.setItem('accounts', JSON.stringify(accounts));
-
-    // ensure new user has a balance entry (0) so giveAZINC works
-    const balances = JSON.parse(localStorage.getItem('balances')) || {};
-    if (balances[username] === undefined) {
-        balances[username] = 0;
-        localStorage.setItem('balances', JSON.stringify(balances));
+async function giveAZINC(targetUsername, amount) {
+    const actor = localStorage.getItem('currentUsername');
+    const resp = await fetch('/api/admin/azinc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actor, username: targetUsername, amount: Number(amount) }),
+    });
+    if (resp.ok) {
+        showMessage(`Gave ${amount} AZINC to ${targetUsername}.`, true);
+        return true;
+    } else {
+        const data = await resp.json().catch(() => ({}));
+        showMessage(data.error || 'Failed to update balance', false);
+        return false;
     }
-
-    showMessage('Account created successfully! You can now login.', true);
-    // Clear signup fields after successful signup
-    usernameInput.value = '';
-    passwordInput.value = '';
-    fullNameInput.value = '';
-    showLogin(); // Automatically switch to the login form
-// ...existing code...
-// ...existing code...
-
-// Initialize messages storage
-if (!localStorage.getItem('messages')) {
-    localStorage.setItem('messages', JSON.stringify([]));
 }
-
-/**
- * Send a message from "fromUsername" to "toUsername"
- * returns true on success, false on failure
- */
-function sendMessage(fromUsername, toUsername, text) {
-    if (!fromUsername || !toUsername || !text) return false;
-    const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
-    if (!accounts[toUsername]) return false; // recipient must exist
-    const messages = JSON.parse(localStorage.getItem('messages')) || [];
-    const msg = {
-        id: Date.now().toString(36) + Math.random().toString(36).slice(2,8),
-        from: fromUsername,
-        to: toUsername,
-        text: String(text),
-        timestamp: new Date().toISOString(),
-        read: false
-    };
-    messages.push(msg);
-    localStorage.setItem('messages', JSON.stringify(messages));
-    return true;
-}
-
-/**
- * Get inbox messages for a user (sorted newest first)
- */
-function getInbox(username) {
-    const messages = JSON.parse(localStorage.getItem('messages')) || [];
-    return messages.filter(m => m.to === username).sort((a,b) => b.timestamp.localeCompare(a.timestamp));
-}
-
-/**
- * Get sent messages for a user (sorted newest first)
- */
-function getSent(username) {
-    const messages = JSON.parse(localStorage.getItem('messages')) || [];
-    return messages.filter(m => m.from === username).sort((a,b) => b.timestamp.localeCompare(a.timestamp));
-}
-
-/**
- * Mark a message read (only recipient can mark)
- */
-function markMessageRead(messageId, username) {
-    const messages = JSON.parse(localStorage.getItem('messages')) || [];
-    const idx = messages.findIndex(m => m.id === messageId && m.to === username);
-    if (idx === -1) return false;
-    messages[idx].read = true;
-    localStorage.setItem('messages', JSON.stringify(messages));
-    return true;
-}
-
-/**
- * Delete a message (sender or recipient can delete)
- */
-function deleteMessage(messageId, username) {
-    let messages = JSON.parse(localStorage.getItem('messages')) || [];
-    const idx = messages.findIndex(m => m.id === messageId && (m.to === username || m.from === username));
-    if (idx === -1) return false;
-    messages.splice(idx, 1);
-    localStorage.setItem('messages', JSON.stringify(messages));
-    return true;
-}
-
-// ...existing code...
