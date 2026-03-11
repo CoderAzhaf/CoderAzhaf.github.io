@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message</title>
+    <link rel="stylesheet" href="app.css">
+    <script src="app.js"></script>
+    <script src="accounts.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Message</h1>
+        <div id="messageContainer">
+            <!-- Messages will be displayed here -->
+        </div>
+        <form id="messageForm">
+            <input type="text" id="messageInput" placeholder="Type your message..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    <script>
+        async function loadMessages() {
+            const user = localStorage.getItem('currentUsername');
+            if (!user) return;
+            try {
+                const resp = await fetch(`/api/messages?username=${encodeURIComponent(user)}`);
+                if (!resp.ok) throw new Error('unable to load');
+                const msgs = await resp.json();
+                const messageContainer = document.getElementById('messageContainer');
+                messageContainer.innerHTML = '';
+                msgs.forEach(m => {
+                    const div = document.createElement('div');
+                    div.className = 'message';
+                    div.textContent = `${m.from}: ${m.text}`;
+                    messageContainer.appendChild(div);
+                });
+            } catch (err) {
+                console.error('loadMessages error', err);
+            }
+        }
+
+        async function sendMessageBackend(text) {
+            const from = localStorage.getItem('currentUsername');
+            const to = prompt('Send to (username):');
+            if (!from || !to) {
+                alert('You must be logged in and specify recipient');
+                return false;
+            }
+            try {
+                const resp = await fetch('/api/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ from, to, text })
+                });
+                return resp.ok;
+            } catch (err) {
+                console.error('sendMessageBackend error', err);
+                return false;
+            }
+        }
+
+        document.getElementById('messageForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const inp = document.getElementById('messageInput');
+            const msg = inp.value.trim();
+            if (msg) {
+                const ok = await sendMessageBackend(msg);
+                if (ok) {
+                    loadMessages();
+                    inp.value = '';
+                } else {
+                    showMessage('Failed to send message', false);
+                }
+            }
+        });
+
+        loadMessages();
+    </script>
+</body>
+</html>

@@ -1,11 +1,307 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.static(__dirname));
 app.use(express.json());
+
+// Data files
+const ACCOUNTS_FILE = path.join(__dirname, 'accounts.json');
+const MESSAGES_FILE = path.join(__dirname, 'messages.json');
+const BALANCES_FILE = path.join(__dirname, 'balances.json');
+
+// Initialize data files if they don't exist
+if (!fs.existsSync(ACCOUNTS_FILE)) {
+    const defaultAccounts = {
+        "AZHA": {
+            username: "AZHA",
+            password: "AZ MOH",
+            fullName: "AZHAFUDDiN MOHAMMED",
+            isAdmin: true,
+            warnings: 0,
+            status: "active"
+        },
+        "Vivvan Dash": {
+            username: "Vivvan Dash",
+            password: "dashpro",
+            fullName: "Vivvan Dash",
+            isAdmin: true,
+            warnings: 0,
+            status: "active"
+        },
+        "Alyanuddin": {
+            username: "Alyanuddin",
+            password: "alyanpro",
+            fullName: "Alyanuddin Mohammed",
+            isAdmin: true,
+            warnings: 0,
+            status: "active"
+        },
+        "Hacker": {
+            username: "Hacker",
+            password: "Hacker",
+            fullName: "Hacker",
+            isAdmin: false,
+            warnings: 0,
+            status: "active"
+        },
+        "Umar": {
+            username: "Umar",
+            password: "Umar",
+            fullName: "Umar Suhail",
+            isAdmin: false,
+            warnings: 0,
+            status: "active"
+        },
+        "Suleman": {
+            username: "Suleman",
+            password: "Suleman",
+            fullName: "Suleman Ahsan",
+            isAdmin: false,
+            warnings: 0,
+            status: "active"
+        }
+    };
+    fs.writeFileSync(ACCOUNTS_FILE, JSON.stringify(defaultAccounts, null, 2));
+}
+
+if (!fs.existsSync(MESSAGES_FILE)) {
+    fs.writeFileSync(MESSAGES_FILE, JSON.stringify([], null, 2));
+}
+
+if (!fs.existsSync(BALANCES_FILE)) {
+    // start with AZHA infinite and everybody else zero
+    fs.writeFileSync(BALANCES_FILE, JSON.stringify({ AZHA: "INF" }, null, 2));
+}
+
+// Helper functions
+function readAccounts() {
+    return JSON.parse(fs.readFileSync(ACCOUNTS_FILE, 'utf8'));
+}
+
+function writeAccounts(accounts) {
+    fs.writeFileSync(ACCOUNTS_FILE, JSON.stringify(accounts, null, 2));
+}
+
+function readMessages() {
+    return JSON.parse(fs.readFileSync(MESSAGES_FILE, 'utf8'));
+}
+
+function writeMessages(messages) {
+    fs.writeFileSync(MESSAGES_FILE, JSON.stringify(messages, null, 2));
+}
+
+function readBalances() {
+    return JSON.parse(fs.readFileSync(BALANCES_FILE, 'utf8'));
+}
+
+function writeBalances(bals) {
+    fs.writeFileSync(BALANCES_FILE, JSON.stringify(bals, null, 2));
+}
+
+
+// API Routes
+app.post('/api/signup', (req, res) => {
+    const { username, password, fullName } = req.body;
+    if (!username || !password || !fullName) {
+        return res.status(400).json({ error: 'Please fill in all fields' });
+    }
+
+    const accounts = readAccounts();
+    if (accounts[username]) {
+        return res.status(400).json({ error: 'Username already exists' });
+    }
+
+    accounts[username] = {
+        username,
+        password, // In production, hash this!
+        fullName,
+        isAdmin: false,
+        warnings: 0,
+        status: "active"
+    };
+
+    writeAccounts(accounts);
+    res.json({ message: 'Account created successfully' });
+});
+
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Please enter both username and password' });
+    }
+
+    const accounts = readAccounts();
+    const account = accounts[username];
+    if (!account || account.password !== password) {
+        return res.status(401).json({ error: 'Invalid username or password' });
+    }
+
+    if (account.status === 'banned') {
+        return res.status(403).json({ error: 'This account has been banned' });
+    }
+
+    res.json({
+        username: account.username,
+        fullName: account.fullName,
+        isAdmin: account.isAdmin
+    });
+});
+
+app.get('/api/messages', (req, res) => {
+    const username = req.query.username;
+    if (!username) {
+        return res.status(400).json({ error: 'Username required' });
+    }
+
+    const messages = readMessages();
+    const userMessages = messages.filter(msg => msg.to === username || msg.from === username);
+    res.json(userMessages);
+});
+
+// return basic user list (username + fullName) for recipients etc.
+app.get('/api/users', (req,res) => {
+    const accounts = readAccounts();
+    // return full objects (password included) so admin panel can display all fields
+    const list = Object.values(accounts);
+    res.json(list);
+});
+
+// helper to verify actor is admin
+function isAdminUser(username) {
+    const acct = readAccounts()[username];
+    return acct && acct.isAdmin;
+}
+
+app.post('/api/admin/makeadmin', (req,res) => {
+    const { actor, username } = req.body;
+    if (!isAdminUser(actor)) return res.status(403).json({ error: 'Not authorized' });
+    const accounts = readAccounts();
+    if (!accounts[username]) return res.status(404).json({ error: 'User not found' });
+    accounts[username].isAdmin = true;
+    writeAccounts(accounts);
+    res.json({ message: 'OK' });
+});
+
+app.post('/api/admin/warn', (req,res) => {
+    const { actor, username } = req.body;
+    if (!isAdminUser(actor)) return res.status(403).json({ error: 'Not authorized' });
+    const accounts = readAccounts();
+    if (!accounts[username]) return res.status(404).json({ error: 'User not found' });
+    accounts[username].warnings = (accounts[username].warnings || 0) + 1;
+    writeAccounts(accounts);
+    res.json({ message: 'OK', warnings: accounts[username].warnings });
+});
+
+app.post('/api/admin/ban', (req,res) => {
+    const { actor, username, action } = req.body;
+    if (!isAdminUser(actor)) return res.status(403).json({ error: 'Not authorized' });
+    const accounts = readAccounts();
+    if (!accounts[username]) return res.status(404).json({ error: 'User not found' });
+    accounts[username].status = action === 'unban' ? 'active' : 'banned';
+    writeAccounts(accounts);
+    res.json({ message: 'OK', status: accounts[username].status });
+});
+
+app.delete('/api/users/:username', (req,res) => {
+    const actor = req.body.actor;
+    if (!isAdminUser(actor)) return res.status(403).json({ error: 'Not authorized' });
+    const username = req.params.username;
+    const accounts = readAccounts();
+    if (!accounts[username]) return res.status(404).json({ error: 'User not found' });
+    if (username === 'AZHA') return res.status(400).json({ error: 'Cannot delete AZHA' });
+    delete accounts[username];
+    writeAccounts(accounts);
+    res.json({ message: 'deleted' });
+});
+
+app.get('/api/balances', (req,res) => {
+    const username = req.query.username;
+    const bals = readBalances();
+    if (username) {
+        return res.json({ [username]: bals[username] || 0 });
+    }
+    res.json(bals);
+});
+
+app.post('/api/admin/azinc', (req,res) => {
+    const { actor, username, amount } = req.body;
+    if (!isAdminUser(actor)) return res.status(403).json({ error: 'Not authorized' });
+    if (!username || typeof amount !== 'number') {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+    const bals = readBalances();
+    if (username === 'AZHA') {
+        bals['AZHA'] = 'INF';
+    } else {
+        const cur = bals[username] || 0;
+        if (cur === 'INF') {
+            return res.status(400).json({ error: 'User already has infinite balance' });
+        }
+        bals[username] = cur + amount;
+    }
+    writeBalances(bals);
+    res.json({ message: 'Balance updated', balances: bals });
+});
+
+app.post('/api/messages', (req, res) => {
+    const { from, to, text } = req.body;
+    if (!from || !to || !text) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const accounts = readAccounts();
+    if (!accounts[to]) {
+        return res.status(400).json({ error: 'Recipient does not exist' });
+    }
+
+    const messages = readMessages();
+    const message = {
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+        from,
+        to,
+        text: String(text),
+        timestamp: new Date().toISOString(),
+        read: false
+    };
+
+    messages.push(message);
+    writeMessages(messages);
+    res.json({ message: 'Message sent successfully', id: message.id });
+});
+
+app.put('/api/messages/:id/read', (req, res) => {
+    const { id } = req.params;
+    const { username } = req.body;
+
+    const messages = readMessages();
+    const messageIndex = messages.findIndex(msg => msg.id === id && msg.to === username);
+    if (messageIndex === -1) {
+        return res.status(404).json({ error: 'Message not found' });
+    }
+
+    messages[messageIndex].read = true;
+    writeMessages(messages);
+    res.json({ message: 'Message marked as read' });
+});
+
+app.delete('/api/messages/:id', (req, res) => {
+    const { id } = req.params;
+    const { username } = req.body;
+
+    const messages = readMessages();
+    const messageIndex = messages.findIndex(msg => msg.id === id && (msg.to === username || msg.from === username));
+    if (messageIndex === -1) {
+        return res.status(404).json({ error: 'Message not found' });
+    }
+
+    messages.splice(messageIndex, 1);
+    writeMessages(messages);
+    res.json({ message: 'Message deleted' });
+});
 
 // Routes
 app.get('/', (req, res) => {
@@ -31,6 +327,10 @@ app.get('/Getin.html', (req, res) => {
 
 app.get('/Download.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'Download.html'));
+});
+
+app.get('/Message.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Message.html'));
 });
 
 // Handle 404
