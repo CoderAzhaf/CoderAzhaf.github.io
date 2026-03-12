@@ -33,6 +33,11 @@ function checkLogin() {
  * Handles the user login process.
  */
 async function login() {
+    // prevent useless attempts on static hosting
+    if (API_BASE_URL.includes('github.io')) {
+        showMessage('Login is not available on GitHub Pages. Run server locally.', false);
+        return;
+    }
     // trim whitespace to avoid accidental spaces causing mismatches
     const username = document.getElementById('login-username').value.trim();
     const password = document.getElementById('login-password').value.trim();
@@ -40,6 +45,7 @@ async function login() {
         showMessage('Please enter both username and password', false);
         return;
     }
+}
 
     try {
         const resp = await fetch(`${API_BASE_URL}/api/login`, {
@@ -64,7 +70,7 @@ async function login() {
         console.error('Login error:', err);
         showMessage('An error occurred during login', false);
     }
-}
+
 
 /**
  * Swap forms on Getin.html
@@ -87,6 +93,11 @@ function showSignup() {
  * Create new account via backend.
  */
 async function signup() {
+    // don't try to create accounts on static hosting
+    if (API_BASE_URL.includes('github.io')) {
+        showMessage('Signup not supported when loaded from GitHub Pages.', false);
+        return;
+    }
     // trim fields to prevent accidental leading/trailing spaces
     const username = document.getElementById('signup-username').value.trim();
     const password = document.getElementById('signup-password').value.trim();
