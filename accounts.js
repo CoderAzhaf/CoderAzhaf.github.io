@@ -1,6 +1,11 @@
 // @ts-nocheck
 // accounts.js -- client helpers that interact with the backend API
 
+// Determine API base URL: use localhost:3000 for local dev, otherwise current domain
+const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000' 
+    : window.location.origin;
+
 /**
  * Displays a temporary message (success or error) on the screen.
  */
@@ -37,7 +42,7 @@ async function login() {
     }
 
     try {
-        const resp = await fetch('/api/login', {
+        const resp = await fetch(`${API_BASE_URL}/api/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password }),
@@ -91,7 +96,7 @@ async function signup() {
         return;
     }
     try {
-        const resp = await fetch('/api/signup', {
+        const resp = await fetch(`${API_BASE_URL}/api/signup`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password, fullName }),
@@ -128,7 +133,7 @@ function logout() {
 async function makeAdmin(username) {
     const actor = localStorage.getItem('currentUsername');
     try {
-        const resp = await fetch('/api/admin/makeadmin', {
+        const resp = await fetch(`${API_BASE_URL}/api/admin/makeadmin`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ actor, username }),
@@ -152,7 +157,7 @@ async function makeAdmin(username) {
 async function warnUser(username) {
     const actor = localStorage.getItem('currentUsername');
     try {
-        const resp = await fetch('/api/admin/warn', {
+        const resp = await fetch(`${API_BASE_URL}/api/admin/warn`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ actor, username }),
@@ -177,7 +182,7 @@ async function warnUser(username) {
 async function toggleBan(username, action) {
     const actor = localStorage.getItem('currentUsername');
     try {
-        const resp = await fetch('/api/admin/ban', {
+        const resp = await fetch(`${API_BASE_URL}/api/admin/ban`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ actor, username, action }),
@@ -201,7 +206,7 @@ async function toggleBan(username, action) {
 async function deleteUserAccount(username) {
     const actor = localStorage.getItem('currentUsername');
     try {
-        const resp = await fetch(`/api/users/${encodeURIComponent(username)}`, {
+        const resp = await fetch(`${API_BASE_URL}/api/users/${username}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ actor }),
@@ -224,7 +229,7 @@ async function deleteUserAccount(username) {
 
 async function getBalance(username) {
     try {
-        const resp = await fetch(`/api/balances?username=${encodeURIComponent(username)}`);
+        const resp = await fetch(`${API_BASE_URL}/api/balances?username=${encodeURIComponent(username)}`);
         if (!resp.ok) return 0;
         const data = await resp.json();
         return data[username] || 0;
@@ -236,7 +241,7 @@ async function getBalance(username) {
 
 async function giveAZINC(targetUsername, amount) {
     const actor = localStorage.getItem('currentUsername');
-    const resp = await fetch('/api/admin/azinc', {
+    const resp = await fetch(`${API_BASE_URL}/api/admin/azinc`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ actor, username: targetUsername, amount: Number(amount) }),
