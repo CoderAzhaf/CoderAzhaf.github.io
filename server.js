@@ -104,17 +104,30 @@ function writeBalances(bals) {
 
 
 // API Routes
+// helper that finds an account by username, case-insensitive
+function findAccount(username) {
+    if (!username) return undefined;
+    const accounts = readAccounts();
+    const lower = username.toString().toLowerCase();
+    return Object.values(accounts).find(acc => acc.username.toLowerCase() === lower);
+}
+
 app.post('/api/signup', (req, res) => {
-    const { username, password, fullName } = req.body;
+    let { username, password, fullName } = req.body;
+    username = username && username.toString().trim();
+    password = password && password.toString().trim();
+    fullName = fullName && fullName.toString().trim();
     if (!username || !password || !fullName) {
         return res.status(400).json({ error: 'Please fill in all fields' });
     }
 
-    const accounts = readAccounts();
-    if (accounts[username]) {
+    // prevent case-insensitive duplicates
+    if (findAccount(username)) {
         return res.status(400).json({ error: 'Username already exists' });
     }
 
+    const accounts = readAccounts();
+    // store using the provided case, but lookup will be case-insensitive
     accounts[username] = {
         username,
         password, // In production, hash this!
@@ -129,13 +142,14 @@ app.post('/api/signup', (req, res) => {
 });
 
 app.post('/api/login', (req, res) => {
-    const { username, password } = req.body;
+    let { username, password } = req.body;
+    username = username && username.toString().trim();
+    password = password && password.toString().trim();
     if (!username || !password) {
         return res.status(400).json({ error: 'Please enter both username and password' });
     }
 
-    const accounts = readAccounts();
-    const account = accounts[username];
+    const account = findAccount(username);
     if (!account || account.password !== password) {
         return res.status(401).json({ error: 'Invalid username or password' });
     }
@@ -170,9 +184,9 @@ app.get('/api/users', (req,res) => {
     res.json(list);
 });
 
-// helper to verify actor is admin
+// helper to verify actor is admin (case-insensitive lookup)
 function isAdminUser(username) {
-    const acct = readAccounts()[username];
+    const acct = findAccount(username && username.toString().trim());
     return acct && acct.isAdmin;
 }
 
@@ -180,8 +194,10 @@ app.post('/api/admin/makeadmin', (req,res) => {
     const { actor, username } = req.body;
     if (!isAdminUser(actor)) return res.status(403).json({ error: 'Not authorized' });
     const accounts = readAccounts();
-    if (!accounts[username]) return res.status(404).json({ error: 'User not found' });
-    accounts[username].isAdmin = true;
+    // find the actual stored key for the provided username
+    const key = Object.keys(accounts).find(k => accounts[k].username.toLowerCase() === username.toString().toLowerCase());
+    if (!key) return res.status(404).json({ error: 'User not found' });
+    accounts[key].isAdmin = true;
     writeAccounts(accounts);
     res.json({ message: 'OK' });
 });
@@ -190,20 +206,22 @@ app.post('/api/admin/warn', (req,res) => {
     const { actor, username } = req.body;
     if (!isAdminUser(actor)) return res.status(403).json({ error: 'Not authorized' });
     const accounts = readAccounts();
-    if (!accounts[username]) return res.status(404).json({ error: 'User not found' });
-    accounts[username].warnings = (accounts[username].warnings || 0) + 1;
+    const key = Object.keys(accounts).find(k => accounts[k].username.toLowerCase() === username.toString().toLowerCase());
+    if (!key) return res.status(404).json({ error: 'User not found' });
+    accounts[key].warnings = (accounts[key].warnings || 0) + 1;
     writeAccounts(accounts);
-    res.json({ message: 'OK', warnings: accounts[username].warnings });
+    res.json({ message: 'OK', warnings: accounts[key].warnings });
 });
 
 app.post('/api/admin/ban', (req,res) => {
     const { actor, username, action } = req.body;
     if (!isAdminUser(actor)) return res.status(403).json({ error: 'Not authorized' });
     const accounts = readAccounts();
-    if (!accounts[username]) return res.status(404).json({ error: 'User not found' });
-    accounts[username].status = action === 'unban' ? 'active' : 'banned';
+    const key = Object.keys(accounts).find(k => accounts[k].username.toLowerCase() === username.toString().toLowerCase());
+    if (!key) return res.status(404).json({ error: 'User not found' });
+    accounts[key].status = action === 'unban' ? 'active' : 'banned';
     writeAccounts(accounts);
-    res.json({ message: 'OK', status: accounts[username].status });
+    res.json({ message: 'OK', status: accounts[key].status });
 });
 
 app.delete('/api/users/:username', (req,res) => {
@@ -211,9 +229,10 @@ app.delete('/api/users/:username', (req,res) => {
     if (!isAdminUser(actor)) return res.status(403).json({ error: 'Not authorized' });
     const username = req.params.username;
     const accounts = readAccounts();
-    if (!accounts[username]) return res.status(404).json({ error: 'User not found' });
-    if (username === 'AZHA') return res.status(400).json({ error: 'Cannot delete AZHA' });
-    delete accounts[username];
+    const key = Object.keys(accounts).find(k => accounts[k].username.toLowerCase() === username.toString().toLowerCase());
+    if (!key) return res.status(404).json({ error: 'User not found' });
+    if (accounts[key].username === 'AZHA') return res.status(400).json({ error: 'Cannot delete AZHA' });
+    delete accounts[key];
     writeAccounts(accounts);
     res.json({ message: 'deleted' });
 });

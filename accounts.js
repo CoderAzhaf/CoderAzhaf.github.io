@@ -1,3 +1,4 @@
+// @ts-nocheck
 // accounts.js -- client helpers that interact with the backend API
 
 /**
@@ -27,8 +28,9 @@ function checkLogin() {
  * Handles the user login process.
  */
 async function login() {
-    const username = document.getElementById('login-username').value;
-    const password = document.getElementById('login-password').value;
+    // trim whitespace to avoid accidental spaces causing mismatches
+    const username = document.getElementById('login-username').value.trim();
+    const password = document.getElementById('login-password').value.trim();
     if (!username || !password) {
         showMessage('Please enter both username and password', false);
         return;
@@ -80,9 +82,10 @@ function showSignup() {
  * Create new account via backend.
  */
 async function signup() {
-    const username = document.getElementById('signup-username').value;
-    const password = document.getElementById('signup-password').value;
-    const fullName = document.getElementById('signup-fullname').value;
+    // trim fields to prevent accidental leading/trailing spaces
+    const username = document.getElementById('signup-username').value.trim();
+    const password = document.getElementById('signup-password').value.trim();
+    const fullName = document.getElementById('signup-fullname').value.trim();
     if (!username || !password || !fullName) {
         showMessage('Please fill in all fields', false);
         return;
