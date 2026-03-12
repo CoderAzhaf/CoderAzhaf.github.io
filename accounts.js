@@ -45,7 +45,6 @@ async function login() {
         showMessage('Please enter both username and password', false);
         return;
     }
-}
 
     try {
         const resp = await fetch(`${API_BASE_URL}/api/login`, {
@@ -70,6 +69,7 @@ async function login() {
         console.error('Login error:', err);
         showMessage('An error occurred during login', false);
     }
+}
 
 
 /**
