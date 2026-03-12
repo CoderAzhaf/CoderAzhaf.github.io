@@ -1,10 +1,14 @@
 // @ts-nocheck
 // accounts.js -- client helpers that interact with the backend API
 
-// Determine API base URL: use localhost:3000 for local dev, otherwise current domain
-const API_BASE_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:3000' 
-    : window.location.origin;
+// Determine API base URL.
+// - On Vercel: automatically uses the Vercel domain as API base (both frontend + backend share same origin)
+// - On GitHub Pages: backend not available (GitHub Pages is static only)
+// - For local testing: set window.API_BASE_URL = 'http://localhost:3000' before loading this script
+const API_BASE_URL = (window.API_BASE_URL || window.location.origin).replace(/\/+$/,'');
+const isGitHubPages = window.location.hostname.includes('github.io');
+
+console.log('Environment:', { hostname: window.location.hostname, origin: window.location.origin, API_BASE_URL, isGitHubPages });
 
 /**
  * Displays a temporary message (success or error) on the screen.
@@ -33,14 +37,16 @@ function checkLogin() {
  * Handles the user login process.
  */
 async function login() {
+    console.log('login() called');
     // prevent useless attempts on static hosting
-    if (API_BASE_URL.includes('github.io')) {
-        showMessage('Login is not available on GitHub Pages. Run server locally.', false);
+    if (isGitHubPages) {
+        showMessage('Backend not available on GitHub Pages. Deploy to Vercel or run locally.', false);
         return;
     }
     // trim whitespace to avoid accidental spaces causing mismatches
     const username = document.getElementById('login-username').value.trim();
     const password = document.getElementById('login-password').value.trim();
+    console.log('attempting login', { username, password });
     if (!username || !password) {
         showMessage('Please enter both username and password', false);
         return;
@@ -94,8 +100,8 @@ function showSignup() {
  */
 async function signup() {
     // don't try to create accounts on static hosting
-    if (API_BASE_URL.includes('github.io')) {
-        showMessage('Signup not supported when loaded from GitHub Pages.', false);
+    if (isGitHubPages) {
+        showMessage('Backend not available on GitHub Pages. Deploy to Vercel or run locally.', false);
         return;
     }
     // trim fields to prevent accidental leading/trailing spaces

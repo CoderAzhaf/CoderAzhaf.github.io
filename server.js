@@ -363,8 +363,13 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!');
 });
 
-// Start server
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-    console.log(`Press Ctrl+C to stop the server`);
-});
+// For local development: start server
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(`Server running at http://localhost:${port}`);
+        console.log(`Press Ctrl+C to stop the server`);
+    });
+}
+
+// For Vercel: export the app
+module.exports = app;
