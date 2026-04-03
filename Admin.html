@@ -175,9 +175,10 @@
 
     <script>
         async function loadUsers() {
-            const users = await apiRequest('/api/users');
             const list = document.getElementById('usersList');
-            list.innerHTML = users.map((user) => {
+            try {
+                const users = await getAllUsers();
+                list.innerHTML = users.map((user) => {
                 const canDelete = user.username !== 'AZHA';
                 const balance = user.balance === undefined ? 0 : user.balance;
                 const banAction = user.status === 'banned' ? 'unban' : 'ban';
@@ -205,7 +206,10 @@
                         </div>
                     </article>
                 `;
-            }).join('');
+                }).join('');
+            } catch (error) {
+                list.innerHTML = '<p>Unable to load users right now.</p>';
+            }
         }
 
         async function promoteUser(username) {

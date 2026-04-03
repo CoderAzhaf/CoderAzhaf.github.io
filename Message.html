@@ -169,7 +169,7 @@
     <script>
         async function loadRecipients(currentUsername) {
             try {
-                const users = await apiRequest('/api/users');
+                const users = await getAllUsers();
                 const select = document.getElementById('recipientSelect');
                 const options = users
                     .filter((user) => user.username !== currentUsername)
@@ -177,7 +177,7 @@
                     .join('');
                 select.innerHTML = options || '<option value="">No other users yet</option>';
             } catch (error) {
-                document.getElementById('recipientSelect').innerHTML = '<option value="">Backend required</option>';
+                document.getElementById('recipientSelect').innerHTML = '<option value="">No users available</option>';
             }
         }
 

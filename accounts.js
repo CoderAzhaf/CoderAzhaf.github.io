@@ -95,6 +95,19 @@ function findAccount(username) {
     return Object.values(readAccounts()).find((account) => account.username.toLowerCase() === lowered);
 }
 
+async function getAllUsers() {
+    if (await hasBackend()) {
+        return apiRequest('/api/users');
+    }
+
+    const accounts = Object.values(readAccounts());
+    const balances = readBalancesLocal();
+    return accounts.map((account) => ({
+        ...account,
+        balance: balances[account.username] ?? (account.username === 'AZHA' ? 'INF' : 0)
+    }));
+}
+
 function showMessage(message, isSuccess) {
     const div = document.createElement('div');
     div.textContent = message;
@@ -533,3 +546,4 @@ window.markMessageRead = markMessageRead;
 window.deleteMessage = deleteMessage;
 window.hasBackend = hasBackend;
 window.apiRequest = apiRequest;
+window.getAllUsers = getAllUsers;
