@@ -3,9 +3,11 @@
 
 // Determine API base URL.
 // - On Vercel: uses the current origin.
-// - On GitHub Pages: set window.API_BASE_URL to your backend (e.g., Vercel URL) before loading this script.
-// - For local testing: set window.API_BASE_URL = 'http://localhost:3000'.
-const API_BASE_URL = (window.API_BASE_URL || window.location.origin).replace(/\/+$/,'');
+// - On GitHub Pages: this defaults to a Vercel backend URL (replace below with your deployed backend URL).
+// - For local testing: you can set window.API_BASE_URL = 'http://localhost:3000'.
+const defaultGitHubApi = 'https://your-vercel-backend.vercel.app'; // <--- replace with your real Vercel backend URL
+const defaultApi = window.location.hostname.includes('github.io') ? defaultGitHubApi : window.location.origin;
+const API_BASE_URL = (window.API_BASE_URL || defaultApi).replace(/\/+$/,'');
 
 console.log('Environment:', { hostname: window.location.hostname, origin: window.location.origin, API_BASE_URL });
 
