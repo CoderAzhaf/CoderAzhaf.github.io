@@ -15,7 +15,7 @@
                 <p class="eyebrow">Personal launchpad</p>
                 <h1>CoderAzhaf</h1>
                 <p class="hero-text">A cleaner home for your favorite links, projects, and account tools, now connected to a real Vercel-ready backend with live summary data.</p>
-                <div class="hero-actions">
+                <div class="hero-actions" id="heroActions">
                     <a class="button button-primary" href="Getin.html">Open Account</a>
                     <a class="button button-secondary" href="Message.html">Messages</a>
                     <a class="button button-secondary" href="contact.html">Website Info</a>
@@ -65,7 +65,7 @@
                     <article class="status-card">
                         <span>AZHA balance</span>
                         <strong id="azhaBalance">-</strong>
-                        <p>Live AZINC value reported by the backend.</p>
+                        <p>Only the AZHA account keeps infinite AZINC by default.</p>
                     </article>
                 </div>
             </section>
@@ -172,13 +172,22 @@
         const welcomeName = document.getElementById('welcomeName');
         const welcomeMeta = document.getElementById('welcomeMeta');
         const logoutButton = document.getElementById('logoutButton');
+        const heroActions = document.getElementById('heroActions');
 
         if (isLoggedIn && currentUsername) {
             welcomeName.textContent = currentUsername;
             welcomeMeta.textContent = isAdmin
-                ? `Signed in as ${currentUser || currentUsername}. Admin tools are available through your account pages.`
+                ? `Signed in as ${currentUser || currentUsername}. Admin tools are available in the admin panel.`
                 : `Signed in as ${currentUser || currentUsername}. Your inbox and account tools are ready.`;
             logoutButton.hidden = false;
+
+            if (isAdmin) {
+                const adminLink = document.createElement('a');
+                adminLink.className = 'button button-secondary';
+                adminLink.href = 'Admin.html';
+                adminLink.textContent = 'Admin Panel';
+                heroActions.insertBefore(adminLink, logoutButton);
+            }
         }
 
         logoutButton?.addEventListener('click', () => {

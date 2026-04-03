@@ -20,7 +20,7 @@ app.use((req, res, next) => {
     next();
 });
 
-const pageRoutes = ['Getin.html', 'Message.html', 'contact.html', 'Download.html'];
+const pageRoutes = ['Getin.html', 'Message.html', 'contact.html', 'Download.html', 'Admin.html'];
 pageRoutes.forEach((page) => {
     app.get(`/${page}`, (req, res) => {
         res.sendFile(path.join(__dirname, page));
@@ -114,6 +114,7 @@ app.post('/api/signup', wrap(async (req, res) => {
     }
 
     const accounts = await readAccounts();
+    const balances = await readBalances();
     accounts[username] = {
         username,
         password,
@@ -122,8 +123,11 @@ app.post('/api/signup', wrap(async (req, res) => {
         warnings: 0,
         status: 'active'
     };
+    if (username !== 'AZHA') {
+        balances[username] = 0;
+    }
 
-    await writeAccounts(accounts);
+    await Promise.all([writeAccounts(accounts), writeBalances(balances)]);
     res.json({ message: 'Account created successfully' });
 }));
 
@@ -156,7 +160,13 @@ app.post('/api/login', wrap(async (req, res) => {
 
 app.get('/api/users', wrap(async (req, res) => {
     const accounts = await readAccounts();
-    res.json(Object.values(accounts));
+    const balances = await readBalances();
+    res.json(
+        Object.values(accounts).map((account) => ({
+            ...account,
+            balance: balances[account.username] ?? (account.username === 'AZHA' ? 'INF' : 0)
+        }))
+    );
 }));
 
 app.delete('/api/users/:username', wrap(async (req, res) => {
@@ -174,8 +184,18 @@ app.delete('/api/users/:username', wrap(async (req, res) => {
         return res.status(400).json({ error: 'Cannot delete AZHA' });
     }
 
+    const targetUsername = accounts[key].username;
     delete accounts[key];
-    await writeAccounts(accounts);
+    const balances = await readBalances();
+    delete balances[targetUsername];
+    const messages = await readMessages();
+    const remainingMessages = messages.filter((message) => message.from !== targetUsername && message.to !== targetUsername);
+
+    await Promise.all([
+        writeAccounts(accounts),
+        writeBalances(balances),
+        writeMessages(remainingMessages)
+    ]);
     res.json({ message: 'deleted' });
 }));
 
@@ -191,6 +211,31 @@ app.post('/api/admin/makeadmin', wrap(async (req, res) => {
     }
 
     accounts[key].isAdmin = true;
+    await writeAccounts(accounts);
+    res.json({ message: 'OK' });
+}));
+
+app.post('/api/admin/removeadmin', wrap(async (req, res) => {
+    const { actor, username } = req.body;
+    if (!(await isAdminUser(actor))) {
+        return res.status(403).json({ error: 'Not authorized' });
+    }
+
+    const actorAccount = await findAccount(actor);
+    if (!actorAccount || actorAccount.username !== 'AZHA') {
+        return res.status(403).json({ error: 'Only AZHA can remove admin access' });
+    }
+
+    const { accounts, key } = await findAccountKey(username);
+    if (!key) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (accounts[key].username === 'AZHA') {
+        return res.status(400).json({ error: 'Cannot remove admin from AZHA' });
+    }
+
+    accounts[key].isAdmin = false;
     await writeAccounts(accounts);
     res.json({ message: 'OK' });
 }));
@@ -222,6 +267,10 @@ app.post('/api/admin/ban', wrap(async (req, res) => {
         return res.status(404).json({ error: 'User not found' });
     }
 
+    if (accounts[key].username === 'AZHA' && action !== 'unban') {
+        return res.status(400).json({ error: 'Cannot ban AZHA' });
+    }
+
     accounts[key].status = action === 'unban' ? 'active' : 'banned';
     await writeAccounts(accounts);
     res.json({ message: 'OK', status: accounts[key].status });
@@ -231,7 +280,7 @@ app.get('/api/balances', wrap(async (req, res) => {
     const username = req.query.username ? String(req.query.username) : '';
     const balances = await readBalances();
     if (username) {
-        return res.json({ [username]: balances[username] || 0 });
+        return res.json({ [username]: balances[username] ?? (username === 'AZHA' ? 'INF' : 0) });
     }
     res.json(balances);
 }));
@@ -242,23 +291,47 @@ app.post('/api/admin/azinc', wrap(async (req, res) => {
         return res.status(403).json({ error: 'Not authorized' });
     }
 
-    if (!username || typeof amount !== 'number') {
+    if (!username || typeof amount !== 'number' || Number.isNaN(amount)) {
         return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const recipient = await findAccount(username);
+    if (!recipient) {
+        return res.status(404).json({ error: 'User not found' });
     }
 
     const balances = await readBalances();
     if (username === 'AZHA') {
         balances.AZHA = 'INF';
     } else {
-        const current = balances[username] || 0;
-        if (current === 'INF') {
-            return res.status(400).json({ error: 'User already has infinite balance' });
-        }
+        const current = Number(balances[username] || 0);
         balances[username] = current + amount;
     }
 
     await writeBalances(balances);
-    res.json({ message: 'Balance updated', balances });
+    res.json({ message: 'Balance updated', balance: balances[username] });
+}));
+
+app.post('/api/admin/reset-balance', wrap(async (req, res) => {
+    const { actor, username } = req.body;
+    if (!(await isAdminUser(actor))) {
+        return res.status(403).json({ error: 'Not authorized' });
+    }
+
+    const recipient = await findAccount(username);
+    if (!recipient) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    const balances = await readBalances();
+    if (recipient.username === 'AZHA') {
+        balances.AZHA = 'INF';
+    } else {
+        balances[recipient.username] = 0;
+    }
+
+    await writeBalances(balances);
+    res.json({ message: 'Balance reset', balance: balances[recipient.username] ?? 0 });
 }));
 
 app.get('/api/messages', wrap(async (req, res) => {

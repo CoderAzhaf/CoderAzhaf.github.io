@@ -18,7 +18,7 @@ const defaultAccounts = {
         username: 'Vivvan Dash',
         password: 'dashpro',
         fullName: 'Vivvan Dash',
-        isAdmin: true,
+        isAdmin: false,
         warnings: 0,
         status: 'active'
     },
@@ -26,7 +26,7 @@ const defaultAccounts = {
         username: 'Alyanuddin',
         password: 'alyanpro',
         fullName: 'Alyanuddin Mohammed',
-        isAdmin: true,
+        isAdmin: false,
         warnings: 0,
         status: 'active'
     },
@@ -221,6 +221,9 @@ async function signup() {
             const accounts = readAccounts();
             accounts[username] = { username, password, fullName, isAdmin: false, warnings: 0, status: 'active' };
             writeAccounts(accounts);
+            const balances = readBalancesLocal();
+            balances[username] = 0;
+            writeBalancesLocal(balances);
         }
 
         showMessage('Account created successfully! You can now login.', true);
@@ -255,6 +258,32 @@ async function makeAdmin(username) {
             writeAccounts(accounts);
         }
         showMessage(`${username} is now an admin!`, true);
+        if (typeof showAdminPanel === 'function') showAdminPanel();
+        return true;
+    } catch (error) {
+        showMessage(error.message, false);
+        return false;
+    }
+}
+
+async function removeAdmin(username) {
+    const actor = localStorage.getItem('currentUsername');
+    try {
+        if (await hasBackend()) {
+            await apiRequest('/api/admin/removeadmin', {
+                method: 'POST',
+                body: JSON.stringify({ actor, username })
+            });
+        } else {
+            if (actor !== 'AZHA') throw new Error('Only AZHA can remove admin access.');
+            const accounts = readAccounts();
+            const key = Object.keys(accounts).find((entry) => accounts[entry].username.toLowerCase() === username.toLowerCase());
+            if (!key) throw new Error('User not found');
+            if (accounts[key].username === 'AZHA') throw new Error('Cannot remove admin from AZHA');
+            accounts[key].isAdmin = false;
+            writeAccounts(accounts);
+        }
+        showMessage(`${username} is no longer an admin.`, true);
         if (typeof showAdminPanel === 'function') showAdminPanel();
         return true;
     } catch (error) {
@@ -326,6 +355,9 @@ async function deleteUserAccount(username) {
             if (accounts[key].username === 'AZHA') throw new Error('Cannot delete AZHA');
             delete accounts[key];
             writeAccounts(accounts);
+            const balances = readBalancesLocal();
+            delete balances[username];
+            writeBalancesLocal(balances);
         }
         showMessage(`Account ${username} deleted.`, true);
         if (typeof showAdminPanel === 'function') showAdminPanel();
@@ -354,18 +386,43 @@ async function giveAZINC(targetUsername, amount) {
                 body: JSON.stringify({ actor, username: targetUsername, amount })
             });
         } else {
-            if (actor !== 'AZHA') throw new Error('Only AZHA can give AZINC.');
+            if (localStorage.getItem('isAdmin') !== 'true') throw new Error('Only admins can give AZINC.');
             const balances = readBalancesLocal();
             if (targetUsername === 'AZHA') {
                 balances.AZHA = 'INF';
             } else {
-                const current = balances[targetUsername] || 0;
-                if (current === 'INF') throw new Error('User already has infinite balance');
+                const current = Number(balances[targetUsername] || 0);
                 balances[targetUsername] = current + amount;
             }
             writeBalancesLocal(balances);
         }
         showMessage(`Gave ${amount} AZINC to ${targetUsername}.`, true);
+        return true;
+    } catch (error) {
+        showMessage(error.message, false);
+        return false;
+    }
+}
+
+async function resetAZINC(targetUsername) {
+    const actor = localStorage.getItem('currentUsername');
+    try {
+        if (await hasBackend()) {
+            await apiRequest('/api/admin/reset-balance', {
+                method: 'POST',
+                body: JSON.stringify({ actor, username: targetUsername })
+            });
+        } else {
+            if (localStorage.getItem('isAdmin') !== 'true') throw new Error('Only admins can reset AZINC.');
+            const balances = readBalancesLocal();
+            if (targetUsername === 'AZHA') {
+                balances.AZHA = 'INF';
+            } else {
+                balances[targetUsername] = 0;
+            }
+            writeBalancesLocal(balances);
+        }
+        showMessage(`${targetUsername}'s AZINC has been reset.`, true);
         return true;
     } catch (error) {
         showMessage(error.message, false);
@@ -462,11 +519,13 @@ window.showSignup = showSignup;
 window.showMessage = showMessage;
 window.checkLogin = checkLogin;
 window.makeAdmin = makeAdmin;
+window.removeAdmin = removeAdmin;
 window.warnUser = warnUser;
 window.toggleBan = toggleBan;
 window.deleteUserAccount = deleteUserAccount;
 window.getBalance = getBalance;
 window.giveAZINC = giveAZINC;
+window.resetAZINC = resetAZINC;
 window.getInbox = getInbox;
 window.getSent = getSent;
 window.sendMessage = sendMessage;

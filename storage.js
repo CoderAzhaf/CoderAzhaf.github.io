@@ -18,7 +18,7 @@ const defaultAccounts = {
         username: 'Vivvan Dash',
         password: 'dashpro',
         fullName: 'Vivvan Dash',
-        isAdmin: true,
+        isAdmin: false,
         warnings: 0,
         status: 'active'
     },
@@ -26,7 +26,7 @@ const defaultAccounts = {
         username: 'Alyanuddin',
         password: 'alyanpro',
         fullName: 'Alyanuddin Mohammed',
-        isAdmin: true,
+        isAdmin: false,
         warnings: 0,
         status: 'active'
     },

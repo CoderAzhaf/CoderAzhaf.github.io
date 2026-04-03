@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoderAzhaf | Admin Panel</title>
+    <link rel="icon" type="image/png" href="AZHA.PNG">
+    <script src="accounts.js"></script>
+    <style>
+        :root {
+            --bg: #081119;
+            --panel: rgba(10, 22, 30, 0.9);
+            --line: rgba(255, 255, 255, 0.1);
+            --text: #f4f1e8;
+            --muted: #bfd0d8;
+            --accent: #f2c35e;
+            --danger: #ff8c7f;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Trebuchet MS", sans-serif;
+            color: var(--text);
+            background: linear-gradient(rgba(5, 10, 15, 0.76), rgba(5, 10, 15, 0.88)), url("channels4_profile (2).jpg") center/cover no-repeat fixed;
+            padding: 20px;
+        }
+        .shell {
+            width: min(1200px, 100%);
+            margin: 0 auto;
+            display: grid;
+            gap: 20px;
+        }
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(16px);
+            padding: 24px;
+        }
+        .eyebrow {
+            margin: 0 0 10px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            font-size: 0.78rem;
+        }
+        h1 { margin-top: 0; font-family: Georgia, serif; font-size: clamp(2.4rem, 5vw, 4rem); }
+        p { color: var(--muted); line-height: 1.7; }
+        .toolbar {
+            display: grid;
+            grid-template-columns: 1fr 220px 160px;
+            gap: 12px;
+            align-items: end;
+        }
+        input, button {
+            width: 100%;
+            font: inherit;
+        }
+        input {
+            padding: 12px 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+        }
+        button {
+            min-height: 44px;
+            border: 0;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--accent), #ffae42);
+            color: #111;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .danger {
+            background: rgba(255, 140, 127, 0.2);
+            color: #fff;
+            border: 1px solid rgba(255, 140, 127, 0.45);
+        }
+        .users {
+            display: grid;
+            gap: 14px;
+        }
+        .user-card {
+            padding: 18px;
+            border-radius: 22px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .user-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .meta span {
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .actions button {
+            width: auto;
+            padding: 0 14px;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            min-height: 44px;
+            padding: 0 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text);
+        }
+        .message.success, .message.error {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            padding: 10px 16px;
+            border-radius: 16px;
+        }
+        @media (max-width: 860px) {
+            .toolbar { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <section class="panel">
+            <p class="eyebrow">Admin only</p>
+            <h1>Admin panel</h1>
+            <p id="statusText">Checking admin access.</p>
+            <a class="back-link" href="index.html">Back to launchpad</a>
+        </section>
+
+        <section class="panel">
+            <h2>Give AZINC</h2>
+            <div class="toolbar">
+                <input id="azincUser" type="text" placeholder="Username">
+                <input id="azincAmount" type="number" placeholder="Amount" step="1">
+                <button type="button" id="azincButton">Give AZINC</button>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Users</h2>
+            <div id="usersList" class="users"></div>
+        </section>
+    </main>
+
+    <script>
+        async function loadUsers() {
+            const users = await apiRequest('/api/users');
+            const list = document.getElementById('usersList');
+            list.innerHTML = users.map((user) => {
+                const canDelete = user.username !== 'AZHA';
+                const balance = user.balance === undefined ? 0 : user.balance;
+                const banAction = user.status === 'banned' ? 'unban' : 'ban';
+                return `
+                    <article class="user-card">
+                        <div class="user-head">
+                            <div>
+                                <h3>${user.username}</h3>
+                                <p>${user.fullName}</p>
+                            </div>
+                            <strong>${user.isAdmin ? 'Admin' : 'User'}</strong>
+                        </div>
+                        <div class="meta">
+                            <span>Status: ${user.status}</span>
+                            <span>Warnings: ${user.warnings || 0}</span>
+                            <span>AZINC: ${balance}</span>
+                        </div>
+                        <div class="actions">
+                            ${!user.isAdmin ? `<button type="button" onclick="promoteUser('${user.username}')">Make Admin</button>` : ''}
+                            ${user.isAdmin && user.username !== 'AZHA' ? `<button type="button" class="secondary" onclick="demoteUser('${user.username}')">Remove Admin</button>` : ''}
+                            <button type="button" class="secondary" onclick="warnSelectedUser('${user.username}')">Warn</button>
+                            <button type="button" class="secondary" onclick="resetSelectedBalance('${user.username}')">Reset AZINC</button>
+                            ${user.username !== 'AZHA' ? `<button type="button" class="secondary" onclick="toggleUserBan('${user.username}', '${banAction}')">${banAction === 'ban' ? 'Ban' : 'Unban'}</button>` : ''}
+                            ${canDelete ? `<button type="button" class="danger" onclick="deleteSelectedUser('${user.username}')">Delete</button>` : ''}
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        async function promoteUser(username) {
+            if (await makeAdmin(username)) loadUsers();
+        }
+
+        async function demoteUser(username) {
+            if (await removeAdmin(username)) loadUsers();
+        }
+
+        async function warnSelectedUser(username) {
+            if (await warnUser(username)) loadUsers();
+        }
+
+        async function resetSelectedBalance(username) {
+            if (await resetAZINC(username)) loadUsers();
+        }
+
+        async function toggleUserBan(username, action) {
+            if (await toggleBan(username, action)) loadUsers();
+        }
+
+        async function deleteSelectedUser(username) {
+            if (!confirm(`Delete ${username}? This removes account data and messages.`)) return;
+            if (await deleteUserAccount(username)) loadUsers();
+        }
+
+        document.getElementById('azincButton').addEventListener('click', async () => {
+            const username = document.getElementById('azincUser').value.trim();
+            const amount = Number(document.getElementById('azincAmount').value);
+            if (!username || Number.isNaN(amount)) {
+                showMessage('Enter a username and amount.', false);
+                return;
+            }
+            if (await giveAZINC(username, amount)) {
+                document.getElementById('azincAmount').value = '';
+                loadUsers();
+            }
+        });
+
+        async function init() {
+            if (!checkLogin()) return;
+            if (localStorage.getItem('isAdmin') !== 'true') {
+                showMessage('You are not an admin.', false);
+                window.location.href = 'index.html';
+                return;
+            }
+            const backend = await hasBackend();
+            document.getElementById('statusText').textContent = backend
+                ? 'Admin access confirmed. You can manage users, roles, bans, and AZINC here.'
+                : 'Admin access confirmed in local fallback mode.';
+            loadUsers();
+        }
+
+        window.promoteUser = promoteUser;
+        window.demoteUser = demoteUser;
+        window.warnSelectedUser = warnSelectedUser;
+        window.resetSelectedBalance = resetSelectedBalance;
+        window.toggleUserBan = toggleUserBan;
+        window.deleteSelectedUser = deleteSelectedUser;
+        init();
+    </script>
+</body>
+</html>
