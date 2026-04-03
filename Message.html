@@ -3,79 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Message</title>
-    <link rel="stylesheet" href="app.css">
-    <script src="app.js"></script>
+    <title>CoderAzhaf | Messages</title>
+    <link rel="icon" type="image/png" href="AZHA.PNG">
     <script src="accounts.js"></script>
+    <style>
+        :root {
+            --bg: #081119;
+            --panel: rgba(10, 22, 30, 0.9);
+            --line: rgba(255, 255, 255, 0.1);
+            --text: #f4f1e8;
+            --muted: #bfd0d8;
+            --accent: #f2c35e;
+            --good: #67d7a7;
+            --bad: #ff8c7f;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Trebuchet MS", sans-serif;
+            color: var(--text);
+            background: linear-gradient(rgba(5, 10, 15, 0.76), rgba(5, 10, 15, 0.88)), url("channels4_profile (2).jpg") center/cover no-repeat fixed;
+            padding: 20px;
+        }
+        .shell {
+            width: min(1100px, 100%);
+            margin: 0 auto;
+            display: grid;
+            gap: 20px;
+        }
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(16px);
+            padding: 24px;
+        }
+        .eyebrow {
+            margin: 0 0 10px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            font-size: 0.78rem;
+        }
+        h1, h2 { margin-top: 0; }
+        h1 { font-family: Georgia, serif; font-size: clamp(2.4rem, 5vw, 4rem); }
+        p { color: var(--muted); line-height: 1.7; }
+        .layout {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 20px;
+        }
+        .field, select, textarea, button {
+            width: 100%;
+            font: inherit;
+        }
+        .field, select, textarea {
+            margin-bottom: 12px;
+            padding: 12px 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+        }
+        textarea { min-height: 120px; resize: vertical; }
+        button {
+            min-height: 46px;
+            border: 0;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--accent), #ffae42);
+            color: #111;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .lists {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .message-list {
+            display: grid;
+            gap: 12px;
+        }
+        .message-card {
+            padding: 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .message-card strong,
+        .message-card span {
+            display: block;
+        }
+        .message-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .message-actions button {
+            min-height: 40px;
+        }
+        .secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 8px;
+            color: var(--text);
+            text-decoration: none;
+            min-height: 44px;
+            padding: 0 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .message.success, .message.error {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            padding: 10px 16px;
+            border-radius: 16px;
+        }
+        .success { background: rgba(103, 215, 167, 0.18); border: 1px solid var(--good); }
+        .error { background: rgba(255, 140, 127, 0.18); border: 1px solid var(--bad); }
+        @media (max-width: 860px) {
+            .layout, .lists { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Message</h1>
-        <div id="messageContainer">
-            <!-- Messages will be displayed here -->
-        </div>
-        <form id="messageForm">
-            <input type="text" id="messageInput" placeholder="Type your message..." required>
-            <button type="submit">Send</button>
-        </form>
-    </div>
+    <main class="shell">
+        <section class="panel">
+            <p class="eyebrow">Messaging</p>
+            <h1>Inbox and sent messages</h1>
+            <p id="statusText">Checking your account and backend connection.</p>
+            <a class="back-link" href="index.html">Back to launchpad</a>
+        </section>
+
+        <section class="panel layout">
+            <div>
+                <h2>Compose</h2>
+                <select id="recipientSelect"></select>
+                <textarea id="messageInput" placeholder="Write your message here"></textarea>
+                <button id="sendButton" type="button">Send message</button>
+            </div>
+            <div class="lists">
+                <div>
+                    <h2>Inbox</h2>
+                    <div id="inboxList" class="message-list"></div>
+                </div>
+                <div>
+                    <h2>Sent</h2>
+                    <div id="sentList" class="message-list"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
     <script>
-        async function loadMessages() {
-            const user = localStorage.getItem('currentUsername');
-            if (!user) return;
+        async function loadRecipients(currentUsername) {
             try {
-                const resp = await fetch(`/api/messages?username=${encodeURIComponent(user)}`);
-                if (!resp.ok) throw new Error('unable to load');
-                const msgs = await resp.json();
-                const messageContainer = document.getElementById('messageContainer');
-                messageContainer.innerHTML = '';
-                msgs.forEach(m => {
-                    const div = document.createElement('div');
-                    div.className = 'message';
-                    div.textContent = `${m.from}: ${m.text}`;
-                    messageContainer.appendChild(div);
-                });
-            } catch (err) {
-                console.error('loadMessages error', err);
+                const users = await apiRequest('/api/users');
+                const select = document.getElementById('recipientSelect');
+                const options = users
+                    .filter((user) => user.username !== currentUsername)
+                    .map((user) => `<option value="${user.username}">${user.username}</option>`)
+                    .join('');
+                select.innerHTML = options || '<option value="">No other users yet</option>';
+            } catch (error) {
+                document.getElementById('recipientSelect').innerHTML = '<option value="">Backend required</option>';
             }
         }
 
-        async function sendMessageBackend(text) {
-            const from = localStorage.getItem('currentUsername');
-            const to = prompt('Send to (username):');
-            if (!from || !to) {
-                alert('You must be logged in and specify recipient');
-                return false;
+        function renderMessageCard(message, currentUsername, type) {
+            const actionButtons = [];
+            if (type === 'inbox' && !message.read) {
+                actionButtons.push(`<button type="button" onclick="markRead('${message.id}')">Mark read</button>`);
             }
-            try {
-                const resp = await fetch('/api/messages', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ from, to, text })
-                });
-                return resp.ok;
-            } catch (err) {
-                console.error('sendMessageBackend error', err);
-                return false;
+            actionButtons.push(`<button type="button" class="secondary" onclick="removeMessage('${message.id}')">Delete</button>`);
+
+            return `
+                <article class="message-card">
+                    <strong>${type === 'inbox' ? `From: ${message.from}` : `To: ${message.to}`}</strong>
+                    <span>${new Date(message.timestamp).toLocaleString()}</span>
+                    <p>${message.text}</p>
+                    <div class="message-actions">${actionButtons.join('')}</div>
+                </article>
+            `;
+        }
+
+        async function refreshMessages() {
+            const currentUsername = localStorage.getItem('currentUsername');
+            const inbox = (await getInbox(currentUsername)).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            const sent = (await getSent(currentUsername)).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            document.getElementById('inboxList').innerHTML = inbox.length ? inbox.map((message) => renderMessageCard(message, currentUsername, 'inbox')).join('') : '<p>No inbox messages yet.</p>';
+            document.getElementById('sentList').innerHTML = sent.length ? sent.map((message) => renderMessageCard(message, currentUsername, 'sent')).join('') : '<p>No sent messages yet.</p>';
+        }
+
+        async function markRead(id) {
+            const currentUsername = localStorage.getItem('currentUsername');
+            if (await markMessageRead(id, currentUsername)) {
+                refreshMessages();
             }
         }
 
-        document.getElementById('messageForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const inp = document.getElementById('messageInput');
-            const msg = inp.value.trim();
-            if (msg) {
-                const ok = await sendMessageBackend(msg);
-                if (ok) {
-                    loadMessages();
-                    inp.value = '';
-                } else {
-                    showMessage('Failed to send message', false);
-                }
+        async function removeMessage(id) {
+            const currentUsername = localStorage.getItem('currentUsername');
+            if (await deleteMessage(id, currentUsername)) {
+                refreshMessages();
+            }
+        }
+
+        document.getElementById('sendButton').addEventListener('click', async () => {
+            const currentUsername = localStorage.getItem('currentUsername');
+            const recipient = document.getElementById('recipientSelect').value;
+            const text = document.getElementById('messageInput').value.trim();
+            if (!recipient || !text) {
+                showMessage('Choose a recipient and write a message.', false);
+                return;
+            }
+            const ok = await sendMessage(currentUsername, recipient, text);
+            if (ok) {
+                document.getElementById('messageInput').value = '';
+                showMessage('Message sent.', true);
+                refreshMessages();
             }
         });
 
-        loadMessages();
+        async function init() {
+            if (!checkLogin()) return;
+            const currentUsername = localStorage.getItem('currentUsername');
+            const backend = await hasBackend();
+            document.getElementById('statusText').textContent = backend
+                ? `Signed in as ${currentUsername}. Messages are connected to the backend.`
+                : `Signed in as ${currentUsername}. Backend is unavailable, so local fallback mode is active.`;
+            await loadRecipients(currentUsername);
+            await refreshMessages();
+        }
+
+        window.markRead = markRead;
+        window.removeMessage = removeMessage;
+        init();
     </script>
 </body>
 </html>

@@ -1,141 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" type="image/png" href="AZHA.PNG">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AZHA LanchPad - Login/Signup</title>
-
+    <title>CoderAzhaf | Account</title>
+    <link rel="icon" type="image/png" href="AZHA.PNG">
     <script>
-        // Using localStorage-based authentication (no backend required)
-        console.log('Running GitHub Pages compatible mode (localStorage)');
+        console.log('Running localStorage-based account mode');
     </script>
     <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: 'Segoe UI', sans-serif;
-            background-image: url('channels4_profile (2).jpg');
-            background-size: cover;
-            background-attachment: fixed;
-            color: white;
+        :root {
+            --bg: #071018;
+            --panel: rgba(9, 20, 29, 0.88);
+            --line: rgba(255, 255, 255, 0.1);
+            --text: #f4f2ea;
+            --muted: #bfd0d8;
+            --accent: #f6c453;
+            --accent-strong: #ffb341;
+            --good: #67d7a7;
+            --bad: #ff8c7f;
         }
 
-        .nav-center {
-            text-align: center;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-            margin-bottom: 20px;
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Trebuchet MS", sans-serif;
+            color: var(--text);
+            background:
+                linear-gradient(rgba(5, 10, 15, 0.7), rgba(5, 10, 15, 0.88)),
+                url("channels4_profile (2).jpg") center/cover no-repeat fixed;
+            padding: 20px;
+        }
+
+        .shell {
+            width: min(980px, 100%);
+            margin: 0 auto;
+        }
+
+        .hero,
+        .account-form {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+            backdrop-filter: blur(16px);
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 20px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-family: Georgia, serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+        }
+
+        .eyebrow {
+            margin: 0 0 10px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            font-size: 0.78rem;
+        }
+
+        .hero p,
+        .account-form p {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .hero img {
+            width: 120px;
+            height: 120px;
+            border-radius: 28px;
+            object-fit: cover;
+            justify-self: end;
+        }
+
+        .forms {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
         }
 
         .account-form {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 400px;
-            margin: 20px auto;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            padding: 24px;
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
         }
 
         input {
             width: 100%;
-            padding: 10px;
             margin: 10px 0;
-            border: none;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.9);
-            box-sizing: border-box;
+            padding: 13px 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.56);
         }
 
         button {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 5px;
-            background: #4CAF50;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s;
+            min-height: 48px;
+            margin-top: 10px;
+            border: 0;
+            border-radius: 999px;
             font-weight: bold;
+            cursor: pointer;
+            color: #111;
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
         }
 
-        button:hover {
-            transform: scale(1.02);
-            background: #45a049;
+        .switch-link,
+        .back-link {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
         }
 
         .message {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            text-align: center;
-            animation: fadeIn 0.3s ease-out;
-            position: fixed; /* Keep messages on top */
+            position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px 16px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
         }
 
         .success {
-            background: rgba(76, 175, 80, 0.3);
-            border: 1px solid #4CAF50;
+            background: rgba(103, 215, 167, 0.18);
+            border: 1px solid var(--good);
         }
 
         .error {
-            background: rgba(244, 67, 54, 0.3);
-            border: 1px solid #f44336;
+            background: rgba(255, 140, 127, 0.18);
+            border: 1px solid var(--bad);
         }
 
-        .username-display {
-            font-size: 1.2em;
-            margin: 10px 0;
-            color: #4CAF50;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
+        @media (max-width: 720px) {
+            .hero {
+                grid-template-columns: 1fr;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+
+            .hero img {
+                justify-self: start;
             }
         }
     </style>
 </head>
-
 <body>
-    <div class="nav-center">
-        <img src="/AZHA.PNG" alt="Icon"
-            style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-        <h1>Account</h1>
-        <div id="username" class="username-display"></div>
+    <div class="shell">
+        <section class="hero">
+            <div>
+                <p class="eyebrow">Account access</p>
+                <h1>Welcome back</h1>
+                <p>Sign in or create an account using the browser-only setup you already have. This keeps things simple for Vercel because it works entirely with local storage.</p>
+                <a class="back-link" href="index.html">Back to launchpad</a>
+            </div>
+            <img src="AZHA.PNG" alt="CoderAzhaf logo">
+        </section>
+
+        <div class="forms">
+            <div id="login-form" class="account-form">
+                <h2>Login</h2>
+                <p>Use your username and password to open your account.</p>
+                <input type="text" id="login-username" placeholder="Enter username">
+                <input type="password" id="login-password" placeholder="Enter password">
+                <button type="button" onclick="login()">Login</button>
+                <p>Need an account? <a class="switch-link" href="#" onclick="showSignup(); return false;">Create one</a></p>
+            </div>
+
+            <div id="signup-form" class="account-form" style="display: none;">
+                <h2>Create account</h2>
+                <p>Make a local account for this browser and start using the site tools.</p>
+                <input type="text" id="signup-username" placeholder="Choose username">
+                <input type="password" id="signup-password" placeholder="Choose password">
+                <input type="text" id="signup-fullname" placeholder="Enter your full name">
+                <button type="button" onclick="signup()">Sign Up</button>
+                <p>Already have one? <a class="switch-link" href="#" onclick="showLogin(); return false;">Go to login</a></p>
+            </div>
         </div>
-
-    <div id="login-form" class="account-form">
-        <h2>Login</h2>
-        <input type="text" id="login-username" placeholder="Enter username">
-        <input type="password" id="login-password" placeholder="Enter password">
-        <button onclick="login()">Login</button>
-        <p style="text-align: center; margin-top: 10px;">
-            Don't have an account? <a href="#" onclick="showSignup()" style="color: #4CAF50;">Sign up</a>
-        </p>
-    </div>
-
-    <div id="signup-form" class="account-form" style="display: none;">
-        <h2>Sign Up</h2>
-        <input type="text" id="signup-username" placeholder="Choose username">
-        <input type="password" id="signup-password" placeholder="Choose password">
-        <input type="text" id="signup-fullname" placeholder="Enter your full name">
-        <button onclick="signup()">Sign Up</button>
-        <p style="text-align: center; margin-top: 10px;">
-            Already have an account? <a href="#" onclick="showLogin()" style="color: #4CAF50;">Login</a>
-        </p>
     </div>
 
     <script src="accounts.js"></script>

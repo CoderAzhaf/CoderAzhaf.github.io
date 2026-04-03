@@ -1,7 +1,123 @@
-<body background="AZHA.PNG"></body>
-<link rel="icon" href="AZHA.PNG" type="image/x-icon">
-
-<button><a href="Minecraft.gif" download>Download Minecraft Gif</a></button>
-        <button><a href="tenor.gif" download>Download Roblox Gif</a></button>
-        <button><a href="tenor 2.gif" download>Download Fortnite Gif</a></button>
-        <button><a href="tenor 3.gif" download>Download Among Us Gif</a></button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoderAzhaf | Downloads</title>
+    <link rel="icon" type="image/png" href="AZHA.PNG">
+    <style>
+        :root {
+            --bg: #081119;
+            --panel: rgba(10, 22, 30, 0.9);
+            --line: rgba(255, 255, 255, 0.1);
+            --text: #f4f1e8;
+            --muted: #bfd0d8;
+            --accent: #f2c35e;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Trebuchet MS", sans-serif;
+            color: var(--text);
+            background: linear-gradient(rgba(5, 10, 15, 0.76), rgba(5, 10, 15, 0.88)), url("AZHA.PNG") center/cover no-repeat fixed;
+            padding: 20px;
+        }
+        .shell {
+            width: min(1100px, 100%);
+            margin: 0 auto;
+        }
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(16px);
+            padding: 28px;
+        }
+        .eyebrow {
+            margin: 0 0 10px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            font-size: 0.78rem;
+        }
+        h1 {
+            margin-top: 0;
+            font-family: Georgia, serif;
+            font-size: clamp(2.4rem, 5vw, 4rem);
+        }
+        p { color: var(--muted); line-height: 1.7; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-top: 24px;
+        }
+        .card {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 18px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .card img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 18px;
+        }
+        .download-link, .back-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            border-radius: 999px;
+            padding: 0 16px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .download-link {
+            background: linear-gradient(135deg, var(--accent), #ffae42);
+            color: #111;
+        }
+        .back-link {
+            margin-top: 20px;
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+    </style>
+</head>
+<body>
+    <main class="shell panel">
+        <p class="eyebrow">Downloads</p>
+        <h1>Media downloads</h1>
+        <p>Grab your animated assets from a proper download page that works cleanly on Vercel.</p>
+        <section class="grid">
+            <article class="card">
+                <img src="Minecraft.gif" alt="Minecraft GIF preview">
+                <h2>Minecraft GIF</h2>
+                <a class="download-link" href="Minecraft.gif" download>Download</a>
+            </article>
+            <article class="card">
+                <img src="tenor.gif" alt="Roblox GIF preview">
+                <h2>Roblox GIF</h2>
+                <a class="download-link" href="tenor.gif" download>Download</a>
+            </article>
+            <article class="card">
+                <img src="tenor 2.gif" alt="Fortnite GIF preview">
+                <h2>Fortnite GIF</h2>
+                <a class="download-link" href="tenor 2.gif" download>Download</a>
+            </article>
+            <article class="card">
+                <img src="tenor 3.gif" alt="Among Us GIF preview">
+                <h2>Among Us GIF</h2>
+                <a class="download-link" href="tenor 3.gif" download>Download</a>
+            </article>
+        </section>
+        <a class="back-link" href="index.html">Back to launchpad</a>
+    </main>
+</body>
+</html>

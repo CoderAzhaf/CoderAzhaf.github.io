@@ -1,766 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <link rel="icon" type="image/png" href="AZHA.PNG">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="app.css">
-    <title>AZHA LanchPad</title>
+    <meta name="description" content="CoderAzhaf is a personal launchpad for projects, games, videos, and account access.">
+    <title>CoderAzhaf | Launchpad</title>
     <link rel="icon" type="image/png" href="AZHA.PNG">
-
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: 'Segoe UI', sans-serif;
-            background-image: url('channels4_profile (2).jpg');
-            background-size: cover;
-            background-attachment: fixed;
-            color: white;
-        }
-
-        .nav-center {
-            text-align: center;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .account-form {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 400px;
-            margin: 20px auto;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.9);
-            box-sizing: border-box;
-            color: black; /* Ensure text is visible */
-        }
-
-        button {
-            width: 50%;
-            padding: 12px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 5px;
-            background: #000000;
-            color: gold;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-        }
-
-        button:hover {
-            transform: scale(1.02);
-            background: #45a049;
-        }
-
-        .message {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            text-align: center;
-            animation: fadeIn 0.3s ease-out;
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .success {
-            background: rgba(76, 175, 80, 0.3);
-            border: 1px solid #4CAF50;
-        }
-
-        .error {
-            background: rgba(244, 67, 54, 0.3);
-            border: 1px solid #f44336;
-        }
-
-        .username-display {
-            font-size: 1.2em;
-            margin: 10px 0;
-            color: #4CAF50;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Styles for the admin panel */
-        .admin-panel {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 800px;
-            margin: 20px auto;
-            color: white;
-        }
-
-        .account-list {
-            margin-top: 20px;
-        }
-
-        .account-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .account-item > div {
-            margin: 5px 0;
-        }
-
-        .admin-controls button {
-            background: #4CAF50;
-            color: white;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-left: 5px;
-            width: auto;
-        }
-
-        .admin-controls button:hover {
-            opacity: 0.9;
-        }
-
-        .warning {
-            color: yellow;
-            margin-left: 10px;
-        }
-
-        .banned {
-            color: red;
-            margin-left: 10px;
-        }
-
-        .admin {
-            color: green;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-
-        .search-bar {
-            margin-bottom: 10px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .search-bar input {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            color: black;
-        }
-
-        .search-bar button {
-            padding: 8px 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: auto;
-        }
-
-        .logout-button, .delete-button {
-            background-color: #f44336;
-            color: white;
-            width: auto;
-            margin-left: 10px;
-        }
-
-        .logout-button:hover, .delete-button:hover {
-            background-color: #d32f2f;
-        }
-
-        .nav-center button {
-            width: auto;
-            margin: 5px;
-        }
-
-        .admin-toggle {
-        position: fixed;
-        right: 20px;
-        bottom: 20px;
-        background: #222;
-        color: #fff;
-        padding: 10px 14px;
-        border: none;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        z-index: 1200;
-        cursor: pointer;
-        font-weight: bold;
-        display: none; /* shown via script for admins */
-    }
-    .admin-toggle:hover { opacity: 0.95; transform: translateY(-1px); }
-    </style>
+    <link rel="stylesheet" href="app.css">
 </head>
-
-<body>
-    <div class="nav-center">
-        <img src="AZHA.PNG" alt="Icon"
-            style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-        <h1>CoderAzhaf</h1>
-        <div id="username" class="username-display"></div>
-        <button onclick="logout()" class="logout-button" style="display: none;">Logout</button>
-    <h1 class="section-title">Websites</h1>
-    <div class="nav-center">
-        <a href="https://www.google.com" target="_blank">
-            <button style="background-color: rgb(69, 67, 15);color: aquamarine;">Go To Google!</button>
-        </a>
-        <a href="https://launchpad.classlink.com/" target="_blank">
-            <button style="background-color: rgb(131, 127, 29);color: rgb(38, 207, 151);">Go to Classlink!</button>
-        </a>
-        <a href="https://www.youtube.com/@BrosMaxGamerz" target="_blank">
-            <button style="background-color: rgb(69, 67, 15);color: aquamarine;">Go To my YouTube Channel!</button>
-        </a>
-         <a href="https://www.youtube.com/" target="_blank">
-            <button style="background-color: rgb(69, 67, 15);color: aquamarine;">Go To my YouTube!</button>
-        </a>
-        <a href="/Pro-Open/" target="_blank">
-            <button style="background-color: rgb(69, 67, 15);color: aquamarine;">Go To Azha Lanchpad Pro-Open!</button>
-        </a>
-    </div>
-
-    <h1 class="section-title">AZHA Games</h1>
-    <div class="nav-center game-container">
-        <a href="https://azhaownershouse.vercel.app" target="_blank">
-            <img src="OwnersHowseimage.PNG" height="100" title="Owners House" alt="Owners House">
-        </a>
-        <a href="https://azhahidingmonsters.base44.app" target="_blank">
-            <img src="gemini-image.png.PNG" height="100" title="Hiding Monsters" alt="Hiding Monsters">
-        </a>
-
-    <a href="https://azhaaviationbuil.base44.app" target="_blank">
-            <img src="27eecd342_logo.png" height="100" title="Hiding Monsters" alt="Hiding Monsters">
-        </a>
-    </div>
-
-    <h1 class="section-title">Coder azhaf Website Video</h1>
-    <div class="nav-center">
-        <video controls loop src="Azhaf video web ..mp4" width="500"
-            style="display: block; margin: 20px auto; border-radius: 10px;"></video>
-    </div>
-
-    <div class="nav-center">
-        <button><a href="contact.html">Info Of website</a></button>
-        <button><a href="Getin.html">Sign up or Log in</a></button>
-        <button><a href="Download.html">Download</a></button>
-        <button><a href="Game.py">Game</a></button>
-         <!-- Admin Panel toggle button (fixed bottom-right) -->
-    <button id="adminToggleBtn" class="admin-toggle" title="Open Admin Panel">Admin Panel</button>
-
-    <script>
-    // show/hide and click behavior for Admin Panel button
-    document.addEventListener('DOMContentLoaded', () => {
-        const btn = document.getElementById('adminToggleBtn');
-        if (!btn) return;
-
-        function updateAdminBtn() {
-            const isAdmin = localStorage.getItem('isAdmin') === 'true';
-            const loggedIn = !!localStorage.getItem('currentUsername');
-            btn.style.display = (isAdmin && loggedIn) ? 'block' : 'none';
-        }
-
-        btn.addEventListener('click', () => {
-            const current = localStorage.getItem('currentUsername');
-            const isAdmin = localStorage.getItem('isAdmin') === 'true';
-            if (!current) { if (typeof showMessage === 'function') showMessage('Please login first.', false); return; }
-            if (!isAdmin) { if (typeof showMessage === 'function') showMessage('You are not an admin.', false); return; }
-            if (typeof showAdminPanel === 'function') showAdminPanel();
-            const pane = document.getElementById('adminPanel');
-            if (pane) pane.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-
-        // update on load and when other tabs change login/admin status
-        updateAdminBtn();
-        window.addEventListener('storage', updateAdminBtn);
-    });
-    </script>
-    </div>
-
-    <div id="adminPanel" class="admin-panel" style="display: none;">
-        <h2>Admin Panel</h2>
-        <div class="search-bar">
-            <input type="text" id="searchUsername" placeholder="Search by username">
-            <button onclick="searchUsers()">Search</button>
-        </div>
-        <div class="account-list">
-            <h3>Manage User Accounts</h3>
-            <div id="accountsList"></div>
-        </div>
-    </div>
-
-    <script src="accounts.js"></script>
-    <script>
-        // admin panel helpers using backend APIs
-        let adminAccountsCache = [];
-
-        async function fetchAllAccounts() {
-            // Read from localStorage instead of API (GitHub Pages compatible)
-            const accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
-            return Object.values(accounts);
-        }
-
-        async function showAdminPanel() {
-            const current = localStorage.getItem('currentUsername');
-            const accounts = await fetchAllAccounts();
-            if (!accounts.find(u => u.username === current && u.isAdmin)) {
-                document.getElementById('adminPanel').style.display = 'none';
-                return;
-            }
-            adminAccountsCache = accounts.filter(u => u.username !== current);
-            displayAccounts(adminAccountsCache);
-            const searchInput = document.getElementById('searchUsername');
-            if (searchInput) {
-                searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') searchUsers(); });
-            }
-            document.getElementById('adminPanel').style.display = 'block';
-        }
-
-        function searchUsers() {
-            const term = document.getElementById('searchUsername').value.toLowerCase();
-            const filtered = adminAccountsCache.filter(acc => acc.username.toLowerCase().includes(term));
-            displayAccounts(filtered);
-        }
-
-        function displayAccounts(accountsToDisplay) {
-            const accountsList = document.getElementById('accountsList');
-            accountsList.innerHTML = '';
-            if (accountsToDisplay.length === 0) {
-                accountsList.innerHTML = '<p>No accounts found matching your search or no other users.</p>';
-                return;
-            }
-            const currentUsername = localStorage.getItem('currentUsername');
-            const isOwner = currentUsername === 'AZHA';
-            accountsToDisplay.forEach(account => {
-                const username = account.username;
-                const passwordDisplay = isOwner ? `<div><strong>Password:</strong> ${account.password}</div>` : '';
-                const statusBtnLabel = account.status === 'banned' ? 'Unban' : 'Ban';
-                const statusAction = account.status === 'banned' ? 'unban' : 'ban';
-                const controls = `
-                    <button onclick="warnUser('${username}')">Warn</button>
-                    <button onclick="toggleBan('${username}','${statusAction}')">${statusBtnLabel}</button>
-                    <button onclick="confirmDeleteUser('${username}')">Delete</button>
-                    ${!account.isAdmin ? `<button onclick="makeAdmin('${username}')">Make Admin</button>` : ''}
-                `;
-                const accountDiv = document.createElement('div');
-                accountDiv.className = 'account-item';
-                accountDiv.innerHTML = `
+<body class="home-page">
+    <div class="page-shell">
+        <header class="hero-panel">
+            <div class="hero-copy">
+                <p class="eyebrow">Personal launchpad</p>
+                <h1>CoderAzhaf</h1>
+                <p class="hero-text">A cleaner home for your favorite links, projects, and account tools, now connected to a real Vercel-ready backend with live summary data.</p>
+                <div class="hero-actions">
+                    <a class="button button-primary" href="Getin.html">Open Account</a>
+                    <a class="button button-secondary" href="Message.html">Messages</a>
+                    <a class="button button-secondary" href="contact.html">Website Info</a>
+                    <button id="logoutButton" class="button button-ghost" type="button" hidden>Log Out</button>
+                </div>
+            </div>
+            <aside class="profile-card">
+                <img class="profile-logo" src="AZHA.PNG" alt="CoderAzhaf logo">
+                <p class="profile-label">Current status</p>
+                <h2 id="welcomeName">Visitor</h2>
+                <p id="welcomeMeta">Browse the launchpad or sign in to use account and messaging features.</p>
+                <div class="profile-stats">
                     <div>
-                        <strong>${account.fullName}</strong> (${username})
-                        ${account.isAdmin ? `<span class="admin">ADMIN</span>` : ''}
-                        ${account.warnings > 0 ? `<span class="warning">Warnings: ${account.warnings}</span>` : ''}
-                        ${account.status === 'banned' ? `<span class="banned">BANNED</span>` : ''}
-                        ${passwordDisplay}
+                        <span>Projects</span>
+                        <strong id="projectCount">3</strong>
                     </div>
-                    <div class="admin-controls">${controls}</div>
-                `;
-                accountsList.appendChild(accountDiv);
-            });
-        }
+                    <div>
+                        <span>Accounts</span>
+                        <strong id="userCount">-</strong>
+                    </div>
+                    <div>
+                        <span>Storage</span>
+                        <strong id="storageMode">Checking</strong>
+                    </div>
+                </div>
+            </aside>
+        </header>
 
-        function confirmDeleteUser(username) {
-            if (confirm(`Are you sure you want to delete ${username}'s account? This cannot be undone.`)) {
-                deleteUserAccount(username).then(ok => {
-                    if (ok) showMessage(`${username}'s account has been deleted.`, true);
-                    showAdminPanel();
-                });
-            }
-        }
+        <main>
+            <section class="content-section status-panel">
+                <div class="section-heading compact">
+                    <p class="section-kicker">Backend status</p>
+                    <h2>Live site summary</h2>
+                    <p>The card below reads from your backend so the homepage reflects what is really happening on the server.</p>
+                </div>
+                <div class="status-grid">
+                    <article class="status-card">
+                        <span>Total messages</span>
+                        <strong id="messageCount">-</strong>
+                        <p>Messages stored by the current backend.</p>
+                    </article>
+                    <article class="status-card">
+                        <span>Unread for you</span>
+                        <strong id="unreadCount">-</strong>
+                        <p>Unread inbox messages for the signed-in user.</p>
+                    </article>
+                    <article class="status-card">
+                        <span>AZHA balance</span>
+                        <strong id="azhaBalance">-</strong>
+                        <p>Live AZINC value reported by the backend.</p>
+                    </article>
+                </div>
+            </section>
 
-        async function deleteAccount() {
-            const currentUsername = localStorage.getItem('currentUsername');
-            if (confirm(`Are you sure you want to delete your account (${currentUsername})? This cannot be undone.`)) {
-                const ok = await deleteUserAccount(currentUsername);
-                if (ok) {
-                    showMessage('Your account has been deleted. Redirecting...', true);
-                    setTimeout(logout, 1500);
-                }
-            }
-        }
+            <section class="content-section">
+                <div class="section-heading">
+                    <p class="section-kicker">Quick access</p>
+                    <h2>Favorite websites</h2>
+                    <p>Everything you open often, organized into proper cards instead of a wall of buttons.</p>
+                </div>
+                <div id="linksGrid" class="card-grid"></div>
+            </section>
 
-        window.onload = async function () {
-            if (!checkLogin()) return;
-            const currentUsername = localStorage.getItem('currentUsername');
-            const currentUserFullName = localStorage.getItem('currentUser');
-            const isAdmin = localStorage.getItem('isAdmin') === 'true';
-            if (currentUserFullName) {
-                document.getElementById('username').textContent = `Welcome back, ${currentUserFullName}!`;
-                document.querySelector('.logout-button').style.display = 'inline-block';
-                document.querySelector('.delete-button').style.display = 'inline-block';
-            }
-            if (isAdmin) {
-                await showAdminPanel();
-            }
-        };
+            <section class="content-section alt-surface">
+                <div class="section-heading">
+                    <p class="section-kicker">Games</p>
+                    <h2>AZHA game worlds</h2>
+                    <p>Featured game builds and experiments with clear previews and direct launch links.</p>
+                </div>
+                <div id="gamesGrid" class="feature-grid"></div>
+            </section>
 
+            <section class="content-section media-layout">
+                <div class="section-heading compact">
+                    <p class="section-kicker">Featured video</p>
+                    <h2>Website walkthrough</h2>
+                    <p>A short look at your site in action, embedded in a cleaner media frame.</p>
+                </div>
+                <div class="media-card">
+                    <video controls preload="metadata" poster="AZHA.PNG">
+                        <source src="Azhaf video web ..mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </section>
 
-// update welcome + balance display
-async function updateBalanceDisplay() {
-    const currentUsername = localStorage.getItem('currentUsername');
-    const currentUserFullName = localStorage.getItem('currentUser') || currentUsername;
-    if (!currentUsername) return;
-    const bal = (typeof getBalance === 'function') ? await getBalance(currentUsername) : 0;
-    const balDisplay = bal === "INF" ? '∞ AZINC' : `${bal} AZINC`;
-    const el = document.getElementById('username');
-    if (el) el.textContent = `Welcome back, ${currentUserFullName}! (${balDisplay})`;
-    const logoutBtn = document.querySelector('.logout-button');
-    const delBtn = document.querySelector('.delete-button');
-    if (logoutBtn) logoutBtn.style.display = 'inline-block';
-    if (delBtn) delBtn.style.display = 'inline-block';
-}
-
-async function promptGiveAZINC(targetUsername) {
-    const current = localStorage.getItem('currentUsername');
-    if (current !== 'AZHA') { showMessage('Only AZHA can give AZINC.', false); return; }
-    const raw = prompt(`Enter AZINC amount to give to ${targetUsername}:`, "100");
-    if (raw === null) return;
-    const amt = Number(raw);
-    if (isNaN(amt) || amt <= 0) { showMessage('Invalid amount.', false); return; }
-    if (typeof giveAZINC === 'function' && await giveAZINC(targetUsername, amt)) {
-        await updateBalanceDisplay();
-        if (typeof showAdminPanel === 'function') showAdminPanel();
-    }
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-    updateBalanceDisplay();
-});
-</script>
-    <!-- Messaging UI -->
-    <div id="messagingPanel" style="max-width:800px;margin:20px auto;display:none;">
-        <h2>Messages</h2>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <div style="flex:1;min-width:240px;">
-                <h3>Compose</h3>
-                <select id="msgRecipient" style="width:100%;padding:8px;margin-bottom:8px;"></select>
-                <textarea id="msgText" placeholder="Write message..." style="width:100%;height:80px;padding:8px;"></textarea>
-                <button id="sendMsgBtn" style="margin-top:8px;">Send</button>
-            </div>
-            <div style="flex:2;min-width:300px;">
-                <h3>Inbox</h3>
-                <div id="inboxList" style="max-height:220px;overflow:auto;background:rgba(0,0,0,0.5);padding:8px;border-radius:6px;"></div>
-                <h3 style="margin-top:12px;">Sent</h3>
-                <div id="sentList" style="max-height:160px;overflow:auto;background:rgba(0,0,0,0.5);padding:8px;border-radius:6px;"></div>
-            </div>
-        </div>
+            <section class="content-section tool-row">
+                <a class="tool-card" href="contact.html">
+                    <span class="tool-title">Website Info</span>
+                    <span class="tool-copy">Version notes, creator details, and deployment guidance.</span>
+                </a>
+                <a class="tool-card" href="Getin.html">
+                    <span class="tool-title">Sign Up or Log In</span>
+                    <span class="tool-copy">Use the account page powered by backend-first auth helpers.</span>
+                </a>
+                <a class="tool-card" href="Download.html">
+                    <span class="tool-title">Downloads</span>
+                    <span class="tool-copy">Download your GIF assets from a cleaner media page.</span>
+                </a>
+                <a class="tool-card" href="Message.html">
+                    <span class="tool-title">Messages</span>
+                    <span class="tool-copy">Open the dedicated inbox page and send messages from the backend.</span>
+                </a>
+            </section>
+        </main>
     </div>
 
     <script>
-    // messaging UI logic
-    function openMessaging() {
-        const panel = document.getElementById('messagingPanel');
-        panel.style.display = 'block';
-        populateRecipients();
-        renderMessages();
-    }
+        const quickLinks = [
+            { title: 'Google', description: 'Search, browse, and jump into everyday web tasks quickly.', href: 'https://www.google.com', accent: 'gold' },
+            { title: 'ClassLink', description: 'Open your learning dashboard without digging through bookmarks.', href: 'https://launchpad.classlink.com/', accent: 'green' },
+            { title: 'YouTube Channel', description: 'Visit the BrosMaxGamerz channel and jump right to your uploads.', href: 'https://www.youtube.com/@BrosMaxGamerz', accent: 'red' },
+            { title: 'YouTube', description: 'Open the main YouTube homepage for videos, playlists, and search.', href: 'https://www.youtube.com/', accent: 'blue' },
+            { title: 'LaunchPad Pro-Open', description: 'Open the pro version of your launchpad in a separate tab.', href: '/Pro-Open/', accent: 'violet' }
+        ];
 
-    function closeMessaging() {
-        const panel = document.getElementById('messagingPanel');
-        panel.style.display = 'none';
-    }
+        const games = [
+            { title: 'Owners House', description: 'A house-themed experience hosted on Vercel.', href: 'https://azhaownershouse.vercel.app', image: 'OwnersHowseimage.PNG' },
+            { title: 'Hiding Monsters', description: 'A spooky project with a dramatic creature-style preview.', href: 'https://azhahidingmonsters.base44.app', image: 'gemini-image.png.PNG' },
+            { title: 'Aviation Build', description: 'An aviation-themed build with its own custom logo and feel.', href: 'https://azhaaviationbuil.base44.app', image: '27eecd342_logo.png' }
+        ];
 
-    async function populateRecipients() {
-        const select = document.getElementById('msgRecipient');
-        select.innerHTML = '';
-        const current = localStorage.getItem('currentUsername');
-        try {
-            const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
-            const resp = await fetch(`${baseUrl}/api/users`);
-            const users = await resp.json();
-            users.forEach(u => {
-                if (u.username === current) return; // don't send to self
-                const opt = document.createElement('option');
-                opt.value = u.username;
-                opt.textContent = `${u.fullName} (${u.username})`;
-                select.appendChild(opt);
-            });
-        } catch (err) {
-            console.error('populateRecipients error', err);
+        function createLinkCard(item) {
+            return `
+                <a class="launch-card accent-${item.accent}" href="${item.href}" target="_blank" rel="noreferrer">
+                    <span class="launch-label">Open</span>
+                    <h3>${item.title}</h3>
+                    <p>${item.description}</p>
+                    <span class="launch-arrow">Visit site</span>
+                </a>
+            `;
         }
-    }
 
-    async function renderMessages() {
-        const current = localStorage.getItem('currentUsername');
-        const inbox = await getInbox(current);
-        const sent = await getSent(current);
+        function createGameCard(item) {
+            return `
+                <a class="game-card" href="${item.href}" target="_blank" rel="noreferrer">
+                    <img src="${item.image}" alt="${item.title} preview">
+                    <div class="game-card-copy">
+                        <h3>${item.title}</h3>
+                        <p>${item.description}</p>
+                        <span>Play now</span>
+                    </div>
+                </a>
+            `;
+        }
 
-        const inboxEl = document.getElementById('inboxList');
-        inboxEl.innerHTML = inbox.length ? '' : '<em>No messages</em>';
-        inbox.forEach(m => {
-            const div = document.createElement('div');
-            div.style.padding = '6px';
-            div.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-            div.innerHTML = `<strong>${m.from}</strong> <small>${new Date(m.timestamp).toLocaleString()}</small>
-                             <p style="margin:6px 0;color:#ddd">${escapeHtml(m.text)}</p>
-                             <button onclick="markAndRefresh('${m.id}')">Mark Read</button>
-                             <button onclick="deleteAndRefresh('${m.id}')">Delete</button>
-                             ${m.read ? '<span style="color:lightgreen;margin-left:8px">Read</span>' : '<span style="color:yellow;margin-left:8px">Unread</span>'}`;
-            inboxEl.appendChild(div);
+        document.getElementById('linksGrid').innerHTML = quickLinks.map(createLinkCard).join('');
+        document.getElementById('gamesGrid').innerHTML = games.map(createGameCard).join('');
+
+        const currentUser = localStorage.getItem('currentUser');
+        const currentUsername = localStorage.getItem('currentUsername');
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const isAdmin = localStorage.getItem('isAdmin') === 'true';
+        const welcomeName = document.getElementById('welcomeName');
+        const welcomeMeta = document.getElementById('welcomeMeta');
+        const logoutButton = document.getElementById('logoutButton');
+
+        if (isLoggedIn && currentUsername) {
+            welcomeName.textContent = currentUsername;
+            welcomeMeta.textContent = isAdmin
+                ? `Signed in as ${currentUser || currentUsername}. Admin tools are available through your account pages.`
+                : `Signed in as ${currentUser || currentUsername}. Your inbox and account tools are ready.`;
+            logoutButton.hidden = false;
+        }
+
+        logoutButton?.addEventListener('click', () => {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentUsername');
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('isAdmin');
+            window.location.reload();
         });
 
-        const sentEl = document.getElementById('sentList');
-        sentEl.innerHTML = sent.length ? '' : '<em>No sent messages</em>';
-        sent.forEach(m => {
-            const div = document.createElement('div');
-            div.style.padding = '6px';
-            div.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-            div.innerHTML = `<strong>To: ${m.to}</strong> <small>${new Date(m.timestamp).toLocaleString()}</small>
-                             <p style="margin:6px 0;color:#ddd">${escapeHtml(m.text)}</p>
-                             <button onclick="deleteAndRefresh('${m.id}')">Delete</button>`;
-            sentEl.appendChild(div);
-        });
-    }
-
-    function escapeHtml(s) {
-        return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
-    }
-
-    async function markAndRefresh(id) {
-        const current = localStorage.getItem('currentUsername');
-        if (await markMessageRead(id, current)) renderMessages();
-    }
-
-    async function deleteAndRefresh(id) {
-        const current = localStorage.getItem('currentUsername');
-        if (await deleteMessage(id, current)) renderMessages();
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const sendBtn = document.getElementById('sendMsgBtn');
-        if (sendBtn) {
-            sendBtn.addEventListener('click', async () => {
-                const to = document.getElementById('msgRecipient').value;
-                const text = document.getElementById('msgText').value.trim();
-                const from = localStorage.getItem('currentUsername');
-                if (!from) { showMessage('You must be logged in to send messages.', false); return; }
-                if (!to || !text) { showMessage('Choose recipient and enter a message.', false); return; }
-                const ok = await sendMessage(from, to, text);
-                if (ok) {
-                    document.getElementById('msgText').value = '';
-                    renderMessages();
-                    showMessage('Message sent.', true);
-                } else {
-                    showMessage('Failed to send message.', false);
-                }
-            });
+        async function loadSummary() {
+            const query = currentUsername ? `?username=${encodeURIComponent(currentUsername)}` : '';
+            try {
+                const response = await fetch(`/api/site-summary${query}`);
+                if (!response.ok) throw new Error('Unable to load summary');
+                const summary = await response.json();
+                document.getElementById('projectCount').textContent = summary.featuredProjects;
+                document.getElementById('userCount').textContent = summary.users;
+                document.getElementById('storageMode').textContent = summary.storage;
+                document.getElementById('messageCount').textContent = summary.messages;
+                document.getElementById('unreadCount').textContent = summary.unreadCount;
+                document.getElementById('azhaBalance').textContent = summary.azhaBalance;
+            } catch (error) {
+                document.getElementById('storageMode').textContent = 'offline';
+                document.getElementById('messageCount').textContent = '0';
+                document.getElementById('unreadCount').textContent = '0';
+                document.getElementById('azhaBalance').textContent = 'INF';
+            }
         }
 
-        // optional: add a quick open button in header
-        const header = document.querySelector('.nav-center');
-        if (header) {
-            const btn = document.createElement('button');
-            btn.textContent = 'Messages';
-            btn.style.marginLeft = '8px';
-            btn.onclick = openMessaging;
-            header.appendChild(btn);
-        }
-    });
-    </script>
-```
-<script>
-// backend-driven message helpers (persisted in server messages.json)
-window.sendMessage = async function(from, to, text) {
-    if (!from || !to || !text) return false;
-    try {
-        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
-        const resp = await fetch(`${baseUrl}/api/messages`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ from, to, text })
-        });
-        return resp.ok;
-    } catch (err) {
-        console.error('sendMessage error', err);
-        return false;
-    }
-};
-
-window.getInbox = async function(username) {
-    if (!username) return [];
-    try {
-        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
-        const resp = await fetch(`${baseUrl}/api/messages?username=${encodeURIComponent(username)}`);
-        if (!resp.ok) return [];
-        const msgs = await resp.json();
-        return msgs.filter(m => m.to === username)
-                   .sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
-    } catch (err) {
-        console.error('getInbox error', err);
-        return [];
-    }
-};
-
-window.getSent = async function(username) {
-    if (!username) return [];
-    try {
-        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
-        const resp = await fetch(`${baseUrl}/api/messages?username=${encodeURIComponent(username)}`);
-        if (!resp.ok) return [];
-        const msgs = await resp.json();
-        return msgs.filter(m => m.from === username)
-                   .sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
-    } catch (err) {
-        console.error('getSent error', err);
-        return [];
-    }
-};
-
-window.markMessageRead = async function(messageId, username) {
-    try {
-        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
-        const resp = await fetch(`${baseUrl}/api/messages/${messageId}/read`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username })
-        });
-        return resp.ok;
-    } catch (err) {
-        console.error('markMessageRead error', err);
-        return false;
-    }
-};
-
-window.deleteMessage = async function(messageId, username) {
-    try {
-        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
-        const resp = await fetch(`${baseUrl}/api/messages/${messageId}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username })
-        });
-        return resp.ok;
-    } catch (err) {
-        console.error('deleteMessage error', err);
-        return false;
-    }
-};
-</script>
-
-    <!-- Entrance Overlay + Animations -->
-   
-
-
-    
-    <!-- Entrance overlay (insert right after <body>) -->
-    <div id="entranceOverlay" aria-hidden="true">
-        <div id="entranceContent" role="img" aria-label="Welcome">
-            <div class="logo" aria-hidden="true"></div>
-            <h1>Welcome to CoderAzhaf</h1>
-        </div>
-    </div>
-
-    <style>
-        /* Entrance overlay + animations */
-        #entranceOverlay{
-            position:fixed;
-            inset:0;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            background:linear-gradient(135deg, rgba(0,0,0,0.95), rgba(0,0,0,0.7));
-            z-index:2500;
-            opacity:1;
-            transition:opacity 600ms ease, transform 600ms ease;
-            pointer-events:auto;
-        }
-        #entranceOverlay.hidden{
-            opacity:0;
-            pointer-events:none;
-            transform:scale(1.02);
-        }
-        #entranceContent{
-            text-align:center;
-            color:#fff;
-            transform:translateY(6px);
-            opacity:0;
-            animation: entranceText 700ms ease forwards 200ms;
-        }
-        #entranceContent .logo{
-            width:110px;
-            height:110px;
-            border-radius:50%;
-            margin:0 auto 12px;
-            background:url('Azha LanchPad Icon..png') center/cover no-repeat;
-            box-shadow:0 8px 30px rgba(0,0,0,0.6),0 2px 6px rgba(0,0,0,0.4);
-            transform:scale(.86);
-            animation: logoPop 700ms cubic-bezier(.2,.9,.2,1) forwards;
-        }
-        #entranceContent h1{
-            margin:0;
-            font-size:1.6rem;
-            letter-spacing:0.6px;
-        }
-        @keyframes logoPop{
-            from{ transform: scale(.6); opacity:0 }
-            to{ transform: scale(1); opacity:1 }
-        }
-        @keyframes entranceText{
-            from{ transform: translateY(8px); opacity:0 }
-            to{ transform: translateY(0); opacity:1 }
-        }
-
-        /* animate-in class for page elements */
-        .animate-in .nav-center, .animate-in .admin-panel, .animate-in .game-container {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        .nav-center, .admin-panel, .game-container {
-            transform: translateY(10px);
-            opacity: 0;
-            transition: transform 520ms ease, opacity 520ms ease;
-        }
-    </style>
-
-    <script>
-        // Entrance overlay logic: hide after animation and enable page animations
-        document.addEventListener('DOMContentLoaded', () => {
-            const overlay = document.getElementById('entranceOverlay');
-            // small delay so users see it briefly
-            const showTime = 900; // ms (adjust)
-            setTimeout(() => {
-                if (!overlay) return;
-                overlay.classList.add('hidden');
-                // remove from DOM after transition to avoid blocking interactions
-                overlay.addEventListener('transitionend', () => {
-                    if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
-                }, { once: true });
-                // add animate-in class to body so sections fade/slide in
-                document.documentElement.classList.add('animate-in');
-            }, showTime);
-        });
+        loadSummary();
     </script>
 </body>
 </html>
