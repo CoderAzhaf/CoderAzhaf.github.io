@@ -2,13 +2,12 @@
 // accounts.js -- client helpers that interact with the backend API
 
 // Determine API base URL.
-// - On Vercel: automatically uses the Vercel domain as API base (both frontend + backend share same origin)
-// - On GitHub Pages: backend not available (GitHub Pages is static only)
-// - For local testing: set window.API_BASE_URL = 'http://localhost:3000' before loading this script
+// - On Vercel: uses the current origin.
+// - On GitHub Pages: set window.API_BASE_URL to your backend (e.g., Vercel URL) before loading this script.
+// - For local testing: set window.API_BASE_URL = 'http://localhost:3000'.
 const API_BASE_URL = (window.API_BASE_URL || window.location.origin).replace(/\/+$/,'');
-const isGitHubPages = window.location.hostname.includes('github.io');
 
-console.log('Environment:', { hostname: window.location.hostname, origin: window.location.origin, API_BASE_URL, isGitHubPages });
+console.log('Environment:', { hostname: window.location.hostname, origin: window.location.origin, API_BASE_URL });
 
 /**
  * Displays a temporary message (success or error) on the screen.
@@ -38,11 +37,6 @@ function checkLogin() {
  */
 async function login() {
     console.log('login() called');
-    // prevent useless attempts on static hosting
-    if (isGitHubPages) {
-        showMessage('Backend not available on GitHub Pages. Deploy to Vercel or run locally.', false);
-        return;
-    }
     // trim whitespace to avoid accidental spaces causing mismatches
     const username = document.getElementById('login-username').value.trim();
     const password = document.getElementById('login-password').value.trim();
@@ -99,11 +93,6 @@ function showSignup() {
  * Create new account via backend.
  */
 async function signup() {
-    // don't try to create accounts on static hosting
-    if (isGitHubPages) {
-        showMessage('Backend not available on GitHub Pages. Deploy to Vercel or run locally.', false);
-        return;
-    }
     // trim fields to prevent accidental leading/trailing spaces
     const username = document.getElementById('signup-username').value.trim();
     const password = document.getElementById('signup-password').value.trim();
