@@ -5,8 +5,22 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname))); // Serve all static files from root
 app.use(express.json());
+
+// Explicit page routes to prevent 404 from direct URL requests
+app.get('/Getin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Getin.html'));
+});
+app.get('/Message.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Message.html'));
+});
+app.get('/contact.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'contact.html'));
+});
+app.get('/Download.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Download.html'));
+});
 
 // On Vercel, use in-memory storage. Locally, use files.
 const isVercel = !!process.env.VERCEL;
