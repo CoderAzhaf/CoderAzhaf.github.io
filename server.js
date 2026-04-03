@@ -414,6 +414,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+app.get('/index.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 app.get('/manifest.json', (req, res) => {
     res.sendFile(path.join(__dirname, 'manifest.json'));
 });
@@ -439,9 +443,17 @@ app.get('/Message.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'Message.html'));
 });
 
-// Handle 404
+// Handle 404 with fallback to static existing files or index
 app.use((req, res) => {
-    res.status(404).send('Page not found');
+    const staticPath = path.join(__dirname, req.path);
+    if (fs.existsSync(staticPath) && fs.statSync(staticPath).isFile()) {
+        return res.sendFile(staticPath);
+    }
+    if (req.path.startsWith('/api/')) {
+        return res.status(404).json({ error: 'API route not found' });
+    }
+    // For SPA-like behavior and direct route links
+    return res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Error handling
