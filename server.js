@@ -8,13 +8,19 @@ const port = process.env.PORT || 3000;
 app.use(express.static(__dirname));
 app.use(express.json());
 
-// Data files
+// On Vercel, use in-memory storage. Locally, use files.
+const isVercel = !!process.env.VERCEL;
 const ACCOUNTS_FILE = path.join(__dirname, 'accounts.json');
 const MESSAGES_FILE = path.join(__dirname, 'messages.json');
 const BALANCES_FILE = path.join(__dirname, 'balances.json');
 
-// Initialize data files if they don't exist
-if (!fs.existsSync(ACCOUNTS_FILE)) {
+// In-memory storage for Vercel
+let accountsCache = null;
+let messagesCache = null;
+let balancesCache = null;
+
+// Initialize data files if they don't exist (local only, or first boot on Vercel)
+if (!isVercel && !fs.existsSync(ACCOUNTS_FILE)) {
     const defaultAccounts = {
         "AZHA": {
             username: "AZHA",
@@ -68,38 +74,119 @@ if (!fs.existsSync(ACCOUNTS_FILE)) {
     fs.writeFileSync(ACCOUNTS_FILE, JSON.stringify(defaultAccounts, null, 2));
 }
 
-if (!fs.existsSync(MESSAGES_FILE)) {
+if (!isVercel && !fs.existsSync(MESSAGES_FILE)) {
     fs.writeFileSync(MESSAGES_FILE, JSON.stringify([], null, 2));
 }
 
-if (!fs.existsSync(BALANCES_FILE)) {
+if (!isVercel && !fs.existsSync(BALANCES_FILE)) {
     // start with AZHA infinite and everybody else zero
     fs.writeFileSync(BALANCES_FILE, JSON.stringify({ AZHA: "INF" }, null, 2));
 }
 
+// Initialize in-memory storage if needed
+function initializeInMemory() {
+    if (accountsCache) return; // already initialized
+    accountsCache = {
+        "AZHA": {
+            username: "AZHA",
+            password: "AZ MOH",
+            fullName: "AZHAFUDDiN MOHAMMED",
+            isAdmin: true,
+            warnings: 0,
+            status: "active"
+        },
+        "Vivvan Dash": {
+            username: "Vivvan Dash",
+            password: "dashpro",
+            fullName: "Vivvan Dash",
+            isAdmin: true,
+            warnings: 0,
+            status: "active"
+        },
+        "Alyanuddin": {
+            username: "Alyanuddin",
+            password: "alyanpro",
+            fullName: "Alyanuddin Mohammed",
+            isAdmin: true,
+            warnings: 0,
+            status: "active"
+        },
+        "Hacker": {
+            username: "Hacker",
+            password: "Hacker",
+            fullName: "Hacker",
+            isAdmin: false,
+            warnings: 0,
+            status: "active"
+        },
+        "Umar": {
+            username: "Umar",
+            password: "Umar",
+            fullName: "Umar Suhail",
+            isAdmin: false,
+            warnings: 0,
+            status: "active"
+        },
+        "Suleman": {
+            username: "Suleman",
+            password: "Suleman",
+            fullName: "Suleman Ahsan",
+            isAdmin: false,
+            warnings: 0,
+            status: "active"
+        }
+    };
+    messagesCache = [];
+    balancesCache = { AZHA: "INF" };
+}
+
 // Helper functions
 function readAccounts() {
+    if (isVercel) {
+        initializeInMemory();
+        return accountsCache;
+    }
     return JSON.parse(fs.readFileSync(ACCOUNTS_FILE, 'utf8'));
 }
 
 function writeAccounts(accounts) {
-    fs.writeFileSync(ACCOUNTS_FILE, JSON.stringify(accounts, null, 2));
+    if (isVercel) {
+        accountsCache = accounts;
+    } else {
+        fs.writeFileSync(ACCOUNTS_FILE, JSON.stringify(accounts, null, 2));
+    }
 }
 
 function readMessages() {
+    if (isVercel) {
+        initializeInMemory();
+        return messagesCache;
+    }
     return JSON.parse(fs.readFileSync(MESSAGES_FILE, 'utf8'));
 }
 
 function writeMessages(messages) {
-    fs.writeFileSync(MESSAGES_FILE, JSON.stringify(messages, null, 2));
+    if (isVercel) {
+        messagesCache = messages;
+    } else {
+        fs.writeFileSync(MESSAGES_FILE, JSON.stringify(messages, null, 2));
+    }
 }
 
 function readBalances() {
+    if (isVercel) {
+        initializeInMemory();
+        return balancesCache;
+    }
     return JSON.parse(fs.readFileSync(BALANCES_FILE, 'utf8'));
 }
 
 function writeBalances(bals) {
-    fs.writeFileSync(BALANCES_FILE, JSON.stringify(bals, null, 2));
+    if (isVercel) {
+        balancesCache = bals;
+    } else {
+        fs.writeFileSync(BALANCES_FILE, JSON.stringify(bals, null, 2));
+    }
 }
 
 

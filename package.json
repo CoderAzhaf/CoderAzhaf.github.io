@@ -1,4 +1,15 @@
 {
+  "name": "coder-azhaf",
+  "version": "1.0.0",
+  "description": "Account management app with Express API and HTML frontend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
   "dependencies": {
     "express": "^5.2.1"
   }
