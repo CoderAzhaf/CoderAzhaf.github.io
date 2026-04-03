@@ -324,15 +324,9 @@
         let adminAccountsCache = [];
 
         async function fetchAllAccounts() {
-            try {
-                const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
-                const resp = await fetch(`${baseUrl}/api/users`);
-                if (!resp.ok) { showMessage('Failed to load users', false); return []; }
-                return await resp.json();
-            } catch (err) {
-                console.error('fetchAllAccounts error', err);
-                return [];
-            }
+            // Read from localStorage instead of API (GitHub Pages compatible)
+            const accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
+            return Object.values(accounts);
         }
 
         async function showAdminPanel() {
