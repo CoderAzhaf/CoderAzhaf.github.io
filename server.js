@@ -8,6 +8,18 @@ const port = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname))); // Serve all static files from root
 app.use(express.json());
 
+// CORS support for GitHub pages + other origins
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(204);
+    }
+    next();
+});
+
 // Explicit page routes to prevent 404 from direct URL requests
 app.get('/Getin.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'Getin.html'));
