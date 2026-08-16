@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEO Panel - AZHA</title>
+    <link rel="stylesheet" href="app.css">
+    <style>
+        .admin-page { padding: 20px; max-width: 1400px; margin: 0 auto; }
+        .admin-header { margin-bottom: 30px; }
+        .admin-tabs { display: flex; gap: 10px; border-bottom: 2px solid rgba(255,255,255,0.1); margin-bottom: 30px; }
+        .admin-tab { padding: 12px 20px; background: none; border: none; color: var(--muted); cursor: pointer;
+            font-weight: bold; border-bottom: 3px solid transparent; transition: all 0.2s; }
+        .admin-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .pending-item {
+            background: var(--panel); border-radius: 12px; padding: 16px; margin-bottom: 16px;
+            border-left: 4px solid var(--gold);
+        }
+        .pending-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
+        .pending-title { font-weight: bold; color: var(--gold); font-size: 1.1rem; }
+        .pending-type { background: rgba(246,196,83,0.2); color: var(--gold); padding: 4px 10px;
+            border-radius: 20px; font-size: 0.8rem; }
+        .pending-details { color: var(--muted); margin-bottom: 12px; line-height: 1.6; }
+        .pending-actions { display: flex; gap: 10px; }
+        .btn-approve { background: #50C878; color: white; padding: 10px 16px; border: none;
+            border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-reject { background: var(--red); color: white; padding: 10px 16px; border: none;
+            border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-approve:hover { background: #45b06b; }
+        .btn-reject:hover { background: #ff6b5b; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; }
+        .status-pending { background: rgba(255,200,0,0.2); color: #FFD700; }
+        .status-approved { background: rgba(80,200,120,0.2); color: #50C878; }
+        .meetings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .meeting-card { background: var(--panel); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.1); }
+        .meeting-info { margin-bottom: 12px; }
+        .meeting-host { font-weight: bold; color: var(--gold); }
+        .meeting-participants { color: var(--muted); font-size: 0.9rem; }
+        .btn-end-meeting { background: var(--red); color: white; padding: 8px 12px; border: none;
+            border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
+        .btn-join-invisible { background: #9B59B6; color: white; padding: 8px 12px; border: none;
+            border-radius: 8px; cursor: pointer; font-size: 0.9rem; margin-right: 8px; }
+        .stat-card { background: var(--panel); border-radius: 12px; padding: 20px; text-align: center; }
+        .stat-number { font-size: 2rem; color: var(--gold); font-weight: bold; }
+        .stat-label { color: var(--muted); font-size: 0.9rem; margin-top: 5px; }
+    </style>
+    <style>
+      body {
+        background-image: url("channels4profile.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+    </style>
+</head>
+<body>
+    <div class="admin-page">
+        <div class="admin-header">
+            <h1 style="color: var(--gold); margin: 0;">🔑 CEO Control Panel</h1>
+            <p style="color: var(--muted); margin: 5px 0 0;">Manage system-wide settings, approvals, and controls</p>
+        </div>
+
+        <div class="admin-tabs">
+            <button class="admin-tab active" onclick="switchTab('approvals')">⏳ Pending Approvals</button>
+            <button class="admin-tab" onclick="switchTab('meetings')">📞 All Meetings</button>
+            <button class="admin-tab" onclick="switchTab('clubs')">👥 All Clubs</button>
+            <button class="admin-tab" onclick="switchTab('users')">👤 User Management</button>
+            <button class="admin-tab" onclick="switchTab('stats')">📊 System Stats</button>
+        </div>
+
+        <!-- Pending Approvals Tab -->
+        <div id="approvals" class="tab-content active">
+            <h2 style="color: var(--gold); margin-top: 0;">Pending Admin Actions</h2>
+            <p style="color: var(--muted);">Review and approve/reject changes from administrators</p>
+            <div id="pendingList"></div>
+        </div>
+
+        <!-- Meetings Tab -->
+        <div id="meetings" class="tab-content">
+            <h2 style="color: var(--gold); margin-top: 0;">Active Meetings</h2>
+            <p style="color: var(--muted);">View and manage all active meetings in the system</p>
+            <div class="meetings-grid" id="meetingsList"></div>
+        </div>
+
+        <!-- Clubs Tab -->
+        <div id="clubs" class="tab-content">
+            <h2 style="color: var(--gold); margin-top: 0;">All Clubs</h2>
+            <p style="color: var(--muted);">View and manage all clubs in the system</p>
+            <div id="clubsList"></div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="users" class="tab-content">
+            <h2 style="color: var(--gold); margin-top: 0;">User Management</h2>
+            <p style="color: var(--muted);">Manage users, roles, and permissions</p>
+            <div id="usersList"></div>
+        </div>
+
+        <!-- Statistics Tab -->
+        <div id="stats" class="tab-content">
+            <h2 style="color: var(--gold); margin-top: 0;">System Statistics</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeMeetings">0</div>
+                    <div class="stat-label">Active Meetings</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalClubs">0</div>
+                    <div class="stat-label">Total Clubs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingApprovals">0</div>
+                    <div class="stat-label">Pending Approvals</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const currentUser = localStorage.getItem('loggedInUser');
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.admin-tab').forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Load content
+            if (tabName === 'approvals') loadPendingApprovals();
+            else if (tabName === 'meetings') loadAllMeetings();
+            else if (tabName === 'clubs') loadAllClubs();
+            else if (tabName === 'users') loadAllUsers();
+            else if (tabName === 'stats') loadStatistics();
+        }
+
+        async function loadPendingApprovals() {
+            try {
+                const announcements = await fetch('/api/announcements').then(r => r.json());
+                const pending = announcements.filter(a => a.status === 'pending');
+                
+                const list = document.getElementById('pendingList');
+                if (pending.length === 0) {
+                    list.innerHTML = '<p style="color: var(--muted); text-align: center; padding: 40px;">No pending approvals.</p>';
+                    return;
+                }
+
+                list.innerHTML = pending.map(item => `
+                    <div class="pending-item">
+                        <div class="pending-header">
+                            <div>
+                                <div class="pending-title">${item.title}</div>
+                                <div style="font-size: 0.9rem; color: var(--muted); margin-top: 4px;">by @${item.createdBy}</div>
+                            </div>
+                            <span class="pending-type">Announcement</span>
+                        </div>
+                        <div class="pending-details">
+                            ${item.content}<br>
+                            <span style="font-size: 0.8rem;">Posted: ${new Date(item.timestamp).toLocaleString()}</span>
+                        </div>
+                        <div class="pending-actions">
+                            <button class="btn-approve" onclick="approveAction('announcement', '${item.id}')">✓ Approve</button>
+                            <button class="btn-reject" onclick="rejectAction('announcement', '${item.id}')">✗ Reject</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Load pending approvals failed:', err);
+            }
+        }
+
+        async function loadAllMeetings() {
+            try {
+                if (currentUser !== 'AZHA') {
+                    document.getElementById('meetingsList').innerHTML = '<p style="color: var(--red);">Only CEO can view all meetings.</p>';
+                    return;
+                }
+                
+                const meetings = await fetch(`/api/ceo/meetings?username=${currentUser}`).then(r => r.json());
+                const list = document.getElementById('meetingsList');
+                
+                if (meetings.length === 0) {
+                    list.innerHTML = '<p style="color: var(--muted);">No meetings found.</p>';
+                    return;
+                }
+
+                list.innerHTML = meetings.map(m => `
+                    <div class="meeting-card">
+                        <div class="meeting-info">
+                            <div class="meeting-host"><strong>${m.title}</strong></div>
+                            <div class="meeting-participants">Host: ${m.host}</div>
+                            <div class="meeting-participants">Participants: ${m.participantCount || 0}</div>
+                            <div class="meeting-participants" style="font-size: 0.8rem; margin-top: 8px;">
+                                ${new Date(m.startsAt).toLocaleString()}
+                            </div>
+                        </div>
+                        <div>
+                            <button class="btn-join-invisible" onclick="ceoJoinInvisible('${m.roomCode}')">👻 Join Invisible</button>
+                            <button class="btn-end-meeting" onclick="endMeeting('${m.roomCode}')">End Meeting</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Load meetings failed:', err);
+            }
+        }
+
+        async function loadAllClubs() {
+            try {
+                if (currentUser !== 'AZHA') {
+                    document.getElementById('clubsList').innerHTML = '<p style="color: var(--red);">Only CEO can view all clubs.</p>';
+                    return;
+                }
+
+                const clubs = await fetch(`/api/ceo/clubs?username=${currentUser}`).then(r => r.json());
+                const list = document.getElementById('clubsList');
+                
+                if (clubs.length === 0) {
+                    list.innerHTML = '<p style="color: var(--muted);">No clubs found.</p>';
+                    return;
+                }
+
+                list.innerHTML = `<div>${clubs.map(club => `
+                    <div class="pending-item">
+                        <div class="pending-header">
+                            <div>
+                                <div class="pending-title">${club.name}</div>
+                                <div style="font-size: 0.9rem; color: var(--muted);">Admin: ${club.admin} | Members: ${club.members.length}</div>
+                            </div>
+                        </div>
+                        <div class="pending-details">${club.description}</div>
+                    </div>
+                `).join('')}</div>`;
+            } catch (err) {
+                console.error('Load clubs failed:', err);
+            }
+        }
+
+        async function loadStatistics() {
+            try {
+                const meetings = await fetch('/api/ceo/meetings?username=' + currentUser).then(r => r.json());
+                const clubs = await fetch(`/api/ceo/clubs?username=${currentUser}`).then(r => r.json());
+                
+                document.getElementById('activeMeetings').textContent = meetings.filter(m => m.active !== false).length;
+                document.getElementById('totalClubs').textContent = clubs.length;
+                document.getElementById('pendingApprovals').textContent = '?';
+            } catch (err) {
+                console.error('Load stats failed:', err);
+            }
+        }
+
+        async function approveAction(type, id) {
+            try {
+                await fetch(`/api/announcements/${id}/approve`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser })
+                });
+                alert('Action approved!');
+                loadPendingApprovals();
+            } catch (err) {
+                console.error('Approve failed:', err);
+            }
+        }
+
+        function rejectAction(type, id) {
+            alert('Reject functionality coming soon');
+        }
+
+        async function endMeeting(roomCode) {
+            try {
+                await fetch(`/api/ceo/meetings/${roomCode}/end`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser })
+                });
+                alert('Meeting ended!');
+                loadAllMeetings();
+            } catch (err) {
+                console.error('End meeting failed:', err);
+            }
+        }
+
+        async function ceoJoinInvisible(roomCode) {
+            try {
+                await fetch('/api/ceo/join-invisible', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser, roomCode })
+                });
+                alert('Joining invisibly...');
+                window.location.href = `Meetings.html?meeting=${roomCode}`;
+            } catch (err) {
+                console.error('Join invisible failed:', err);
+            }
+        }
+
+        // Check if user is CEO
+        if (currentUser !== 'AZHA') {
+            document.querySelector('.admin-page').innerHTML = '<div style="padding: 40px; text-align: center; color: var(--red);"><h2>⛔ Access Denied</h2><p>Only the CEO can access this panel.</p></div>';
+        }
+    </script>
+</body>
+</html>

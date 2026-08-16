@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZHA Games</title>
+    <link rel="stylesheet" href="app.css">
+    <style>
+        .games-page { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .games-header { margin-bottom: 40px; }
+        .games-header h1 { color: var(--gold); font-size: 2.5rem; margin: 0 0 10px; }
+        .games-header p { color: var(--muted); font-size: 1.1rem; margin: 0; }
+        .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; margin-bottom: 40px; }
+        .game-card {
+            background: var(--panel); border-radius: 16px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1); transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .game-card:hover { transform: translateY(-8px); box-shadow: var(--shadow); }
+        .game-image { width: 100%; aspect-ratio: 16/9; background: linear-gradient(135deg, #f6c453, #65d1b7);
+            display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+        .game-content { padding: 20px; }
+        .game-title { font-size: 1.3rem; font-weight: bold; color: var(--text); margin: 0 0 8px; }
+        .game-description { color: var(--muted); font-size: 0.95rem; line-height: 1.5; margin: 0 0 15px; }
+        .game-badge { display: inline-block; background: rgba(246,196,83,0.2); color: var(--gold);
+            padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; margin-bottom: 10px; }
+        .game-button {
+            width: 100%; padding: 12px; background: var(--gold); color: var(--bg); border: none;
+            border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .game-button:hover { background: #f6c453; }
+        .coming-soon { background: var(--muted); cursor: not-allowed; opacity: 0.6; }
+        .coming-soon:hover { background: var(--muted); }
+        .game-category { margin-bottom: 40px; }
+        .category-title { color: var(--gold); font-size: 1.5rem; margin-bottom: 20px; padding-bottom: 10px;
+            border-bottom: 2px solid rgba(246,196,83,0.3); }
+    </style>
+    <style>
+      body {
+        background-image: url("channels4profile.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+    </style>
+</head>
+<body>
+    <div class="games-page">
+        <div class="games-header">
+            <h1>🎮 AZHA Games</h1>
+            <p>Explore and play exciting games in the AZHA ecosystem</p>
+        </div>
+
+        <div class="game-category">
+            <h2 class="category-title">Featured Games</h2>
+            <div class="games-grid">
+                <div class="game-card">
+                    <div class="game-image">✈️</div>
+                    <div class="game-content">
+                        <div class="game-badge">New</div>
+                        <h3 class="game-title">Aviation Build Lite</h3>
+                        <p class="game-description">Build and design aircraft in this physics-based simulation. Create your own flying machines and test them in the sky!</p>
+                        <button class="game-button" onclick="launchGame('https://azhaaviationbuillite.bolt.host')">
+                            Play Now
+                        </button>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-image">🎮</div>
+                    <div class="game-content">
+                        <div class="game-badge">Classic</div>
+                        <h3 class="game-title">Minecraft</h3>
+                        <p class="game-description">The classic sandbox game. Build, explore, and survive in infinite worlds.</p>
+                        <button class="game-button" onclick="openGameModal('minecraft')">
+                            Play Now
+                        </button>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-image">🐍</div>
+                    <div class="game-content">
+                        <div class="game-badge">Action</div>
+                        <h3 class="game-title">Snake Game</h3>
+                        <p class="game-description">A retro classic. Control the snake, eat food, and grow longer while avoiding obstacles.</p>
+                        <button class="game-button" onclick="openGameModal('snake')">
+                            Play Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-category">
+            <h2 class="category-title">Coming Soon</h2>
+            <div class="games-grid">
+                <div class="game-card">
+                    <div class="game-image">🏎️</div>
+                    <div class="game-content">
+                        <div class="game-badge">Coming Soon</div>
+                        <h3 class="game-title">Racing Game</h3>
+                        <p class="game-description">High-speed racing action with multiplayer support. Challenge your friends!</p>
+                        <button class="game-button coming-soon" disabled>Coming Soon</button>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-image">🧩</div>
+                    <div class="game-content">
+                        <div class="game-badge">Coming Soon</div>
+                        <h3 class="game-title">Puzzle Master</h3>
+                        <p class="game-description">Solve challenging puzzles and brain teasers. Test your logic and problem-solving skills.</p>
+                        <button class="game-button coming-soon" disabled>Coming Soon</button>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-image">⚡</div>
+                    <div class="game-content">
+                        <div class="game-badge">Coming Soon</div>
+                        <h3 class="game-title">Thunder Battle</h3>
+                        <p class="game-description">Multiplayer action game with lightning-fast gameplay and epic battles.</p>
+                        <button class="game-button coming-soon" disabled>Coming Soon</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function launchGame(url) {
+            window.open(url, '_blank', 'width=1200,height=800');
+        }
+
+        function openGameModal(gameId) {
+            alert('Game launcher for: ' + gameId + '\nThis feature will be available soon!');
+        }
+
+        // Add games to index navigation
+        document.addEventListener('DOMContentLoaded', () => {
+            const gamesLink = document.querySelector('a[href="games.html"]');
+            if (gamesLink) {
+                gamesLink.href = 'games.html';
+            }
+        });
+    </script>
+</body>
+</html>

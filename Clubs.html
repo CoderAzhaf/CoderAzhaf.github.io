@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clubs - AZHA</title>
+    <link rel="stylesheet" href="app.css">
+    <style>
+        .clubs-page { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .clubs-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .clubs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .club-card {
+            background: var(--panel); border-radius: 16px; padding: 20px; border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .club-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+        .club-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; }
+        .club-name { font-size: 1.3rem; font-weight: bold; color: var(--gold); }
+        .club-member-count { color: var(--muted); font-size: 0.85rem; }
+        .club-description { color: var(--text); font-size: 0.95rem; line-height: 1.5; margin-bottom: 15px; }
+        .club-members { margin-bottom: 15px; }
+        .member-tag { display: inline-block; background: rgba(246,196,83,0.2); padding: 4px 10px;
+            border-radius: 20px; font-size: 0.8rem; color: var(--gold); margin-right: 8px; margin-bottom: 5px; }
+        .club-actions { display: flex; gap: 10px; }
+        .btn { padding: 10px 16px; background: var(--gold); color: var(--bg); border: none;
+            border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+        .btn:hover { background: #f6c453; }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: var(--text); border: 1px solid rgba(255,255,255,0.2); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.15); }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--panel); border-radius: 16px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { font-size: 1.5rem; color: var(--gold); margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; color: var(--muted); font-size: 0.9rem; margin-bottom: 5px; }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 10px; background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text);
+        }
+        .form-group input[type="file"] { padding: 8px; cursor: pointer; }
+        .club-chat { margin-top: 20px; max-height: 300px; overflow-y: auto; }
+        .chat-message { padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;
+            margin-bottom: 10px; font-size: 0.9rem; }
+        .chat-username { font-weight: bold; color: var(--gold); }
+        .chat-time { color: var(--muted); font-size: 0.8rem; }
+    </style>
+    <style>
+      body {
+        background-image: url("channels4profile.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+    </style>
+</head>
+<body>
+    <div class="clubs-page">
+        <div class="clubs-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="color: var(--gold); margin: 0;">Clubs & Groups</h1>
+            <div style="display: flex; gap: 10px;">
+                <a href="index.html" style="color: var(--gold); text-decoration: none; padding: 8px 16px; background: rgba(246,196,83,0.1); border-radius: 8px; border: 1px solid rgba(246,196,83,0.2);">← Back to Launchpad</a>
+                <button class="btn" onclick="openCreateClubModal()">+ Create Club</button>
+            </div>
+        </div>
+
+        <div id="clubsList" class="clubs-grid"></div>
+    </div>
+
+    <div id="createClubModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Create New Club</div>
+            <div class="form-group">
+                <label>Club Name</label>
+                <input type="text" id="clubName" placeholder="Enter club name">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="clubDescription" placeholder="Describe your club..." rows="4"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" style="flex: 1;" onclick="createClub()">Create</button>
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closeCreateClubModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="clubDetailModal" class="modal">
+        <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+            <div class="modal-header" id="clubDetailName"></div>
+            <div id="clubDetailContent"></div>
+            <button class="btn btn-secondary" style="width: 100%; margin-top: 20px;" onclick="closeClubDetailModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUsername');
+        const isCEO = currentUser === 'AZHA';
+        let currentClubId = null;
+        const maxClubAnnouncementImageSize = 5 * 1024 * 1024;
+
+        function readImageFileAsDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                if (!file.type.startsWith('image/')) {
+                    reject(new Error('Please choose an image file.'));
+                    return;
+                }
+                if (file.size > maxClubAnnouncementImageSize) {
+                    reject(new Error('Image is too large. Choose an image under 5 MB.'));
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = () => resolve(String(reader.result || ''));
+                reader.onerror = () => reject(new Error('Unable to read image file.'));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function getAnnouncementImageValue(fileInputId, urlInputId) {
+            const fileInput = document.getElementById(fileInputId);
+            const urlInput = document.getElementById(urlInputId);
+            const file = fileInput?.files?.[0];
+            if (file) return readImageFileAsDataUrl(file);
+            return urlInput?.value.trim() || '';
+        }
+
+        async function loadClubs() {
+            try {
+                const endpoint = `/api/clubs?username=${currentUser}`;
+                const res = await fetch(endpoint);
+                const clubs = await res.json();
+                const clubsList = document.getElementById('clubsList');
+                clubsList.innerHTML = '';
+
+                clubs.forEach(club => {
+                    const isMember = club.isMember;
+                    const isAdmin = club.isAdmin;
+                    const adminNames = Array.isArray(club.admins) && club.admins.length ? club.admins : [club.admin].filter(Boolean);
+                    const joinRequested = club.joinRequested;
+                    const joinType = club.joinType || 'request'; // 'request' or 'open'
+                    
+                    let actionBtn = '';
+                    if (isMember) {
+                        actionBtn = `<button class="btn btn-secondary" onclick="leaveClub('${club.id}'); event.stopPropagation();">Leave Club</button>`;
+                    } else if (joinRequested) {
+                        actionBtn = `<button class="btn btn-secondary" disabled style="opacity: 0.7;">Pending Request</button>`;
+                    } else {
+                        const btnText = joinType === 'open' ? 'Join Club' : 'Request to Join';
+                        actionBtn = `<button class="btn" onclick="joinClub('${club.id}'); event.stopPropagation();">${btnText}</button>`;
+                    }
+
+                    clubsList.innerHTML += `
+                        <div class="club-card" onclick="openClubDetail('${club.id}', '${club.name}')">
+                            <div class="club-header">
+                                <div>
+                                    <div class="club-name">${club.name}</div>
+                                    ${isAdmin ? '<div style="font-size: 0.75rem; color: var(--gold); margin-top: 5px;">👑 Admin</div>' : ''}
+                                </div>
+                                <div class="club-member-count">${club.members.length} members</div>
+                            </div>
+                            <div class="club-description">${club.description || 'No description'}</div>
+                            <div class="club-members">
+                                <strong style="color: var(--gold);">Admin:</strong> ${adminNames.join(', ') || 'Unknown'}<br>
+                                <strong style="color: var(--gold); margin-top: 8px; display: block;">Members:</strong>
+                                ${club.members.slice(0, 3).map(m => `<span class="member-tag">${m}</span>`).join('')}
+                                ${club.members.length > 3 ? `<span class="member-tag">+${club.members.length - 3}</span>` : ''}
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--muted); margin-top: 8px;">Join type: <strong>${joinType === 'open' ? 'Open' : 'Request Required'}</strong></div>
+                            <div class="club-actions">
+                                ${actionBtn}
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                console.error('Load clubs failed:', err);
+            }
+        }
+
+        async function joinClub(clubId) {
+            try {
+                const res = await fetch(`/api/clubs/${clubId}/join`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser })
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.message === 'Join request sent') {
+                        alert('✓ Join request sent! Waiting for admin approval.');
+                    } else {
+                        alert('✓ Joined club!');
+                    }
+                    loadClubs();
+                } else {
+                    const error = await res.json();
+                    alert(error.error || 'Failed to join club');
+                }
+            } catch (err) {
+                console.error('Join failed:', err);
+                OfflineSync.queueRequest(`/api/clubs/${clubId}/join`, 'POST', { username: currentUser });
+                alert('Your join request will be sent when online');
+                loadClubs();
+            }
+        }
+
+        async function leaveClub(clubId) {
+            if (!confirm('Are you sure you want to leave this club?')) return;
+            
+            try {
+                const res = await fetch(`/api/clubs/${clubId}/leave`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser })
+                });
+                
+                if (res.ok) {
+                    loadClubs();
+                    closeClubDetailModal();
+                    alert('You left the club');
+                }
+            } catch (err) {
+                console.error('Leave club failed:', err);
+            }
+        }
+
+        async function createClub() {
+            const name = document.getElementById('clubName').value.trim();
+            const description = document.getElementById('clubDescription').value.trim();
+            
+            if (!name) {
+                alert('Club name is required');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/clubs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: currentUser,
+                        name,
+                        description,
+                        isPrivate: false,
+                        joinType: 'request'
+                    })
+                });
+                
+                if (res.ok) {
+                    closeCreateClubModal();
+                    loadClubs();
+                    alert('Club created successfully!');
+                }
+            } catch (err) {
+                console.error('Create club failed:', err);
+                alert('Failed to create club');
+            }
+        }
+
+        async function toggleClubPrivacy(clubId, newValue) {
+            try {
+                const res = await fetch(`/api/clubs/${clubId}/privacy`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ isPrivate: newValue })
+                });
+                
+                if (res.ok) {
+                    alert(newValue ? 'Club is now private' : 'Club is now public');
+                    await loadClubDetail(clubId);
+                }
+            } catch (err) {
+                console.error('Toggle privacy failed:', err);
+            }
+        }
+
+        async function toggleClubJoinType(clubId, newType) {
+            try {
+                const res = await fetch(`/api/clubs/${clubId}/join-type`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ joinType: newType })
+                });
+                
+                if (res.ok) {
+                    alert(newType === 'auto' ? 'Club now allows auto-join' : 'Club now requires join requests');
+                    await loadClubDetail(clubId);
+                }
+            } catch (err) {
+                console.error('Toggle join type failed:', err);
+            }
+        }
+
+        async function inviteUserToClub(clubId) {
+            const username = prompt('Enter username to invite:');
+            if (!username) return;
+            
+            try {
+                const res = await fetch(`/api/clubs/${clubId}/invite`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                });
+                
+                if (res.ok) {
+                    alert('User invited!');
+                    await loadClubDetail(clubId);
+                }
+            } catch (err) {
+                console.error('Invite failed:', err);
+                alert('Failed to invite user');
+            }
+        }
+
+        async function handleJoinRequest(clubId, requester, action) {
+            try {
+                const res = await fetch(`/api/clubs/${clubId}/handle-request`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: requester, action })
+                });
+                
+                if (res.ok) {
+                    alert(action === 'accept' ? 'Request accepted!' : 'Request declined');
+                    await loadClubDetail(clubId);
+                }
+            } catch (err) {
+                console.error('Handle request failed:', err);
+            }
+        }
+
+        async function postClubAnnouncement(clubId) {
+            const title = document.getElementById('clubAnnouncementTitle').value.trim();
+            const content = document.getElementById('clubAnnouncementContent').value.trim();
+            
+            if (!title || !content) {
+                alert('Please fill in title and content');
+                return;
+            }
+
+            let image = '';
+            try {
+                image = await getAnnouncementImageValue('clubAnnouncementImageFile', 'clubAnnouncementImage');
+            } catch (err) {
+                alert(err.message || 'Unable to use that image');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`/api/clubs/${clubId}/announcements`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser, title, content, image })
+                });
+                
+                if (res.ok) {
+                    document.getElementById('clubAnnouncementTitle').value = '';
+                    document.getElementById('clubAnnouncementContent').value = '';
+                    document.getElementById('clubAnnouncementImage').value = '';
+                    document.getElementById('clubAnnouncementImageFile').value = '';
+                    await loadClubDetail(clubId);
+                    alert('Announcement posted!');
+                } else {
+                    const error = await res.json();
+                    alert(error.error || 'Failed to post announcement');
+                }
+            } catch (err) {
+                console.error('Post announcement failed:', err);
+                queueOfflineRequest('/api/clubs/' + clubId + '/announcements', 'POST', { username: currentUser, title, content, image });
+            }
+        }
+        
+        async function replyToAnnouncement(clubId, announcementId) {
+            const replyInput = document.getElementById(`replyText_${announcementId}`);
+            const text = replyInput.value.trim();
+            
+            if (!text) {
+                alert('Please enter a reply');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`/api/clubs/${clubId}/announcements/${announcementId}/reply`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser, text })
+                });
+                
+                if (res.ok) {
+                    replyInput.value = '';
+                    await loadClubDetail(clubId);
+                } else {
+                    const error = await res.json();
+                    alert(error.error || 'Failed to reply');
+                }
+            } catch (err) {
+                console.error('Reply failed:', err);
+                queueOfflineRequest(`/api/clubs/${clubId}/announcements/${announcementId}/reply`, 'POST', { username: currentUser, text });
+            }
+        }
+        
+        async function loadClubChat(clubId) {
+            try {
+                const res = await fetch(`/api/clubs/${clubId}/chat`);
+                const messages = await res.json();
+                const chatDiv = document.getElementById('clubChat');
+                
+                chatDiv.innerHTML = messages.map(msg => `
+                    <div class="chat-message">
+                        <div class="chat-username">${msg.username}</div>
+                        <div class="reply-text">${msg.text}</div>
+                        <div class="chat-time">${new Date(msg.timestamp).toLocaleDateString()}</div>
+                    </div>
+                `).join('');
+                
+                chatDiv.scrollTop = chatDiv.scrollHeight;
+            } catch (err) {
+                console.error('Load club chat failed:', err);
+            }
+        }
+
+        async function sendClubMessage(clubId) {
+            const input = document.getElementById('clubChatInput');
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            try {
+                const res = await fetch(`/api/clubs/${clubId}/message`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser, text })
+                });
+                
+                if (res.ok) {
+                    input.value = '';
+                    await loadClubDetail(clubId);
+                } else {
+                    alert('Failed to send message');
+                }
+            } catch (err) {
+                console.error('Send message failed:', err);
+            }
+        }
+
+        async function loadClubDetail(clubId) {
+            try {
+                // Load club data from the clubs list we already have
+                const allClubsRes = await fetch(`/api/clubs?username=${currentUser}`);
+                const allClubs = await allClubsRes.json();
+                const club = allClubs.find(c => c.id === clubId);
+                
+                if (!club) {
+                    alert('Club not found');
+                    return;
+                }
+                
+                currentClubId = clubId;
+                
+                const isMember = club.members.includes(currentUser);
+                const isAdmin = (Array.isArray(club.admins) && club.admins.length ? club.admins : [club.admin]).includes(currentUser);
+                const adminNames = Array.isArray(club.admins) && club.admins.length ? club.admins : [club.admin].filter(Boolean);
+                const isCEO = currentUser === 'AZHA';
+
+                let content = `
+                    <div style="margin-bottom: 20px;">
+                        <p style="color: var(--muted); margin: 5px 0;"><strong>${club.description || 'No description'}</strong></p>
+                        <p style="color: var(--muted); margin: 5px 0;">Admin: <strong>${adminNames.join(', ') || 'Unknown'}</strong></p>
+                        <p style="color: var(--muted); margin: 5px 0;">Members: <strong>${club.members.join(', ')}</strong></p>
+                    </div>
+                `;
+
+                if (isAdmin) {
+                    content += `
+                        <div style="background: rgba(246,196,83,0.1); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                            <h3 style="color: var(--gold); margin-top: 0;">⚙️ Club Management</h3>
+                            <p style="color: var(--muted); font-size: 0.9rem; margin-top: 0;">You are the club admin</p>
+                            
+                            ${(club.joinRequests || []).length > 0 ? `
+                                <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-top: 10px;">
+                                    <strong style="color: var(--teal);">📋 Join Requests (${(club.joinRequests || []).length})</strong>
+                                    ${(club.joinRequests || []).map(req => `
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.2); border-radius: 6px;">
+                                            <span style="color: var(--text);">${req.username}</span>
+                                            <div style="display: flex; gap: 8px;">
+                                                <button class="btn" onclick="handleJoinRequest('${clubId}', '${req.username}', 'accept')" style="padding: 4px 12px; font-size: 0.85rem;">✓ Accept</button>
+                                                <button class="btn btn-secondary" onclick="handleJoinRequest('${clubId}', '${req.username}', 'reject')" style="padding: 4px 12px; font-size: 0.85rem;">✗ Reject</button>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            
+                            <div style="margin-top: 10px;">
+                                <label style="color: var(--muted); font-size: 0.9rem; display: block; margin-bottom: 6px;">Join Type:</label>
+                                <select id="clubJoinType" style="padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text); width: 100%;">
+                                    <option value="request" ${club.joinType === 'request' ? 'selected' : ''}>Request Required</option>
+                                    <option value="open" ${club.joinType === 'open' ? 'selected' : ''}>Open Join</option>
+                                </select>
+                                <button class="btn" onclick="updateClubSettings('${clubId}')" style="margin-top: 8px; width: 100%;">Update Settings</button>
+                            </div>
+                            
+                            <div style="margin-top: 10px;">
+                                <button class="btn btn-secondary" onclick="showInviteModal('${clubId}')" style="width: 100%;">+ Invite Member</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Announcements section
+                if (isCEO || isAdmin) {
+                    content += `
+                        <div style="background: rgba(246,196,83,0.1); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                            <h3 style="color: var(--gold); margin-top: 0;">📢 Post Announcement</h3>
+                            <div class="form-group">
+                                <input type="text" id="clubAnnouncementTitle" placeholder="Announcement title" style="padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text);">
+                                <textarea id="clubAnnouncementContent" placeholder="Announcement content..." rows="3" style="margin-top: 8px; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text);"></textarea>
+                                <input type="text" id="clubAnnouncementImage" placeholder="Image URL (optional)" style="margin-top: 8px; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text);">
+                                <input type="file" id="clubAnnouncementImageFile" accept="image/*" style="margin-top: 8px; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text);">
+                                <button class="btn" onclick="postClubAnnouncement('${clubId}')" style="margin-top: 8px;">Post Announcement</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                content += `
+                    <h3 style="color: var(--gold);">📣 Announcements (${(club.announcements || []).length})</h3>
+                    <div id="clubAnnouncements" style="margin-bottom: 20px; max-height: 400px; overflow-y: auto;"></div>
+                `;
+
+                content += `
+                    <h3 style="color: var(--gold);">💬 Club Chat (${club.messages ? club.messages.length : 0} messages)</h3>
+                    <div class="club-chat" id="clubChat" style="margin-bottom: 15px;"></div>
+                `;
+
+                if (isMember) {
+                    content += `
+                        <div class="reply-form" style="display: flex; gap: 10px;">
+                            <input type="text" id="clubChatInput" class="reply-input" placeholder="Send a message..." style="flex: 1; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text);">
+                            <button class="btn" onclick="sendClubMessage('${clubId}')">Send</button>
+                        </div>
+                    `;
+                } else {
+                    content += `<p style="color: var(--muted); text-align: center;">Join the club to participate in chat</p>`;
+                }
+
+                document.getElementById('clubDetailName').textContent = club.name;
+                document.getElementById('clubDetailContent').innerHTML = content;
+                
+                // Load and display announcements
+                const announcementsRes = await fetch(`/api/clubs/${clubId}/announcements`);
+                const announcements = await announcementsRes.json();
+                const announcementsDiv = document.getElementById('clubAnnouncements');
+                
+                if (announcements.length > 0) {
+                    announcementsDiv.innerHTML = announcements.map(ann => `
+                        <div style="background: rgba(246,196,83,0.08); padding: 12px; border-radius: 12px; margin-bottom: 12px; border-left: 3px solid var(--gold);">
+                            <div style="display: flex; justify-content: space-between;">
+                                <div>
+                                    <strong style="color: var(--gold);">${ann.title}</strong>
+                                    <p style="color: var(--muted); font-size: 0.85rem; margin: 3px 0;">by ${ann.username}</p>
+                                </div>
+                                <div style="color: var(--muted); font-size: 0.8rem;">${new Date(ann.createdAt).toLocaleDateString()}</div>
+                            </div>
+                            ${ann.image ? `<img src="${ann.image}" style="width: 100%; max-height: 200px; border-radius: 8px; margin: 8px 0; object-fit: cover;">` : ''}
+                            <p style="color: var(--text); margin: 8px 0;">${ann.content}</p>
+                            <div style="background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px; margin-top: 8px;">
+                                ${(ann.replies || []).map(reply => `
+                                    <div style="padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                        <strong style="color: var(--accent);">${reply.username}:</strong>
+                                        <span style="color: var(--muted);">${reply.text}</span>
+                                        <div style="font-size: 0.75rem; color: var(--muted);">${new Date(reply.createdAt).toLocaleTimeString()}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            ${isMember ? `
+                                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                                    <input type="text" id="replyText_${ann.id}" placeholder="Reply..." style="flex: 1; padding: 6px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: var(--text); font-size: 0.9rem;">
+                                    <button class="btn" onclick="replyToAnnouncement('${clubId}', '${ann.id}')" style="min-height: auto; padding: 6px 12px; font-size: 0.9rem;">Reply</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    announcementsDiv.innerHTML = '<p style="color: var(--muted); text-align: center;">No announcements yet</p>';
+                }
+                
+                // Load and display chat messages
+                if (club.messages && club.messages.length > 0) {
+                    const chatDiv = document.getElementById('clubChat');
+                    chatDiv.innerHTML = club.messages.map(msg => `
+                        <div class="chat-message">
+                            <div class="chat-username">${msg.username}</div>
+                            <div class="reply-text">${msg.text}</div>
+                            <div class="chat-time">${new Date(msg.timestamp).toLocaleString()}</div>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error('Load club detail failed:', err);
+                alert('Failed to load club details');
+            }
+        }
+        function openClubDetail(clubId, clubName) {
+            document.getElementById('clubDetailName').textContent = clubName;
+            document.getElementById('clubDetailModal').classList.add('active');
+            loadClubDetail(clubId);
+        }
+
+        function openCreateClubModal() {
+            document.getElementById('createClubModal').classList.add('active');
+        }
+
+        function closeCreateClubModal() {
+            document.getElementById('createClubModal').classList.remove('active');
+            document.getElementById('clubName').value = '';
+            document.getElementById('clubDescription').value = '';
+        }
+
+        function closeClubDetailModal() {
+            document.getElementById('clubDetailModal').classList.remove('active');
+        }
+
+        // Offline request queuing
+        async function queueOfflineRequest(url, method, body) {
+            try {
+                const db = await openIndexedDB();
+                const tx = db.transaction('requestQueue', 'readwrite');
+                const store = tx.objectStore('requestQueue');
+                
+                const request = {
+                    url,
+                    method,
+                    body,
+                    timestamp: Date.now()
+                };
+                
+                store.add(request);
+                alert('Your change will sync when online');
+            } catch (err) {
+                console.error('Queue offline request failed:', err);
+            }
+        }
+        
+        async function openIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open('AZHALaunchpad', 1);
+                
+                req.onerror = () => reject(req.error);
+                req.onsuccess = () => resolve(req.result);
+                
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains('requestQueue')) {
+                        db.createObjectStore('requestQueue', { autoIncrement: true });
+                    }
+                };
+            });
+        }
+        
+        // Sync offline requests when online
+        async function syncOfflineRequests() {
+            try {
+                const db = await openIndexedDB();
+                const tx = db.transaction('requestQueue', 'readonly');
+                const store = tx.objectStore('requestQueue');
+                const allRequests = await new Promise((resolve, reject) => {
+                    const req = store.getAll();
+                    req.onerror = () => reject(req.error);
+                    req.onsuccess = () => resolve(req.result);
+                });
+                
+                if (allRequests.length === 0) return;
+                
+                const txWrite = db.transaction('requestQueue', 'readwrite');
+                const storeWrite = txWrite.objectStore('requestQueue');
+                
+                for (const req of allRequests) {
+                    try {
+                        const res = await fetch(req.url, {
+                            method: req.method,
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(req.body)
+                        });
+                        
+                        if (res.ok) {
+                            storeWrite.delete(allRequests.indexOf(req));
+                        }
+                    } catch (err) {
+                        console.error('Sync request failed:', err);
+                    }
+                }
+            } catch (err) {
+                console.error('Sync offline requests failed:', err);
+            }
+        }
+        
+        // Sync when online
+        window.addEventListener('online', syncOfflineRequests);
+
+        // Handle join requests (accept/reject)
+        async function handleJoinRequest(clubId, username, action) {
+            try {
+                const endpoint = action === 'accept' 
+                    ? `/api/clubs/${clubId}/join-request/${username}/accept`
+                    : `/api/clubs/${clubId}/join-request/${username}/reject`;
+                
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ actor: currentUser })
+                });
+                
+                if (res.ok) {
+                    const msg = action === 'accept' ? 'Join request accepted!' : 'Join request rejected';
+                    alert(msg);
+                    await loadClubDetail(clubId);
+                } else {
+                    const error = await res.json();
+                    alert(error.error || 'Failed to handle join request');
+                }
+            } catch (err) {
+                console.error('Handle join request failed:', err);
+                alert('Failed to handle join request');
+            }
+        }
+
+        // Update club settings (join type)
+        async function updateClubSettings(clubId) {
+            try {
+                const joinType = document.getElementById('clubJoinType')?.value;
+                
+                const res = await fetch(`/api/clubs/${clubId}/settings`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ actor: currentUser, joinType })
+                });
+                
+                if (res.ok) {
+                    alert('✓ Club settings updated!');
+                    await loadClubDetail(clubId);
+                } else {
+                    const error = await res.json();
+                    alert(error.error || 'Failed to update settings');
+                }
+            } catch (err) {
+                console.error('Update settings failed:', err);
+                OfflineSync.queueRequest(`/api/clubs/${clubId}/settings`, 'PUT', { 
+                    actor: currentUser, 
+                    joinType: document.getElementById('clubJoinType')?.value 
+                });
+                alert('Settings will be updated when online');
+            }
+        }
+
+        // Show invite modal
+        function showInviteModal(clubId) {
+            const username = prompt('Enter username to invite:');
+            if (username) {
+                inviteMemberToClub(clubId, username);
+            }
+        }
+
+        // Invite member to club
+        async function inviteMemberToClub(clubId, targetUsername) {
+            try {
+                const res = await fetch(`/api/clubs/${clubId}/invite`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ actor: currentUser, targetUsername })
+                });
+                
+                if (res.ok) {
+                    alert(`✓ ${targetUsername} invited to the club!`);
+                    await loadClubDetail(clubId);
+                } else {
+                    const error = await res.json();
+                    alert(error.error || 'Failed to invite member');
+                }
+            } catch (err) {
+                console.error('Invite failed:', err);
+                OfflineSync.queueRequest(`/api/clubs/${clubId}/invite`, 'POST', { 
+                    actor: currentUser, 
+                    targetUsername 
+                });
+                alert('Invitation will be sent when online');
+            }
+        }
+
+        setTimeout(() => {
+            if (currentUser) {
+                syncOfflineRequests();
+                loadClubs();
+            } else {
+                window.location.href = 'Getin.html';
+            }
+        }, 100);
+    </script>
+    <script src="offline-sync.js"></script>
+</body>
+</html>

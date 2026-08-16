@@ -4,11 +4,816 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="CoderAzhaf is a personal launchpad for projects, games, videos, and account access.">
+    <meta name="theme-color" content="#06131a">
+    <link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./channels4profile.jpg"/>
+
     <title>CoderAzhaf | Launchpad</title>
-    <link rel="icon" type="image/png" href="AZHA.PNG">
-    <link rel="stylesheet" href="app.css">
+    <link rel="icon" type="image/jpeg" sizes="192x192" href="./channels4profile.jpg"/>
+    <link rel="icon" type="image/png" sizes="512x512" href="./channels4profile.jpg"/>
+    <style>
+:root {
+    --bg: #06131a;
+    --bg-soft: #0d1f28;
+    --panel: rgba(8, 18, 26, 0.84);
+    --panel-strong: rgba(10, 18, 28, 0.96);
+    --line: rgba(255, 255, 255, 0.12);
+    --text: #f4f2ea;
+    --muted: #bfd0d8;
+    --gold: #f6c453;
+    --teal: #65d1b7;
+    --red: #ff7b6b;
+    --blue: #70b8ff;
+    --violet: #c6a3ff;
+    --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(246, 196, 83, 0.22), transparent 28%),
+        radial-gradient(circle at 85% 15%, rgba(101, 209, 183, 0.16), transparent 24%),
+        linear-gradient(180deg, #102735 0%, #071118 46%, #05090d 100%);
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+background:
+        linear-gradient(rgba(4, 9, 14, 0.32), rgba(4, 9, 14, 0.78)),
+        url("./assets/profile-bg.svg") center/cover no-repeat;
+    opacity: 0.22;
+    pointer-events: none;
+}
+
+.app-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(circle at top left, rgba(246, 196, 83, 0.2), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(101, 209, 183, 0.16), transparent 24%),
+        linear-gradient(180deg, rgba(9, 20, 30, 0.98), rgba(4, 10, 14, 0.98));
+    transition: opacity 260ms ease, visibility 260ms ease;
+}
+
+.app-loader.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.app-loader-card {
+    display: grid;
+    justify-items: center;
+    gap: 16px;
+    padding: 26px 28px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(8, 18, 26, 0.82);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+}
+
+.app-loader-card img {
+    width: 104px;
+    height: 104px;
+    border-radius: 28px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.35);
+}
+
+.app-loader-card strong {
+    font-size: 1.15rem;
+    letter-spacing: 0.08em;
+}
+
+.app-loader-card span {
+    color: var(--muted);
+    font-size: 0.94rem;
+}
+
+img,
+video {
+    max-width: 100%;
+    display: block;
+}
+
+button,
+a {
+    font: inherit;
+}
+
+.home-page .page-shell {
+    position: relative;
+    z-index: 1;
+    width: min(1180px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 28px 0 56px;
+}
+
+.hero-panel,
+.content-section,
+.tool-card,
+.launch-card,
+.game-card,
+.media-card {
+    backdrop-filter: blur(18px);
+}
+
+.hero-panel {
+    display: grid;
+    grid-template-columns: 1.4fr 0.8fr;
+    gap: 24px;
+    padding: 32px;
+    background: linear-gradient(145deg, rgba(11, 23, 32, 0.94), rgba(18, 40, 52, 0.78));
+    border: 1px solid var(--line);
+    border-radius: 32px;
+    box-shadow: var(--shadow);
+}
+
+.eyebrow,
+.section-kicker,
+.profile-label,
+.launch-label,
+.launch-arrow,
+.tool-title,
+.profile-stats span {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+}
+
+.eyebrow,
+.section-kicker,
+.profile-label,
+.launch-label,
+.launch-arrow {
+    color: var(--gold);
+    font-size: 0.74rem;
+}
+
+.hero-copy h1,
+.section-heading h2,
+.profile-card h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    line-height: 0.96;
+}
+
+.hero-copy h1 {
+    font-size: clamp(3rem, 7vw, 5.6rem);
+    margin-top: 10px;
+}
+
+.hero-text,
+.section-heading p,
+.profile-card p,
+.launch-card p,
+.game-card p,
+.tool-copy {
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.hero-text {
+    max-width: 56ch;
+    margin: 18px 0 0;
+    font-size: 1.05rem;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 18px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.button:hover,
+.launch-card:hover,
+.game-card:hover,
+.tool-card:hover {
+    transform: translateY(-3px);
+}
+
+.button-primary {
+    background: linear-gradient(135deg, var(--gold), #f8a835);
+    color: #111;
+    box-shadow: 0 16px 35px rgba(248, 168, 53, 0.26);
+}
+
+.button-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.button-ghost {
+    background: transparent;
+    color: var(--muted);
+    border-color: rgba(255, 255, 255, 0.16);
+}
+
+.button-install {
+    background: linear-gradient(135deg, var(--teal), #39a489);
+    color: #082018;
+    box-shadow: 0 16px 35px rgba(57, 164, 137, 0.24);
+}
+
+.profile-card {
+    padding: 24px;
+    background: rgba(4, 12, 18, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+}
+
+.profile-logos {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.profile-logo {
+    width: 92px;
+    height: 92px;
+    border-radius: 24px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.profile-user-pic {
+    width: 74px;
+    height: 74px;
+    border-radius: 22px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
+}
+
+.profile-card h2 {
+    font-size: 2rem;
+}
+
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.profile-stats div {
+    padding: 14px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.profile-stats strong {
+    display: block;
+    margin-top: 6px;
+    font-size: 1.1rem;
+}
+
+.content-section {
+    margin-top: 24px;
+    padding: 28px;
+    border-radius: 28px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    box-shadow: var(--shadow);
+}
+
+.alt-surface {
+    background: linear-gradient(160deg, rgba(13, 31, 40, 0.92), rgba(7, 16, 24, 0.9));
+}
+
+.section-heading {
+    max-width: 52rem;
+    margin-bottom: 20px;
+}
+
+.section-heading.compact {
+    margin-bottom: 16px;
+}
+
+.section-heading h2 {
+    margin-top: 8px;
+    font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.card-grid,
+.feature-grid,
+.tool-row {
+    display: grid;
+    gap: 18px;
+}
+
+.card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.feature-grid,
+.tool-row {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.launch-card,
+.game-card,
+.tool-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 100%;
+    padding: 20px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    text-decoration: none;
+    color: inherit;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.launch-card h3,
+.game-card h3 {
+    margin: 0;
+    font-size: 1.45rem;
+}
+
+.launch-card p,
+.game-card p,
+.tool-copy {
+    margin: 0;
+}
+
+.launch-arrow {
+    margin-top: auto;
+}
+
+.accent-gold {
+    box-shadow: inset 0 0 0 1px rgba(246, 196, 83, 0.22);
+}
+
+.accent-green {
+    box-shadow: inset 0 0 0 1px rgba(101, 209, 183, 0.22);
+}
+
+.accent-red {
+    box-shadow: inset 0 0 0 1px rgba(255, 123, 107, 0.22);
+}
+
+.accent-blue {
+    box-shadow: inset 0 0 0 1px rgba(112, 184, 255, 0.22);
+}
+
+.accent-violet {
+    box-shadow: inset 0 0 0 1px rgba(198, 163, 255, 0.22);
+}
+
+.game-card {
+    overflow: hidden;
+    padding: 0;
+}
+
+.game-card img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+}
+
+.game-card-copy {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 12px;
+    padding: 18px 20px 20px;
+}
+
+.game-card-copy span,
+.tool-title {
+    color: var(--gold);
+}
+
+.media-layout {
+    display: grid;
+    gap: 18px;
+}
+
+.media-card {
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    background: var(--panel-strong);
+}
+
+.media-card video {
+    width: 100%;
+    max-height: 560px;
+    background: #000;
+}
+
+.tool-card {
+    justify-content: space-between;
+    min-height: 180px;
+}
+
+.tool-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.tool-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.tool-title {
+    font-size: 0.82rem;
+}
+
+@media (max-width: 900px) {
+    .hero-panel {
+        grid-template-columns: 1fr;
+        padding: 24px;
+    }
+
+    .profile-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .home-page .page-shell {
+        width: min(100% - 20px, 1180px);
+        padding-top: 16px;
+        padding-bottom: 28px;
+    }
+
+    .hero-panel,
+    .content-section {
+        padding: 20px;
+        border-radius: 24px;
+    }
+
+    .hero-copy h1 {
+        font-size: 2.8rem;
+    }
+
+    .profile-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .button {
+        width: 100%;
+    }
+}
+
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+.status-card {
+    padding: 20px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+}
+
+.notification-center {
+    display: grid;
+    gap: 16px;
+}
+
+.notification-list {
+    display: grid;
+    gap: 12px;
+}
+
+.notification-item {
+    display: grid;
+    gap: 10px;
+    padding: 16px;
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+}
+
+.notification-item.unread {
+    box-shadow: inset 0 0 0 1px rgba(246, 196, 83, 0.18);
+}
+
+.notification-top {
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:flex-start;
+}
+
+.notification-top strong {
+    display:block;
+}
+
+.notification-meta {
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.notification-actions {
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.mini-badge {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:30px;
+    min-height:30px;
+    padding:0 10px;
+    border-radius:999px;
+    background:rgba(246,196,83,0.14);
+    border:1px solid rgba(246,196,83,0.24);
+    color:var(--gold);
+    font-size:0.86rem;
+}
+
+.status-card span {
+    display: block;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.72rem;
+}
+
+.status-card strong {
+    display: block;
+    margin-top: 10px;
+    font-size: 2rem;
+}
+
+.status-card p {
+    margin-bottom: 0;
+}
+
+.system-shutdown-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(5, 10, 15, 0.98), rgba(15, 25, 35, 0.98));
+    padding: 20px;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.system-shutdown-overlay.is-visible {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.shutdown-message-card {
+    max-width: 500px;
+    text-align: center;
+    padding: 40px;
+    border-radius: 20px;
+    border: 2px solid rgba(255, 123, 107, 0.3);
+    background: rgba(255, 123, 107, 0.05);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.shutdown-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+.shutdown-message-card h1 {
+    color: #ff7b6b;
+    font-size: 2.5rem;
+    margin: 0 0 15px;
+    font-family: Georgia, serif;
+}
+
+.shutdown-message-card p {
+    color: #bfd0d8;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin: 15px 0;
+}
+
+.shutdown-details {
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid #ff7b6b;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: left;
+    color: #65d1b7;
+    font-size: 0.9rem;
+}
+
+.shutdown-details strong {
+    color: #f6c453;
+}
+
+.shutdown-login-button {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #65d1b7, #4ecdc4);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(101, 209, 183, 0.3);
+}
+
+.shutdown-login-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(101, 209, 183, 0.5);
+    background: linear-gradient(135deg, #4ecdc4, #45b8a8);
+}
+
+.shutdown-login-button:active {
+    transform: translateY(0);
+}
+</style>
+
+<!-- Video Modal -->
+<div id="videoModal" class="video-modal">
+    <div class="video-modal-content">
+        <span id="closeVideoModal" class="video-modal-close">&times;</span>
+        <video id="introVideo" controls preload="metadata" poster="channels4profile.jpg">
+            <source src="./assets/intro-video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</div>
+
+<style>
+/* Video Modal Styles */
+.video-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.video-modal.is-visible {
+    display: flex;
+}
+
+.video-modal-content {
+    position: relative;
+    width: 80%;
+    max-width: 800px;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.video-modal video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.video-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #fff;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10001;
+    background: rgba(0, 0, 0, 0.7);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.video-modal-close:hover {
+    background: rgba(255, 0, 0, 0.8);
+}
+</style>
+
+
+
+<!-- Ensure all elements are properly closed and formatted -->
+    <style>
+      body {
+        background-image: url("channels4profile.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+    </style>
 </head>
 <body class="home-page">
+    <div id="appLoader" class="app-loader" aria-hidden="true">
+        <div class="app-loader-card">
+<img src="./channels4profile.jpg" alt="AZHA Launchpad loading icon">
+            <strong>AZHA Launchpad</strong>
+            <span>Loading your space...</span>
+        </div>
+    </div>
+    
+    <!-- System Shutdown Overlay -->
+    <div id="systemShutdownOverlay" class="system-shutdown-overlay">
+        <div class="shutdown-message-card">
+            <div class="shutdown-icon">⚠️</div>
+            <h1>System Shutdown</h1>
+            <p>The AZHA Launchpad servers are currently offline for maintenance.</p>
+            <p id="shutdownMessageText" style="font-style: italic; color: #f6c453;">Checking server status...</p>
+            <div class="shutdown-details">
+                <p><strong>Status:</strong> <span id="shutdownStatus">Offline</span></p>
+                <p><strong>Reason:</strong> <span id="shutdownReason">Scheduled Maintenance</span></p>
+                <p><strong>Time:</strong> <span id="shutdownTime">-</span></p>
+            </div>
+            <a href="Getin.html" class="shutdown-login-button">Log In to Your Account</a>
+        </div>
+    </div>
+    
     <div class="page-shell">
         <header class="hero-panel">
             <div class="hero-copy">
@@ -18,12 +823,28 @@
                 <div class="hero-actions" id="heroActions">
                     <a class="button button-primary" href="Getin.html">Open Account</a>
                     <a class="button button-secondary" href="Message.html">Messages</a>
+                    <a class="button button-secondary" href="Chat.html">Chat</a>
+                    <a class="button button-secondary" href="Friends.html">Friends</a>
+                    <a class="button button-secondary" href="Meetings.html">Meetings</a>
+                    <a class="button button-secondary" href="Clubs.html">Clubs</a>
+                    <a class="button button-secondary" href="Shop.html">Shop</a>
+                    <a class="button button-secondary" href="Announcements.html">Announcements</a>
+                    <a class="button button-secondary" href="Browser.html">Browser</a>
+                    <a class="button button-secondary" href="OrganizationAdmin.html">Organization</a>
+                    <a class="button button-secondary" href="Profile.html">Profile</a>
+                    <a class="button button-secondary" href="Settings.html">Settings</a>
                     <a class="button button-secondary" href="contact.html">Website Info</a>
+                    <a class="button button-secondary" href="Legacy.html">Legacy Mode</a>
+                    <button id="appInstallerButton" class="button button-install" type="button" hidden>Install App</button>
+                    <button id="installButton" class="button button-install" type="button" hidden>Install Web App</button>
                     <button id="logoutButton" class="button button-ghost" type="button" hidden>Log Out</button>
                 </div>
             </div>
             <aside class="profile-card">
-                <img class="profile-logo" src="AZHA.PNG" alt="CoderAzhaf logo">
+                <div class="profile-logos">
+                    <img id="profileLogo" class="profile-logo" src="./channels4profile.jpg" alt="CoderAzhaf logo"/>
+                    <img id="userProfilePic" class="profile-user-pic" src="./channels4profile.jpg" alt="Your profile picture" hidden/>
+                </div>
                 <p class="profile-label">Current status</p>
                 <h2 id="welcomeName">Visitor</h2>
                 <p id="welcomeMeta">Browse the launchpad or sign in to use account and messaging features.</p>
@@ -63,9 +884,26 @@
                         <p>Unread inbox messages for the signed-in user.</p>
                     </article>
                     <article class="status-card">
-                        <span>AZHA balance</span>
+                        <span>Your AZHA</span>
                         <strong id="azhaBalance">-</strong>
-                        <p>Only the AZHA account keeps infinite AZINC by default.</p>
+                        <p>This is the signed-in account's real AZHA balance from the backend.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="content-section alt-surface notification-center">
+                <div class="section-heading compact">
+                    <p class="section-kicker">Notification center</p>
+                    <h2>What is new for you <span id="notificationBadge" class="mini-badge">0</span></h2>
+                    <p>Messages and meeting invites that come into your signed-in account show up here.</p>
+                </div>
+                <div class="hero-actions">
+                    <button id="enableHomeNotifications" class="button button-secondary" type="button">Enable notifications</button>
+                </div>
+                <div id="notificationList" class="notification-list">
+                    <article class="notification-item">
+                        <strong>No notifications yet.</strong>
+                        <span class="notification-meta">New messages and meeting invites will appear here.</span>
                     </article>
                 </div>
             </section>
@@ -91,12 +929,11 @@
             <section class="content-section media-layout">
                 <div class="section-heading compact">
                     <p class="section-kicker">Featured video</p>
-                    <h2>Website walkthrough</h2>
-                    <p>A short look at your site in action, embedded in a cleaner media frame.</p>
+                    <h2>AZHA intro and outro</h2>
+                    <p>Your updated AZHA intro/outro video is now featured here.</p>
                 </div>
-                <div class="media-card">
-                    <video controls preload="metadata" poster="AZHA.PNG">
-                        <source src="Azhaf video web ..mp4" type="video/mp4">
+<div class="media-card">
+                    <video controls preload="metadata" poster="channels4profile.jpg" src="./assets/intro-video.mp4">
                         Your browser does not support the video tag.
                     </video>
                 </div>
@@ -104,20 +941,88 @@
 
             <section class="content-section tool-row">
                 <a class="tool-card" href="contact.html">
-                    <span class="tool-title">Website Info</span>
+                    <div class="tool-top">
+                        <img id="infoToolAvatar" class="tool-avatar" src="./channels4profile.jpg" alt="Website info icon"/>
+                        <span class="tool-title">Website Info</span>
+                    </div>
                     <span class="tool-copy">Version notes, creator details, and deployment guidance.</span>
                 </a>
                 <a class="tool-card" href="Getin.html">
-                    <span class="tool-title">Sign Up or Log In</span>
+                    <div class="tool-top">
+                        <img id="accountToolAvatar" class="tool-avatar" src="./channels4profile.jpg" alt="Account profile picture"/>
+                        <span class="tool-title">Sign Up or Log In</span>
+                    </div>
                     <span class="tool-copy">Use the account page powered by backend-first auth helpers.</span>
                 </a>
                 <a class="tool-card" href="Download.html">
-                    <span class="tool-title">Downloads</span>
+                    <div class="tool-top">
+                        <img id="downloadToolAvatar" class="tool-avatar" src="./channels4profile.jpg" alt="Downloads icon"/>
+                        <span class="tool-title">Downloads</span>
+                    </div>
                     <span class="tool-copy">Download your GIF assets from a cleaner media page.</span>
                 </a>
                 <a class="tool-card" href="Message.html">
-                    <span class="tool-title">Messages</span>
+                    <div class="tool-top">
+                        <img id="messageToolAvatar" class="tool-avatar" src="./channels4profile.jpg" alt="Message profile picture">
+                        <span class="tool-title">Messages</span>
+                    </div>
                     <span class="tool-copy">Open the dedicated inbox page and send messages from the backend.</span>
+                </a>
+                <a class="tool-card" href="Chat.html">
+                    <div class="tool-top">
+<img class="tool-avatar" src="./channels4profile.jpg" alt="Chat icon">
+                        <span class="tool-title">Chat</span>
+                    </div>
+                    <span class="tool-copy">Friend people, see who is online, and chat once they accept.</span>
+                </a>
+                <a class="tool-card" href="Meetings.html">
+                    <div class="tool-top">
+<img class="tool-avatar" src="./channels4profile.jpg" alt="Meeting icon">
+                        <span class="tool-title">Meetings</span>
+                    </div>
+                    <span class="tool-copy">Launch in-site calls, quick meeting links, and focused rooms from one page.</span>
+                </a>
+                <a class="tool-card" href="Browser.html">
+                    <div class="tool-top">
+<img class="tool-avatar" src="./channels4profile.jpg" alt="Browser icon">
+                        <span class="tool-title">AZHA Browser</span>
+                    </div>
+                    <span class="tool-copy">Use your own signed-in browser space with search, bookmarks, and history tied to your account.</span>
+                </a>
+                <a class="tool-card" href="Friends.html">
+                    <div class="tool-top">
+<img class="tool-avatar" src="./channels4profile.jpg" alt="Friends icon">
+                        <span class="tool-title">Friends</span>
+                    </div>
+                    <span class="tool-copy">Send friend requests, manage your friend list, and set your online status.</span>
+                </a>
+                <a class="tool-card" href="Clubs.html">
+                    <div class="tool-top">
+<img class="tool-avatar" src="./channels4profile.jpg" alt="Clubs icon">
+                        <span class="tool-title">Clubs & Groups</span>
+                    </div>
+                    <span class="tool-copy">Create or join clubs, chat with members, and manage group activities.</span>
+                </a>
+                <a class="tool-card" href="Shop.html">
+                    <div class="tool-top">
+<img class="tool-avatar" src="./channels4profile.jpg" alt="Shop icon">
+                        <span class="tool-title">Shop</span>
+                    </div>
+                    <span class="tool-copy">Browse and purchase exclusive items using your AZHA balance.</span>
+                </a>
+                <a class="tool-card" href="Announcements.html">
+                    <div class="tool-top">
+<img class="tool-avatar" src="./channels4profile.jpg" alt="Announcements icon">
+                        <span class="tool-title">Announcements</span>
+                    </div>
+                    <span class="tool-copy">Stay updated with community announcements and important updates.</span>
+                </a>
+                <a class="tool-card" href="OrganizationAdmin.html">
+                    <div class="tool-top">
+<img class="tool-avatar" src="./channels4profile.jpg" alt="Organization icon">
+                        <span class="tool-title">Organization Admin</span>
+                    </div>
+                    <span class="tool-copy">Manage your organization, members, warnings, bans, and browser policies.</span>
                 </a>
             </section>
         </main>
@@ -129,18 +1034,28 @@
             { title: 'ClassLink', description: 'Open your learning dashboard without digging through bookmarks.', href: 'https://launchpad.classlink.com/', accent: 'green' },
             { title: 'YouTube Channel', description: 'Visit the BrosMaxGamerz channel and jump right to your uploads.', href: 'https://www.youtube.com/@BrosMaxGamerz', accent: 'red' },
             { title: 'YouTube', description: 'Open the main YouTube homepage for videos, playlists, and search.', href: 'https://www.youtube.com/', accent: 'blue' },
-            { title: 'LaunchPad Pro-Open', description: 'Open the pro version of your launchpad in a separate tab.', href: '/Pro-Open/', accent: 'violet' }
+            { title: 'LaunchPad Pro-Open', description: 'This is an website made when the owner of this web was yonger', href: 'https://coderazhaf.github.io/Pro-Open/', accent: 'violet' }
         ];
 
         const games = [
-            { title: 'Owners House', description: 'A house-themed experience hosted on Vercel.', href: 'https://azhaownershouse.vercel.app', image: 'OwnersHowseimage.PNG' },
-            { title: 'Hiding Monsters', description: 'A spooky project with a dramatic creature-style preview.', href: 'https://azhahidingmonsters.base44.app', image: 'gemini-image.png.PNG' },
-            { title: 'Aviation Build', description: 'An aviation-themed build with its own custom logo and feel.', href: 'https://azhaaviationbuil.base44.app', image: '27eecd342_logo.png' }
+            { title: 'Owners House', description: 'A house-themed experience hosted on Vercel.', href: 'https://azhaownershouse.vercel.app', image: './assets/owners-house.png' },
+            { title: 'Hiding Monsters', description: 'A spooky project with a dramatic creature-style preview.', href: 'https://azhahidingmonsters.base44.app', image: './hiding-monsters.png' },
+            { title: 'Aviation Build', description: 'An aviation-themed build with its own custom logo and feel.', href: 'https://azhaaviationbuil.base44.app', image: './aviation-logo.png' },
+            { title: 'Aviation Build Lite', description: 'A lighter aviation build that launches straight from the AZHA games list.', href: 'https://azhaaviationbuillite.bolt.host', image: './aviation-logo.png' }
         ];
 
+        function openLaunchLink(url) {
+            if (/^https?:\/\//i.test(url)) {
+                window.open(url, '_blank', 'noopener,noreferrer');
+                return false;
+            }
+            return true;
+        }
+
         function createLinkCard(item) {
+            const escapedHref = item.href.replace(/'/g, "\\'");
             return `
-                <a class="launch-card accent-${item.accent}" href="${item.href}" target="_blank" rel="noreferrer">
+                <a class="launch-card accent-${item.accent}" href="${item.href}" target="_blank" rel="noreferrer" onclick="return openLaunchLink('${escapedHref}')">
                     <span class="launch-label">Open</span>
                     <h3>${item.title}</h3>
                     <p>${item.description}</p>
@@ -173,6 +1088,11 @@
         const welcomeMeta = document.getElementById('welcomeMeta');
         const logoutButton = document.getElementById('logoutButton');
         const heroActions = document.getElementById('heroActions');
+        const profileLogo = document.getElementById('profileLogo');
+        const userProfilePic = document.getElementById('userProfilePic');
+        const installButton = document.getElementById('installButton');
+        let deferredInstallPrompt = null;
+        const loaderStartedAt = Date.now();
 
         if (isLoggedIn && currentUsername) {
             welcomeName.textContent = currentUsername;
@@ -198,27 +1118,242 @@
             window.location.reload();
         });
 
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredInstallPrompt = event;
+            installButton.hidden = false;
+        });
+
+        installButton?.addEventListener('click', async () => {
+            if (!deferredInstallPrompt) return;
+            deferredInstallPrompt.prompt();
+            await deferredInstallPrompt.userChoice;
+            deferredInstallPrompt = null;
+            installButton.hidden = true;
+        });
+
+        // App Installer Button
+        const appInstallerButton = document.getElementById('appInstallerButton');
+        appInstallerButton?.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = './AZHA-Launchpad-Installer.exe';
+            link.download = 'AZHA-Launchpad-Installer.exe';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Show app installer button on Windows
+        if (navigator.platform && navigator.platform.includes('Win')) {
+            appInstallerButton.hidden = false;
+        }
+
+        // --- Video Modal Management ---
+        const videoModal = document.getElementById('videoModal');
+        const closeVideoModal = document.getElementById('closeVideoModal');
+        const introVideo = document.getElementById('introVideo');
+
+        function showIntroVideo() {
+            if (videoModal && introVideo) {
+                videoModal.style.display = 'flex';
+                introVideo.play().catch(err => console.error('Video play error:', err));
+            }
+        }
+
+        function hideIntroVideo() {
+            if (videoModal && introVideo) {
+                videoModal.style.display = 'none';
+                introVideo.pause();
+            }
+        }
+        
+        // Make function available for other scripts if needed (e.g. after login)
+        window.showVideoAfterAuth = showIntroVideo;
+
+        if (videoModal && closeVideoModal && introVideo) {
+            closeVideoModal.addEventListener('click', hideIntroVideo);
+            introVideo.addEventListener('ended', hideIntroVideo);
+
+            // Show intro video on first visit OR after login
+            const shouldShowIntroVideo = !sessionStorage.getItem('introVideoShown') || sessionStorage.getItem('showIntroVideoOnLoad') === 'true';
+            if (shouldShowIntroVideo) {
+                // Use DOMContentLoaded for faster trigger than 'load' for perceived performance
+                document.addEventListener('DOMContentLoaded', () => {
+                    showIntroVideo();
+                    sessionStorage.setItem('introVideoShown', 'true');
+                    sessionStorage.removeItem('showIntroVideoOnLoad');
+                });
+            }
+        }
+
+        window.addEventListener('appinstalled', () => {
+            installButton.hidden = true;
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+                    .then(async (registration) => {
+                        await registration.update();
+                        const promoteWorker = (worker) => {
+                            if (!worker) return;
+                            worker.postMessage({ type: 'SKIP_WAITING' });
+                        };
+                        if (registration.waiting) promoteWorker(registration.waiting);
+                        if (registration.installing) promoteWorker(registration.installing);
+                        registration.addEventListener('updatefound', () => {
+                            promoteWorker(registration.installing);
+                        });
+                        navigator.serviceWorker.addEventListener('controllerchange', () => {
+                            if (sessionStorage.getItem('swReloadedHome') === 'true') return;
+                            sessionStorage.setItem('swReloadedHome', 'true');
+                            window.location.reload();
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Service worker registration failed', error);
+                    });
+            });
+        }
+
         async function loadSummary() {
             const query = currentUsername ? `?username=${encodeURIComponent(currentUsername)}` : '';
             try {
-                const response = await fetch(`/api/site-summary${query}`);
+                if (currentUsername && typeof getAllUsers === 'function') {
+                    const users = await getAllUsers();
+                    const currentAccount = users.find((user) => user.username === currentUsername);
+                    if (currentAccount?.profilePic) {
+                        userProfilePic.src = currentAccount.profilePic;
+                        userProfilePic.hidden = false;
+                        ['accountToolAvatar', 'messageToolAvatar'].forEach((id) => {
+                            const node = document.getElementById(id);
+                            if (node) node.src = currentAccount.profilePic;
+                        });
+                    } else {
+                        userProfilePic.hidden = true;
+                    }
+                }
+                const response = await fetch(`./api/site-summary${query}`, { cache: 'no-store' });
                 if (!response.ok) throw new Error('Unable to load summary');
                 const summary = await response.json();
                 document.getElementById('projectCount').textContent = summary.featuredProjects;
                 document.getElementById('userCount').textContent = summary.users;
                 document.getElementById('storageMode').textContent = summary.storage;
+                document.getElementById('storageMode').title = summary.storageDetail || '';
                 document.getElementById('messageCount').textContent = summary.messages;
                 document.getElementById('unreadCount').textContent = summary.unreadCount;
-                document.getElementById('azhaBalance').textContent = summary.azhaBalance;
+                document.getElementById('azhaBalance').textContent = summary.currentUserBalance ?? '-';
             } catch (error) {
                 document.getElementById('storageMode').textContent = 'offline';
+                document.getElementById('storageMode').title = '';
                 document.getElementById('messageCount').textContent = '0';
                 document.getElementById('unreadCount').textContent = '0';
-                document.getElementById('azhaBalance').textContent = 'INF';
+                document.getElementById('azhaBalance').textContent = '-';
             }
         }
 
+        function escapeText(value) {
+            return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;' }[char]));
+        }
+
+        function renderNotificationCenter(feed = []) {
+            const badge = document.getElementById('notificationBadge');
+            const list = document.getElementById('notificationList');
+            const unread = feed.filter((entry) => entry.unread).length;
+            badge.textContent = unread;
+            if (!feed.length) {
+                list.innerHTML = `
+                    <article class="notification-item">
+                        <strong>No notifications yet.</strong>
+                        <span class="notification-meta">New messages and meeting invites will appear here.</span>
+                    </article>
+                `;
+                return;
+            }
+            list.innerHTML = feed.slice(0, 8).map((entry) => `
+                <article class="notification-item ${entry.unread ? 'unread' : ''}">
+                    <div class="notification-top">
+                        <div>
+                            <strong>${escapeText(entry.title)}</strong>
+                            <span class="notification-meta">${escapeText(entry.body)}<br>${new Date(entry.timestamp).toLocaleString()}</span>
+                        </div>
+                        ${entry.unread ? '<span class="mini-badge">new</span>' : ''}
+                    </div>
+                    <div class="notification-actions">
+                        <a class="button button-secondary" href="${entry.url || 'Message.html'}" onclick="markCenterRead('${escapeText(entry.id)}')">Open</a>
+                        <button class="button button-ghost" type="button" onclick="dismissCenterItem('${escapeText(entry.id)}')">Dismiss</button>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        function markCenterRead(id) {
+            if (!currentUsername || typeof markNotificationAsRead !== 'function') return true;
+            markNotificationAsRead(currentUsername, id);
+            renderNotificationCenter(getNotificationFeed(currentUsername));
+            return true;
+        }
+
+        function dismissCenterItem(id) {
+            if (!currentUsername || typeof clearNotificationItem !== 'function') return;
+            clearNotificationItem(currentUsername, id);
+            renderNotificationCenter(getNotificationFeed(currentUsername));
+        }
+
+        async function enableHomeNotifications() {
+            if (typeof requestNotificationAccess !== 'function') return;
+            const permission = await requestNotificationAccess();
+            if (permission === 'granted') {
+                alert('Notifications are enabled on this device.');
+            } else if (permission === 'denied') {
+                alert('Notifications are blocked in this browser right now.');
+            }
+        }
+
+        async function checkSystemStatus() {
+            try {
+                const response = await fetch('./api/system/status', { cache: 'no-store' });
+                if (!response.ok) throw new Error('Failed to check system status');
+                
+                const status = await response.json();
+                const isCeo = currentUsername === 'AZHA';
+                const overlay = document.getElementById('systemShutdownOverlay');
+                const pageShell = document.querySelector('.page-shell');
+                
+                if (status.isShutdown && !isCeo) {
+                    // Show shutdown message for regular users
+                    overlay.classList.add('is-visible');
+                    if (pageShell) pageShell.style.display = 'none';
+                    
+                    // Update shutdown details
+                    document.getElementById('shutdownMessageText').textContent = status.shutdownMessage || 'System is undergoing maintenance.';
+                    document.getElementById('shutdownReason').textContent = status.shutdownBy || 'Scheduled Maintenance';
+                    if (status.shutdownAt) {
+                        document.getElementById('shutdownTime').textContent = new Date(status.shutdownAt).toLocaleString();
+                    }
+                } else {
+                    // Show page normally for CEO or when system is online
+                    overlay.classList.remove('is-visible');
+                    if (pageShell) pageShell.style.display = '';
+                }
+            } catch (error) {
+                console.error('Error checking system status:', error);
+            }
+        }
+
+        // --- Page Load and Initialization ---
+        checkSystemStatus();
+        setInterval(checkSystemStatus, 60000); // Check every 60 seconds
         loadSummary();
+
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('appLoader');
+            if (loader) {
+                loader.classList.add('is-hidden');
+                // Remove from DOM after transition for a cleaner DOM
+                loader.addEventListener('transitionend', () => loader.remove(), { once: true });
+            }
+        });
     </script>
 </body>
 </html>

@@ -1,124 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#06131a">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="channels4profile.jpg">
-    <title>CoderAzhaf | Admin Panel</title>
-    <link rel="icon" type="image/png" sizes="192x192" href="channels4profile.jpg">
-    <script src="accounts.js"></script>
-    <style>
-        :root { --bg:#081119; --panel:rgba(10,22,30,.9); --line:rgba(255,255,255,.1); --text:#f4f1e8; --muted:#bfd0d8; --accent:#f2c35e; --danger:#ff8c7f; }
-        * { box-sizing:border-box; }
-        body { margin:0; min-height:100vh; font-family:"Trebuchet MS",sans-serif; color:var(--text); background:linear-gradient(rgba(5,10,15,.76), rgba(5,10,15,.88)), url("assets/profile-bg.svg") center/cover no-repeat fixed; padding:20px; }
-        .shell { width:min(1280px,100%); margin:0 auto; display:grid; gap:20px; }
-        .panel { background:var(--panel); border:1px solid var(--line); border-radius:28px; box-shadow:0 24px 80px rgba(0,0,0,.35); backdrop-filter:blur(16px); padding:24px; }
-        .eyebrow { margin:0 0 10px; color:var(--accent); text-transform:uppercase; letter-spacing:.14em; font-size:.78rem; }
-        h1 { margin-top:0; font-family:Georgia,serif; font-size:clamp(2.4rem,5vw,4rem); }
-        p { color:var(--muted); line-height:1.7; }
-        .header-row { display:flex; justify-content:space-between; gap:20px; align-items:center; flex-wrap:wrap; }
-        .admin-chip { display:flex; align-items:center; gap:14px; padding:12px 16px; border-radius:22px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); }
-        .admin-chip img { width:68px; height:68px; border-radius:20px; object-fit:cover; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); }
-        .admin-chip strong,.admin-chip span { display:block; }
-        .admin-chip span { color:var(--muted); font-size:.9rem; }
-        .toolbar { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; align-items:end; }
-        input, button { width:100%; font:inherit; }
-        input { padding:12px 14px; border-radius:16px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.05); color:var(--text); }
-        button { min-height:44px; border:0; border-radius:999px; background:linear-gradient(135deg,var(--accent),#ffae42); color:#111; font-weight:bold; cursor:pointer; }
-        .secondary { background:rgba(255,255,255,.08); color:var(--text); border:1px solid rgba(255,255,255,.12); }
-        .danger { background:rgba(255,140,127,.2); color:#fff; border:1px solid rgba(255,140,127,.45); }
-        .users { display:grid; gap:14px; }
-        .user-card { padding:18px; border-radius:22px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04); }
-        .user-layout { display:grid; grid-template-columns:160px 1fr; gap:20px; }
-        .avatar-column { display:grid; gap:12px; align-content:start; }
-        .avatar { width:160px; height:160px; border-radius:32px; object-fit:cover; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); }
-        .avatar-caption { font-size:.9rem; color:var(--muted); }
-        .user-head { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:center; }
-        .meta { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
-        .meta span { padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.06); color:var(--muted); font-size:.9rem; }
-        .edit-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-top:14px; }
-        .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
-        .actions button { width:auto; padding:0 14px; }
-        .back-link { display:inline-flex; align-items:center; justify-content:center; text-decoration:none; min-height:44px; padding:0 16px; border-radius:999px; border:1px solid rgba(255,255,255,.12); color:var(--text); }
-        .message.success,.message.error { position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:1000; padding:10px 16px; border-radius:16px; }
-        @media (max-width:900px) { .toolbar{grid-template-columns:1fr;} .user-layout{grid-template-columns:1fr;} .avatar{width:120px;height:120px;} }
-    </style>
-    <style>
-      body {
-        background-image: url("channels4profile.jpg");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-      }
-    </style>
-</head>
-<body>
-    <main class="shell">
-        <section class="panel">
-            <div class="header-row">
-                <div>
-                    <p class="eyebrow">Admin only</p>
-                    <h1>Admin panel</h1>
-                    <p id="statusText">Checking admin access.</p>
-                </div>
-                <div class="admin-chip">
-                    <img id="adminTopAvatar" src="channels4profile.jpg" alt="Admin profile picture">
-                    <div>
-                        <strong id="adminTopName">Loading...</strong>
-                        <span id="adminTopRole">Checking admin access</span>
-                    </div>
-                </div>
-            </div>
-            <a class="back-link" href="index.html">Back to launchpad</a>
-        </section>
-        <section class="panel">
-            <h2>Manage AZHA</h2>
-            <div class="toolbar">
-                <input id="azincUser" type="text" placeholder="Username">
-                <input id="azincAmount" type="number" placeholder="Amount" step="1">
-                <button type="button" id="azincButton">Give AZHA</button>
-                <input id="setBalanceAmount" type="number" placeholder="Set exact AZHA" step="1">
-                <button type="button" id="setBalanceButton" class="secondary">Set AZHA</button>
-                <button type="button" id="setInfiniteButton" class="secondary">Set ∞ AZHA</button>
-            </div>
-        </section>
-        <section class="panel">
-            <h2>Create school/work account</h2>
-            <div class="edit-grid">
-                <input id="managed-username" type="text" placeholder="Username">
-                <input id="managed-password" type="text" placeholder="Password">
-                <input id="managed-fullname" type="text" placeholder="Full name">
-                <select id="managed-type">
-                    <option value="school">School account</option>
-                    <option value="work">Work account</option>
-                </select>
-                <input id="managed-org-name" type="text" placeholder="Organization name">
-                <input id="managed-org-domain" type="text" placeholder="Organization domain">
-                <input id="managed-org-logo" type="text" placeholder="Organization badge text">
-            </div>
-            <div class="actions">
-                <button type="button" id="createManagedButton">Create managed account</button>
-            </div>
-        </section>
-        <section class="panel" id="systemControlSection" style="display:none;">
-            <h2>System control</h2>
-            <p id="systemStatus">Checking system status...</p>
-            <div class="actions">
-                <button type="button" id="toggleShutdownButton">Shut down system</button>
-            </div>
-        </section>
-        <section class="panel" id="userManagementSection">
-            <h2>Users</h2>
-            <div style="margin-bottom:16px;">
-                <input id="searchUsers" type="text" placeholder="Search users by username...">
-            </div>
-            <div id="usersList" class="users"></div>
-        </section>
-    </main>
-    <script>
+
         let allUsers = [];
         function avatarFor(user) { return user.profilePic || 'azha-logo.png'; }
         const pendingAdminPics = {};
@@ -149,84 +29,9 @@
             }
         }
         
-        async function loadSystemStatus() {
-            const isCeo = localStorage.getItem('currentUsername') === 'AZHA';
-            const sectionEl = document.getElementById('systemControlSection');
-            
-            if (!isCeo) {
-                sectionEl.style.display = 'none';
-                return;
-            }
-            
-            try {
-                const response = await fetch('/api/system/status');
-                const status = await response.json();
-                
-                sectionEl.style.display = 'block';
-                const statusEl = document.getElementById('systemStatus');
-                const buttonEl = document.getElementById('toggleShutdownButton');
-                
-                if (status.isShutdown) {
-                    statusEl.innerHTML = `<strong style="color:#ff8c7f;">System is currently shut down</strong><br>Shut down by: ${escapeHtml(status.shutdownBy)}<br>Time: ${new Date(status.shutdownAt).toLocaleString()}<br>Message: "${escapeHtml(status.shutdownMessage)}"`;
-                    buttonEl.textContent = 'Bring system back online';
-                } else {
-                    statusEl.innerHTML = '<strong style="color:#65d1b7;">System is online</strong>';
-                    buttonEl.textContent = 'Shut down system';
-                }
-            } catch (error) {
-                console.error('Failed to load system status:', error);
-                sectionEl.style.display = 'none';
-            }
-        }
-        
-        async function toggleSystemShutdown() {
-            const actor = localStorage.getItem('currentUsername');
-            const response = await fetch('/api/system/status');
-            const status = await response.json();
-            
-            const action = status.isShutdown ? 'bring the system back online' : 'shut down the system';
-            const message = status.isShutdown 
-                ? 'The system will be brought online. Users will have access to all features.'
-                : prompt(`Enter a message for the shutdown (or press Enter for default):\n\n"System is currently undergoing maintenance. You can still log in and sign up."`, 
-                    status.shutdownMessage || 'System is currently undergoing maintenance. You can still log in and sign up.');
-            
-            if (!status.isShutdown && message === null) return;
-            
-            try {
-                const toggleResponse = await fetch('/api/admin/system/toggle-shutdown', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        actor,
-                        message: !status.isShutdown ? message : undefined
-                    })
-                });
-                
-                if (!toggleResponse.ok) {
-                    const error = await toggleResponse.json();
-                    showMessage(error.error || 'Failed to toggle system shutdown', false);
-                    return;
-                }
-                
-                const result = await toggleResponse.json();
-                showMessage(result.message, true);
-                await loadSystemStatus();
-            } catch (error) {
-                showMessage('Error toggling system shutdown: ' + error.message, false);
-            }
-        }
-        
         function renderUsers(users) {
             const list = document.getElementById('usersList');
             const isCeo = localStorage.getItem('currentUsername') === 'AZHA';
-            
-            // If user is not CEO and user management is hidden, don't render users
-            const userMgmtSection = document.getElementById('userManagementSection');
-            if (userMgmtSection && userMgmtSection.style.display === 'none') {
-                list.innerHTML = '<p>User management is restricted to CEO only.</p>';
-                return;
-            }
-            
             list.innerHTML = users.map((user, index) => {
                     const canDelete = user.username !== 'AZHA';
                     const balance = user.balance === undefined ? 0 : user.balance;
@@ -390,7 +195,6 @@
                 loadUsers();
             }
         });
-        document.getElementById('toggleShutdownButton').addEventListener('click', toggleSystemShutdown);
         document.getElementById('azincButton').addEventListener('click', async () => {
             const username = document.getElementById('azincUser').value.trim();
             const amount = Number(document.getElementById('azincAmount').value);
@@ -403,70 +207,19 @@
             if (!username || Number.isNaN(amount) || amount < 0) { showMessage('Enter a username and exact AZHA amount.', false); return; }
             if (await setExactAZHABalance(username, amount)) { document.getElementById('setBalanceAmount').value = ''; loadUsers(); }
         });
-        document.getElementById('setInfiniteButton').addEventListener('click', async () => {
-            const username = document.getElementById('azincUser').value.trim();
-            if (!username) { showMessage('Enter a username.', false); return; }
-            if (await setExactAZHABalance(username, 'INF')) { document.getElementById('setBalanceAmount').value = ''; loadUsers(); }
-        });
         async function init() {
-            // Add a small delay to ensure localStorage is synced after login
-            await new Promise(resolve => setTimeout(resolve, 100));
-            
             if (!checkLogin()) return;
-            
-            // Check if user is CEO or has AZHA membership
-            const isCeo = localStorage.getItem('currentUsername') === 'AZHA';
-            const membershipJson = localStorage.getItem('currentMembership');
-            let membership = {};
-            try {
-                membership = membershipJson ? JSON.parse(membershipJson) : {};
-            } catch (e) {
-                membership = {};
-            }
-            
-            // Check if AZHA membership is active
-            const hasAzhamembership = membership.planKey === 'AZHA' && 
-                                      membership.status === 'active' && 
-                                      membership.expiresAt && 
-                                      new Date(membership.expiresAt).getTime() > Date.now();
-            
-            const hasAdminAccess = localStorage.getItem('isAdmin') === 'true' || hasAzhamembership;
-            
-            if (!hasAdminAccess) { 
-                showMessage('You are not an admin and do not have AZHA membership.', false); 
-                window.location.href = 'index.html'; 
-                return; 
-            }
-            
+            if (localStorage.getItem('isAdmin') !== 'true') { showMessage('You are not an admin.', false); window.location.href = 'index.html'; return; }
             const backend = await hasBackend();
-            
-            if (isCeo) {
-                document.getElementById('statusText').textContent = backend ? 'CEO access confirmed. AZHA can leave a password blank to keep the current one. Only AZHA can give admin access.' : 'CEO access confirmed in local fallback mode.';
-            } else if (hasAzhamembership) {
-                document.getElementById('statusText').textContent = backend ? 'AZHA Membership access confirmed. You can manage AZHA and create managed accounts. User management and system control are restricted to CEO.' : 'AZHA Membership access confirmed in local fallback mode.';
-            }
-            
-            // Hide user management section for non-CEO AZHA members
-            if (!isCeo && hasAzhamembership) {
-                document.getElementById('userManagementSection').style.display = 'none';
-            }
-            
-            // Hide infinite balance setter for non-CEO
-            if (!isCeo) {
+            document.getElementById('statusText').textContent = backend ? 'Admin access confirmed. AZHA can leave a password blank to keep the current one. Only AZHA can give admin access.' : 'Admin access confirmed in local fallback mode.';
+            if (localStorage.getItem('currentUsername') !== 'AZHA') {
                 document.getElementById('setBalanceAmount').style.display = 'none';
                 document.getElementById('setBalanceButton').style.display = 'none';
-                document.getElementById('setInfiniteButton').style.display = 'none';
             }
-            
             loadUsers();
-            loadSystemStatus();
-            
-            const searchUsersEl = document.getElementById('searchUsers');
-            if (searchUsersEl) {
-                searchUsersEl.addEventListener('input', (e) => {
-                    loadUsers(e.target.value);
-                });
-            }
+            document.getElementById('searchUsers').addEventListener('input', (e) => {
+                loadUsers(e.target.value);
+            });
         }
         window.saveUserEdits = saveUserEdits;
         window.previewAdminPic = previewAdminPic;
@@ -481,6 +234,4 @@
         window.grantPlan = grantPlan;
         window.removePlan = removePlan;
         init();
-    </script>
-</body>
-</html>
+    

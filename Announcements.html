@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements - AZHA</title>
+    <link rel="stylesheet" href="app.css">
+    <style>
+        .announcements-page { padding: 20px; max-width: 1000px; margin: 0 auto; }
+        .announcements-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .announcement-card {
+            background: var(--panel); border-radius: 16px; padding: 20px; border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        .announcement-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; }
+        .announcement-title { font-size: 1.3rem; font-weight: bold; color: var(--gold); }
+        .announcement-meta { color: var(--muted); font-size: 0.85rem; }
+        .announcement-image { width: 100%; max-height: 300px; border-radius: 12px; margin-bottom: 15px; object-fit: cover; }
+        .announcement-content { color: var(--text); line-height: 1.6; margin-bottom: 15px; }
+        .announcement-creator { color: var(--muted); font-size: 0.85rem; margin-bottom: 15px; }
+        .announcement-replies { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 15px; margin-top: 15px; }
+        .reply-item { padding: 10px; background: rgba(255,255,255,0.06); border-radius: 8px; margin-bottom: 10px; }
+        .reply-user { font-weight: bold; color: var(--gold); }
+        .reply-text { color: var(--text); margin-top: 5px; }
+        .reply-time { color: var(--muted); font-size: 0.8rem; margin-top: 5px; }
+        .reply-form { display: flex; gap: 10px; margin-top: 15px; }
+        .reply-input { flex: 1; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; color: var(--text); }
+        .btn { padding: 10px 20px; background: var(--gold); color: var(--bg); border: none;
+            border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background: #f6c453; }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: var(--text); border: 1px solid rgba(255,255,255,0.2); }
+        .admin-create { background: rgba(246,196,83,0.1); border: 1px solid rgba(246,196,83,0.2);
+            border-radius: 16px; padding: 20px; margin-bottom: 30px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; color: var(--muted); font-size: 0.9rem; margin-bottom: 5px; }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 10px; background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text);
+        }
+        .form-group input[type="file"] { padding: 8px; cursor: pointer; }
+        .pending-badge { background: var(--red); color: white; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.8rem; margin-left: 10px; }
+        .approval-buttons { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-approve { background: #50C878; }
+        .btn-approve:hover { background: #45b06b; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--panel); border-radius: 16px; padding: 30px; max-width: 600px; width: 90%; }
+        .modal-header { font-size: 1.5rem; color: var(--gold); margin-bottom: 20px; }
+        .btn-danger { background: #e74c3c; }
+        .btn-danger:hover { background: #c0392b; }
+    </style>
+    <style>
+      body {
+        background-image: url("channels4profile.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+    </style>
+</head>
+<body>
+    <div class="announcements-page">
+        <div class="announcements-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="color: var(--gold); margin: 0;">Announcements</h1>
+            <a href="index.html" style="color: var(--gold); text-decoration: none; padding: 8px 16px; background: rgba(246,196,83,0.1); border-radius: 8px; border: 1px solid rgba(246,196,83,0.2);">← Back to Launchpad</a>
+        </div>
+
+        <div id="adminCreateSection" class="admin-create" style="display: none;">
+            <h2 style="color: var(--gold); margin-top: 0;">Create Announcement</h2>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="announcementTitle" placeholder="Announcement title">
+            </div>
+            <div class="form-group">
+                <label>Content</label>
+                <textarea id="announcementContent" placeholder="Announcement message..." rows="5"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Image URL (optional)</label>
+                <input type="text" id="announcementImage" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Upload Image (optional)</label>
+                <input type="file" id="announcementImageFile" accept="image/*">
+            </div>
+            <button class="btn" onclick="createAnnouncement()">Post Announcement</button>
+        </div>
+
+        <div id="editAnnouncementModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Edit Announcement</div>
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="editAnnouncementTitle" placeholder="Announcement title">
+                </div>
+                <div class="form-group">
+                    <label>Content</label>
+                    <textarea id="editAnnouncementContent" placeholder="Announcement message..." rows="5"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Image URL (optional)</label>
+                    <input type="text" id="editAnnouncementImage" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Upload Image (optional)</label>
+                    <input type="file" id="editAnnouncementImageFile" accept="image/*">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn" style="flex: 1;" onclick="saveAnnouncementEdit()">Save Changes</button>
+                    <button class="btn btn-secondary" style="flex: 1;" onclick="closeEditModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="announcementsList"></div>
+    </div>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUsername');
+        let editingAnnouncementId = null;
+        const maxAnnouncementImageSize = 5 * 1024 * 1024;
+
+        function readImageFileAsDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                if (!file.type.startsWith('image/')) {
+                    reject(new Error('Please choose an image file.'));
+                    return;
+                }
+                if (file.size > maxAnnouncementImageSize) {
+                    reject(new Error('Image is too large. Choose an image under 5 MB.'));
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = () => resolve(String(reader.result || ''));
+                reader.onerror = () => reject(new Error('Unable to read image file.'));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function getAnnouncementImageValue(fileInputId, urlInputId) {
+            const fileInput = document.getElementById(fileInputId);
+            const urlInput = document.getElementById(urlInputId);
+            const file = fileInput?.files?.[0];
+            if (file) return readImageFileAsDataUrl(file);
+            return urlInput?.value.trim() || '';
+        }
+
+        async function loadAnnouncements() {
+            try {
+                const res = await fetch('/api/announcements');
+                const announcements = await res.json();
+                const list = document.getElementById('announcementsList');
+                list.innerHTML = '';
+
+                announcements.forEach(announcement => {
+                    const createdDate = new Date(announcement.timestamp);
+                    list.innerHTML += `
+                        <div class="announcement-card">
+                            <div class="announcement-header">
+                                <div>
+                                    <div class="announcement-title">
+                                        ${announcement.title}
+                                        ${announcement.status === 'pending' ? '<span class="pending-badge">PENDING</span>' : ''}
+                                    </div>
+                                    <div class="announcement-meta">
+                                        ${createdDate.toLocaleDateString()} at ${createdDate.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                                        ${announcement.editedAt ? ` (edited)` : ''}
+                                    </div>
+                                </div>
+                                ${announcement.createdBy === currentUser || currentUser === 'AZHA' ? `
+                                    <button class="btn" style="padding: 6px 12px; font-size: 0.85rem;" onclick="openEditModal('${announcement.id}')">✏️ Edit</button>
+                                ` : ''}
+                            </div>
+                            
+                            ${announcement.image ? `<img src="${announcement.image}" class="announcement-image" alt="Announcement image">` : ''}
+                            
+                            <div class="announcement-content">${announcement.content}</div>
+                            <div class="announcement-creator">Posted by <strong>${announcement.createdBy}</strong></div>
+
+                            ${announcement.status === 'pending' && currentUser === 'AZHA' ? `
+                                <div class="approval-buttons">
+                                    <button class="btn btn-approve" onclick="approveAnnouncement('${announcement.id}')">✓ Approve</button>
+                                </div>
+                            ` : ''}
+
+                            <div class="announcement-replies">
+                                <strong style="color: var(--gold);">Replies (${announcement.replies.length})</strong>
+                                ${announcement.replies.map(reply => `
+                                    <div class="reply-item">
+                                        <div class="reply-user">${reply.username}</div>
+                                        <div class="reply-text">${reply.text}</div>
+                                        <div class="reply-time">${new Date(reply.timestamp).toLocaleDateString()}</div>
+                                    </div>
+                                `).join('')}
+                                
+                                <div class="reply-form">
+                                    <input type="text" class="reply-input" placeholder="Reply..." id="reply-${announcement.id}">
+                                    <button class="btn" onclick="replyToAnnouncement('${announcement.id}')">Reply</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                if (announcements.length === 0) {
+                    list.innerHTML = '<p style="color: var(--muted); text-align: center; padding: 40px;">No announcements yet.</p>';
+                }
+            } catch (err) {
+                console.error('Load announcements failed:', err);
+            }
+        }
+
+        async function createAnnouncement() {
+            const title = document.getElementById('announcementTitle').value.trim();
+            const content = document.getElementById('announcementContent').value.trim();
+
+            if (!title || !content) {
+                alert('Title and content are required');
+                return;
+            }
+
+            let image = '';
+            try {
+                image = await getAnnouncementImageValue('announcementImageFile', 'announcementImage');
+            } catch (err) {
+                alert(err.message || 'Unable to use that image');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/announcements', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: currentUser,
+                        title,
+                        content,
+                        image
+                    })
+                });
+
+                if (res.ok) {
+                    alert('Announcement created!');
+                    document.getElementById('announcementTitle').value = '';
+                    document.getElementById('announcementContent').value = '';
+                    document.getElementById('announcementImage').value = '';
+                    document.getElementById('announcementImageFile').value = '';
+                    loadAnnouncements();
+                }
+            } catch (err) {
+                console.error('Create announcement failed:', err);
+                alert('Failed to create announcement');
+            }
+        }
+
+        async function replyToAnnouncement(announcementId) {
+            const text = document.getElementById(`reply-${announcementId}`).value.trim();
+            
+            if (!text) {
+                alert('Reply cannot be empty');
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/announcements/${announcementId}/reply`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: currentUser,
+                        text
+                    })
+                });
+
+                if (res.ok) {
+                    loadAnnouncements();
+                }
+            } catch (err) {
+                console.error('Reply failed:', err);
+            }
+        }
+
+        async function approveAnnouncement(announcementId) {
+            try {
+                const res = await fetch(`/api/announcements/${announcementId}/approve`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser })
+                });
+
+                if (res.ok) {
+                    loadAnnouncements();
+                    alert('Announcement approved!');
+                }
+            } catch (err) {
+                console.error('Approve failed:', err);
+            }
+        }
+
+        async function openEditModal(announcementId) {
+            try {
+                const res = await fetch('/api/announcements');
+                const announcements = await res.json();
+                const announcement = announcements.find(a => a.id === announcementId);
+                
+                if (!announcement) {
+                    alert('Announcement not found');
+                    return;
+                }
+
+                if (announcement.createdBy !== currentUser && currentUser !== 'AZHA') {
+                    alert('You can only edit your own announcements');
+                    return;
+                }
+
+                editingAnnouncementId = announcementId;
+                document.getElementById('editAnnouncementTitle').value = announcement.title;
+                document.getElementById('editAnnouncementContent').value = announcement.content;
+                document.getElementById('editAnnouncementImage').value = announcement.image || '';
+                document.getElementById('editAnnouncementImageFile').value = '';
+                document.getElementById('editAnnouncementModal').classList.add('active');
+            } catch (err) {
+                console.error('Open edit modal failed:', err);
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editAnnouncementModal').classList.remove('active');
+            editingAnnouncementId = null;
+        }
+
+        async function saveAnnouncementEdit() {
+            if (!editingAnnouncementId) {
+                alert('No announcement selected');
+                return;
+            }
+
+            const title = document.getElementById('editAnnouncementTitle').value.trim();
+            const content = document.getElementById('editAnnouncementContent').value.trim();
+
+            if (!title || !content) {
+                alert('Title and content are required');
+                return;
+            }
+
+            let image = '';
+            try {
+                image = await getAnnouncementImageValue('editAnnouncementImageFile', 'editAnnouncementImage');
+            } catch (err) {
+                alert(err.message || 'Unable to use that image');
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/announcements/${editingAnnouncementId}/edit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: currentUser,
+                        title,
+                        content,
+                        image
+                    })
+                });
+
+                if (res.ok) {
+                    alert('Announcement updated!');
+                    closeEditModal();
+                    loadAnnouncements();
+                } else {
+                    const error = await res.json();
+                    alert(error.error || 'Failed to update announcement');
+                }
+            } catch (err) {
+                console.error('Save edit failed:', err);
+                alert('Failed to update announcement');
+            }
+        }
+
+        async function checkAdminStatus() {
+            // Check if user is AZHA (CEO) or has admin flag
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            if (currentUser === 'AZHA' || isAdmin) {
+                document.getElementById('adminCreateSection').style.display = 'block';
+            }
+        }
+
+        setTimeout(() => {
+            if (currentUser) {
+                loadAnnouncements();
+                checkAdminStatus();
+            } else {
+                window.location.href = 'Getin.html';
+            }
+        }, 100);
+    </script>
+</body>
+</html>

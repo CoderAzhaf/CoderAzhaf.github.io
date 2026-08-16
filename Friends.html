@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends - AZHA</title>
+    <link rel="stylesheet" href="app.css">
+    <style>
+        .friends-page { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .friends-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .friends-section { background: var(--panel); border-radius: 16px; padding: 20px; }
+        .friend-item, .request-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 10px;
+        }
+        .friend-info { flex: 1; }
+        .friend-name { font-weight: bold; color: var(--gold); }
+        .friend-status { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+        .status-badge {
+            display: inline-block; width: 12px; height: 12px; border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-online { background: #50C878; }
+        .status-offline { background: #8B8B8B; }
+        .status-busy { background: #ff7b6b; }
+        .action-buttons { display: flex; gap: 8px; }
+        .btn-small {
+            padding: 6px 12px; background: var(--gold); color: var(--bg); border: none;
+            border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+        }
+        .btn-small:hover { background: #f6c453; }
+        .btn-reject { background: var(--red); color: white; }
+        .status-selector {
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px; padding: 16px; margin-bottom: 20px;
+        }
+        .status-options { display: flex; gap: 10px; }
+        .status-btn {
+            flex: 1; padding: 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px; color: var(--text); cursor: pointer; transition: all 0.2s;
+        }
+        .status-btn.active { background: var(--gold); color: var(--bg); }
+        .search-box { width: 100%; padding: 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px; color: var(--text); margin-bottom: 15px; }
+        @media (max-width: 768px) {
+            .friends-container { grid-template-columns: 1fr; }
+        }
+    </style>
+    <style>
+      body {
+        background-image: url("channels4profile.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+    </style>
+</head>
+<body>
+    <div class="friends-page">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1 style="color: var(--gold); margin: 0;">Friends</h1>
+            <a href="index.html" style="color: var(--gold); text-decoration: none; padding: 8px 16px; background: rgba(246,196,83,0.1); border-radius: 8px; border: 1px solid rgba(246,196,83,0.2);">← Back to Launchpad</a>
+        </div>
+        
+        <div class="status-selector">
+            <p style="margin-top: 0;">Your Status</p>
+            <div class="status-options">
+                <button class="status-btn active" data-status="online">🟢 Online</button>
+                <button class="status-btn" data-status="offline">⚫ Offline</button>
+                <button class="status-btn" data-status="busy">🔴 Busy</button>
+            </div>
+        </div>
+
+        <div class="friends-container">
+            <div class="friends-section">
+                <h2 style="color: var(--gold); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Your Friends</h2>
+                <div id="friendsList"></div>
+            </div>
+
+            <div class="friends-section">
+                <h2 style="color: var(--gold); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Friend Requests</h2>
+                <input type="text" id="searchUsers" class="search-box" placeholder="Search users to add...">
+                <div id="friendRequests"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUsername');
+
+        // Status Management
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const status = btn.dataset.status;
+                document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                try {
+                    await fetch('/api/user/status', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: currentUser, status })
+                    });
+                } catch (err) {
+                    console.error('Status update failed:', err);
+                }
+            });
+        });
+
+        // Load Friends List
+        async function loadFriends() {
+            try {
+                const res = await fetch(`/api/friends/${currentUser}`);
+                const data = await res.json();
+                const friendsList = document.getElementById('friendsList');
+                friendsList.innerHTML = '';
+                
+                data.friendships.forEach(f => {
+                    const friend = f.user1 === currentUser ? f.user2 : f.user1;
+                    friendsList.innerHTML += `
+                        <div class="friend-item">
+                            <div class="friend-info">
+                                <div class="friend-name">${friend}</div>
+                                <div class="friend-status">
+                                    <span class="status-badge status-online"></span>Online
+                                </div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn-small" onclick="openChat('${friend}')">Chat</button>
+                                <button class="btn-small" onclick="viewProfile('${friend}')">Profile</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                if (data.friendships.length === 0) {
+                    friendsList.innerHTML = '<p style="color: var(--muted); text-align: center; padding: 20px;">No friends yet. Send friend requests to get started!</p>';
+                }
+
+                // Load Requests
+                const requestsDiv = document.getElementById('friendRequests');
+                requestsDiv.innerHTML = '';
+                
+                data.requests.filter(r => r.to === currentUser).forEach(r => {
+                    requestsDiv.innerHTML += `
+                        <div class="request-item">
+                            <div class="friend-info">
+                                <div class="friend-name">${r.from}</div>
+                                <div class="friend-status">Sent ${new Date(r.timestamp).toLocaleDateString()}</div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn-small" onclick="acceptRequest('${r.from}', '${currentUser}')">Accept</button>
+                                <button class="btn-small btn-reject" onclick="rejectRequest('${r.from}', '${currentUser}')">Reject</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                console.error('Load friends failed:', err);
+            }
+        }
+
+        // Friend Request Management
+        async function acceptRequest(from, to) {
+            try {
+                await fetch('/api/friends/accept', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ from, to })
+                });
+                loadFriends();
+            } catch (err) {
+                console.error('Accept failed:', err);
+            }
+        }
+
+        async function rejectRequest(from, to) {
+            try {
+                await fetch('/api/friends/reject', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ from, to })
+                });
+                loadFriends();
+            } catch (err) {
+                console.error('Reject failed:', err);
+            }
+        }
+
+        // Search and Send Requests
+        document.getElementById('searchUsers').addEventListener('input', async (e) => {
+            const query = e.target.value.toLowerCase();
+            if (query.length < 1) return;
+            
+            try {
+                const res = await fetch('/api/users');
+                const users = await res.json();
+                const results = users.filter(a => 
+                    a.username.toLowerCase().includes(query) && 
+                    a.username !== currentUser
+                );
+                
+                const requestsDiv = document.getElementById('friendRequests');
+                requestsDiv.innerHTML = results.map(user => `
+                    <div class="request-item">
+                        <div class="friend-info">
+                            <div class="friend-name">${user.username}</div>
+                        </div>
+                        <button class="btn-small" onclick="sendFriendRequest('${currentUser}', '${user.username}')">
+                            Add Friend
+                        </button>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Search failed:', err);
+            }
+        });
+
+        async function sendFriendRequest(from, to) {
+            try {
+                await fetch('/api/friends/request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ from, to })
+                });
+                alert('Friend request sent!');
+                document.getElementById('searchUsers').value = '';
+                loadFriends();
+            } catch (err) {
+                console.error('Send request failed:', err);
+                alert('Failed to send friend request');
+            }
+        }
+
+        function openChat(friend) {
+            localStorage.setItem('selectedChat', friend);
+            window.location.href = 'Chat.html';
+        }
+
+        function viewProfile(friend) {
+            localStorage.setItem('selectedProfile', friend);
+            window.location.href = 'Profile.html';
+        }
+
+        // Initial Load
+        setTimeout(() => {
+            if (currentUser) loadFriends();
+            else window.location.href = 'Getin.html';
+        }, 100);
+    </script>
+</body>
+</html>

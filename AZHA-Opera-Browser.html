@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZHA Browser Opera File</title>
+    <style>
+        :root {
+            --bg: #071219;
+            --panel: #0d1c25;
+            --soft: #132633;
+            --line: rgba(255,255,255,.12);
+            --text: #f2efe6;
+            --muted: #b9c6cf;
+            --gold: #f6c453;
+            --gold-2: #ffb23f;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Georgia, "Trebuchet MS", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(246,196,83,.16), transparent 20%),
+                radial-gradient(circle at top right, rgba(101,209,183,.10), transparent 18%),
+                linear-gradient(180deg, #061019, #02070a);
+        }
+        .app {
+            display: grid;
+            grid-template-columns: 320px minmax(0,1fr);
+            gap: 18px;
+            padding: 18px;
+        }
+        .panel {
+            background: rgba(10,22,31,.96);
+            border: 1px solid var(--line);
+            border-radius: 26px;
+            box-shadow: 0 18px 50px rgba(0,0,0,.28);
+        }
+        .sidebar, .main {
+            padding: 16px;
+            display: grid;
+            gap: 14px;
+        }
+        .brand, .card, .tab, .link-item {
+            background: rgba(255,255,255,.04);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+        }
+        .brand {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 14px;
+        }
+        .brand img {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            object-fit: cover;
+        }
+        h1, h2, p { margin: 0; }
+        h2 {
+            font-size: .92rem;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+        .muted { color: var(--muted); }
+        .tiny { font-size: .88rem; }
+        .card { padding: 14px; display: grid; gap: 10px; }
+        .stack { display: grid; gap: 10px; }
+        .row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .tabs { display: flex; gap: 8px; overflow: auto; }
+        .tab {
+            min-width: 180px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+        .tab.active { background: rgba(246,196,83,.15); }
+        .tab strong {
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        input, button {
+            width: 100%;
+            min-height: 46px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,.05);
+            color: var(--text);
+            padding: 10px 14px;
+            font: inherit;
+        }
+        button {
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--gold), var(--gold-2));
+            color: #111;
+            font-weight: bold;
+        }
+        .secondary {
+            background: rgba(255,255,255,.07);
+            color: var(--text);
+        }
+        .viewer-tools {
+            display: grid;
+            grid-template-columns: minmax(0,1fr) repeat(6, 84px);
+            gap: 10px;
+        }
+        .viewer-shell {
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            overflow: hidden;
+            background: rgba(255,255,255,.02);
+            min-height: 70vh;
+        }
+        iframe {
+            width: 100%;
+            min-height: 70vh;
+            border: 0;
+            background: rgba(255,255,255,.02);
+        }
+        .message {
+            padding: 18px;
+            display: grid;
+            gap: 12px;
+            align-content: start;
+        }
+        .hidden { display: none !important; }
+        .list { display: grid; gap: 8px; }
+        .link-item {
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+        .link-item strong { display: block; }
+        .link-item button { width: auto; min-height: 34px; padding: 0 12px; border-radius: 10px; }
+        @media (max-width: 1080px) {
+            .app { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 860px) {
+            .viewer-tools { grid-template-columns: 1fr 1fr; }
+            iframe, .viewer-shell { min-height: 56vh; }
+        }
+    </style>
+    <style>
+      body {
+        background-image: url("channels4profile.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+    </style>
+</head>
+<body>
+    <main class="app">
+        <aside class="panel sidebar">
+            <section class="brand">
+                <img src="channels4profile.jpg" alt="AZHA Browser icon">
+                <div>
+                    <p class="tiny muted">AZHA Browser Opera File</p>
+                    <h1>AZHA Browser</h1>
+                    <p class="tiny muted">One file. Open in Opera.</p>
+                </div>
+            </section>
+
+            <section class="card">
+                <div>
+                    <h2>Quick Open</h2>
+                    <p class="tiny muted">Type a website like `openai.com` or `https://example.com`.</p>
+                </div>
+                <input id="quickInput" placeholder="Type website or AZHA search">
+                <div class="row">
+                    <button type="button" id="quickOpenButton">Open</button>
+                    <button type="button" id="quickTabButton" class="secondary">Open Tab</button>
+                </div>
+            </section>
+
+            <section class="card">
+                <div>
+                    <h2>Bookmarks</h2>
+                    <p class="tiny muted">Saved only in this Opera file on this device.</p>
+                </div>
+                <div id="bookmarksList" class="list"></div>
+            </section>
+
+            <section class="card">
+                <div>
+                    <h2>History</h2>
+                    <p class="tiny muted">Latest pages you opened here.</p>
+                </div>
+                <div id="historyList" class="list"></div>
+            </section>
+        </aside>
+
+        <section class="panel main">
+            <div class="tabs" id="tabsBar"></div>
+
+            <div class="viewer-tools">
+                <input id="addressBar" placeholder="Open a website">
+                <button type="button" id="backButton" class="secondary">Back</button>
+                <button type="button" id="forwardButton" class="secondary">Next</button>
+                <button type="button" id="reloadButton" class="secondary">Reload</button>
+                <button type="button" id="bookmarkButton" class="secondary">Save</button>
+                <button type="button" id="newTabButton" class="secondary">New</button>
+                <button type="button" id="closeTabButton" class="secondary">Close</button>
+            </div>
+
+            <section id="blockedCard" class="card hidden">
+                <h2 id="blockedTitle">Open In Opera Tab</h2>
+                <p id="blockedText" class="muted">This page opens better in a normal Opera tab.</p>
+                <div class="row">
+                    <button type="button" id="blockedOpenButton">Open Tab</button>
+                    <button type="button" id="blockedHomeButton" class="secondary">Back Home</button>
+                </div>
+            </section>
+
+            <section class="viewer-shell" id="viewerShell">
+                <iframe id="viewer" srcdoc="
+                    <style>
+                        body{margin:0;font-family:Georgia,serif;background:#061019;color:#f2efe6;display:grid;place-items:center;min-height:100vh;padding:32px}
+                        .box{max-width:700px;text-align:center}
+                        h1{margin:0 0 12px}
+                        p{margin:0;color:#c2ccd2;line-height:1.6}
+                    </style>
+                    <div class='box'>
+                        <h1>AZHA Browser</h1>
+                        <p>Open a site, save bookmarks, and keep it all inside this single Opera-friendly HTML file.</p>
+                    </div>
+                " title="AZHA Browser viewer" referrerpolicy="no-referrer"></iframe>
+            </section>
+        </section>
+    </main>
+
+    <script>
+        const STORE_KEY = 'azha-opera-browser';
+        const forceOpenTabHosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'accounts.google.com', 'google.com', 'www.google.com', 'login.microsoftonline.com'];
+        const state = loadState();
+        let blockedUrl = '';
+
+        function loadState() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+                return {
+                    tabs: Array.isArray(saved.tabs) && saved.tabs.length ? saved.tabs : [{ id: crypto.randomUUID(), title: 'Start', url: 'azha:start' }],
+                    activeTabId: saved.activeTabId || '',
+                    bookmarks: Array.isArray(saved.bookmarks) ? saved.bookmarks : [],
+                    history: Array.isArray(saved.history) ? saved.history.slice(0, 40) : []
+                };
+            } catch {
+                return { tabs: [{ id: crypto.randomUUID(), title: 'Start', url: 'azha:start' }], activeTabId: '', bookmarks: [], history: [] };
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem(STORE_KEY, JSON.stringify(state));
+        }
+
+        function activeTab() {
+            return state.tabs.find((tab) => tab.id === state.activeTabId) || state.tabs[0];
+        }
+
+        function ensureTabs() {
+            if (!state.tabs.length) {
+                state.tabs = [{ id: crypto.randomUUID(), title: 'Start', url: 'azha:start' }];
+            }
+            if (!state.activeTabId || !state.tabs.some((tab) => tab.id === state.activeTabId)) {
+                state.activeTabId = state.tabs[0].id;
+            }
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;' }[char]));
+        }
+
+        function normalizeUrl(input) {
+            const raw = String(input || '').trim();
+            if (!raw) return 'azha:start';
+            if (/^[a-z]+:/i.test(raw)) return raw;
+            if (raw.includes('.') && !raw.includes(' ')) return `https://${raw}`;
+            return `azha:search:${encodeURIComponent(raw)}`;
+        }
+
+        function hostNeedsTab(url) {
+            try {
+                const host = new URL(url).hostname.toLowerCase();
+                return forceOpenTabHosts.some((item) => host === item || host.endsWith(`.${item}`));
+            } catch {
+                return false;
+            }
+        }
+
+        function renderTabs() {
+            ensureTabs();
+            document.getElementById('tabsBar').innerHTML = state.tabs.map((tab) => `
+                <div class="tab ${tab.id === state.activeTabId ? 'active' : ''}">
+                    <strong onclick="switchTab('${tab.id}')">${escapeHtml(tab.title || 'Tab')}</strong>
+                    <button type="button" class="secondary" onclick="closeTab('${tab.id}')">X</button>
+                </div>
+            `).join('');
+        }
+
+        function renderList(targetId, items, emptyText, onOpenName, onRemoveName) {
+            const el = document.getElementById(targetId);
+            if (!items.length) {
+                el.innerHTML = `<p class="tiny muted">${emptyText}</p>`;
+                return;
+            }
+            el.innerHTML = items.map((item, index) => `
+                <div class="link-item">
+                    <div>
+                        <strong>${escapeHtml(item.title || item.url)}</strong>
+                        <p class="tiny muted">${escapeHtml(item.url)}</p>
+                    </div>
+                    <div class="row">
+                        <button type="button" class="secondary" onclick="${onOpenName}(${index})">Open</button>
+                        <button type="button" class="secondary" onclick="${onRemoveName}(${index})">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderSaved() {
+            renderList('bookmarksList', state.bookmarks, 'No bookmarks yet.', 'openBookmark', 'removeBookmark');
+            renderList('historyList', state.history, 'No history yet.', 'openHistory', 'removeHistory');
+        }
+
+        function addHistory(title, url) {
+            if (!url || url.startsWith('azha:start')) return;
+            state.history = [{ title, url }, ...state.history.filter((item) => item.url !== url)].slice(0, 40);
+            saveState();
+            renderSaved();
+        }
+
+        function showBlocked(url) {
+            blockedUrl = url;
+            document.getElementById('blockedText').textContent = `${url} opens better in a normal Opera tab.`;
+            document.getElementById('blockedCard').classList.remove('hidden');
+            document.getElementById('viewerShell').classList.add('hidden');
+        }
+
+        function hideBlocked() {
+            document.getElementById('blockedCard').classList.add('hidden');
+            document.getElementById('viewerShell').classList.remove('hidden');
+        }
+
+        function renderStart() {
+            hideBlocked();
+            document.getElementById('viewer').srcdoc = `
+                <style>
+                    body{margin:0;font-family:Georgia,serif;background:#061019;color:#f2efe6;display:grid;place-items:center;min-height:100vh;padding:32px}
+                    .box{max-width:760px;text-align:center}
+                    h1{margin:0 0 12px}
+                    .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+                    a{display:inline-block;padding:12px 16px;border-radius:12px;background:#f6c453;color:#111;text-decoration:none;font-weight:bold}
+                    p{margin:0;color:#c2ccd2;line-height:1.6}
+                </style>
+                <div class="box">
+                    <h1>AZHA Browser</h1>
+                    <p>This is your single-file Opera browser page. Some big websites still open better in a real Opera tab.</p>
+                    <div class="row">
+                        <a href="https://azha-lanchpad.vercel.app" target="_top">AZHA Launchpad</a>
+                        <a href="https://openai.com" target="_top">OpenAI</a>
+                        <a href="https://vercel.com" target="_top">Vercel</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSearch(query) {
+            hideBlocked();
+            const clean = decodeURIComponent(query || '').trim();
+            const matches = [...state.bookmarks, ...state.history].filter((item) => `${item.title} ${item.url}`.toLowerCase().includes(clean.toLowerCase())).slice(0, 12);
+            document.getElementById('viewer').srcdoc = `
+                <style>
+                    body{margin:0;font-family:Georgia,serif;background:#061019;color:#f2efe6;padding:24px}
+                    h1{margin:0 0 12px}
+                    p{margin:0 0 16px;color:#c2ccd2}
+                    .card{padding:14px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);margin-bottom:10px}
+                    a{color:#f6c453;text-decoration:none}
+                </style>
+                <h1>AZHA Search</h1>
+                <p>Results for ${escapeHtml(clean)}</p>
+                ${matches.length ? matches.map((item) => `<div class="card"><strong>${escapeHtml(item.title || item.url)}</strong><div><a href="${escapeHtml(item.url)}" target="_top">${escapeHtml(item.url)}</a></div></div>`).join('') : '<div class="card">No saved AZHA results yet. Type a full website URL to open it.</div>'}
+            `;
+        }
+
+        async function openInActiveTab(input, titleHint = '') {
+            ensureTabs();
+            const url = normalizeUrl(input);
+            const tab = activeTab();
+            tab.url = url;
+            tab.title = titleHint || (url.startsWith('azha:search:') ? 'AZHA Search' : (url.startsWith('azha:start') ? 'Start' : new URL(url).hostname.replace(/^www\./, '')));
+            state.activeTabId = tab.id;
+            saveState();
+            renderTabs();
+            document.getElementById('addressBar').value = url.startsWith('azha:search:') ? decodeURIComponent(url.replace('azha:search:', '')) : (url === 'azha:start' ? '' : url);
+            document.getElementById('quickInput').value = document.getElementById('addressBar').value;
+
+            if (url === 'azha:start') {
+                renderStart();
+                return;
+            }
+            if (url.startsWith('azha:search:')) {
+                renderSearch(url.replace('azha:search:', ''));
+                return;
+            }
+            if (hostNeedsTab(url)) {
+                showBlocked(url);
+                return;
+            }
+            hideBlocked();
+            document.getElementById('viewer').src = url;
+            addHistory(tab.title, url);
+        }
+
+        function newTab(url = 'azha:start', title = 'Start') {
+            state.tabs.push({ id: crypto.randomUUID(), title, url });
+            state.activeTabId = state.tabs[state.tabs.length - 1].id;
+            saveState();
+            renderTabs();
+            openInActiveTab(url, title);
+        }
+
+        function closeTab(tabId) {
+            state.tabs = state.tabs.filter((tab) => tab.id !== tabId);
+            ensureTabs();
+            saveState();
+            renderTabs();
+            openInActiveTab(activeTab().url, activeTab().title);
+        }
+
+        function switchTab(tabId) {
+            state.activeTabId = tabId;
+            saveState();
+            renderTabs();
+            openInActiveTab(activeTab().url, activeTab().title);
+        }
+
+        function saveBookmark() {
+            const tab = activeTab();
+            if (!tab || !tab.url || tab.url.startsWith('azha:')) return;
+            state.bookmarks = [{ title: tab.title, url: tab.url }, ...state.bookmarks.filter((item) => item.url !== tab.url)].slice(0, 30);
+            saveState();
+            renderSaved();
+        }
+
+        function openBookmark(index) {
+            const item = state.bookmarks[index];
+            if (item) openInActiveTab(item.url, item.title);
+        }
+
+        function removeBookmark(index) {
+            state.bookmarks.splice(index, 1);
+            saveState();
+            renderSaved();
+        }
+
+        function openHistory(index) {
+            const item = state.history[index];
+            if (item) openInActiveTab(item.url, item.title);
+        }
+
+        function removeHistory(index) {
+            state.history.splice(index, 1);
+            saveState();
+            renderSaved();
+        }
+
+        document.getElementById('quickOpenButton').addEventListener('click', () => openInActiveTab(document.getElementById('quickInput').value));
+        document.getElementById('quickTabButton').addEventListener('click', () => {
+            const url = normalizeUrl(document.getElementById('quickInput').value);
+            window.open(url.startsWith('azha:search:') ? `data:text/html,AZHA Search only works inside this file.` : url, '_blank', 'noopener,noreferrer');
+        });
+        document.getElementById('addressBar').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') openInActiveTab(event.target.value);
+        });
+        document.getElementById('quickInput').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') openInActiveTab(event.target.value);
+        });
+        document.getElementById('backButton').addEventListener('click', () => {
+            try { document.getElementById('viewer').contentWindow.history.back(); } catch {}
+        });
+        document.getElementById('forwardButton').addEventListener('click', () => {
+            try { document.getElementById('viewer').contentWindow.history.forward(); } catch {}
+        });
+        document.getElementById('reloadButton').addEventListener('click', () => {
+            const tab = activeTab();
+            if (tab) openInActiveTab(tab.url, tab.title);
+        });
+        document.getElementById('bookmarkButton').addEventListener('click', saveBookmark);
+        document.getElementById('newTabButton').addEventListener('click', () => newTab());
+        document.getElementById('closeTabButton').addEventListener('click', () => closeTab(activeTab().id));
+        document.getElementById('blockedOpenButton').addEventListener('click', () => {
+            if (blockedUrl) window.open(blockedUrl, '_blank', 'noopener,noreferrer');
+        });
+        document.getElementById('blockedHomeButton').addEventListener('click', () => openInActiveTab('azha:start', 'Start'));
+
+        window.switchTab = switchTab;
+        window.closeTab = closeTab;
+        window.openBookmark = openBookmark;
+        window.removeBookmark = removeBookmark;
+        window.openHistory = openHistory;
+        window.removeHistory = removeHistory;
+
+        ensureTabs();
+        renderTabs();
+        renderSaved();
+        openInActiveTab(activeTab().url, activeTab().title);
+    </script>
+</body>
+</html>

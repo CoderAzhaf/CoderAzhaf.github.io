@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#06131a">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="channels4profile.jpg">
     <title>CoderAzhaf | Downloads</title>
-    <link rel="icon" type="image/png" href="AZHA.PNG">
+    <link rel="icon" type="image/png" sizes="192x192" href="channels4profile.jpg">
     <style>
         :root {
             --bg: #081119;
@@ -20,7 +23,7 @@
             min-height: 100vh;
             font-family: "Trebuchet MS", sans-serif;
             color: var(--text);
-            background: linear-gradient(rgba(5, 10, 15, 0.76), rgba(5, 10, 15, 0.88)), url("AZHA.PNG") center/cover no-repeat fixed;
+            background: linear-gradient(rgba(5, 10, 15, 0.76), rgba(5, 10, 15, 0.88)), url("channels4profile.jpg") center/cover no-repeat fixed;
             padding: 20px;
         }
         .shell {
@@ -89,32 +92,46 @@
             border: 1px solid rgba(255, 255, 255, 0.12);
         }
     </style>
+    <style>
+      body {
+        background-image: url("channels4profile.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+    </style>
 </head>
 <body>
     <main class="shell panel">
         <p class="eyebrow">Downloads</p>
         <h1>Media downloads</h1>
         <p>Grab your animated assets from a proper download page that works cleanly on Vercel.</p>
+        <section id="desktop-app" class="card" style="margin-top:20px;">
+            <h2>AZHA Launchpad app</h2>
+            <p>The real desktop app shell is the Electron build in this project. Right now this page is the launcher spot for it while we finish packaging a full installer.</p>
+            <a class="download-link" href="Browser.html">Open browser shell page</a>
+        </section>
         <section class="grid">
             <article class="card">
-                <img src="Minecraft.gif" alt="Minecraft GIF preview">
+                <img src="minecraft.gif" alt="Minecraft GIF preview">
                 <h2>Minecraft GIF</h2>
-                <a class="download-link" href="Minecraft.gif" download>Download</a>
+                <a class="download-link" href="minecraft.gif" download>Download</a>
             </article>
             <article class="card">
-                <img src="tenor.gif" alt="Roblox GIF preview">
+                <img src="roblox.gif" alt="Roblox GIF preview">
                 <h2>Roblox GIF</h2>
-                <a class="download-link" href="tenor.gif" download>Download</a>
+                <a class="download-link" href="roblox.gif" download>Download</a>
             </article>
             <article class="card">
-                <img src="tenor 2.gif" alt="Fortnite GIF preview">
+                <img src="fortnite.gif" alt="Fortnite GIF preview">
                 <h2>Fortnite GIF</h2>
-                <a class="download-link" href="tenor 2.gif" download>Download</a>
+                <a class="download-link" href="fortnite.gif" download>Download</a>
             </article>
             <article class="card">
-                <img src="tenor 3.gif" alt="Among Us GIF preview">
+                <img src="among-us.gif" alt="Among Us GIF preview">
                 <h2>Among Us GIF</h2>
-                <a class="download-link" href="tenor 3.gif" download>Download</a>
+                <a class="download-link" href="among-us.gif" download>Download</a>
             </article>
         </section>
         <a class="back-link" href="index.html">Back to launchpad</a>

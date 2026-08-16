@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#06131a">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="channels4profile.jpg">
+    <title>CoderAzhaf | Chat</title>
+    <link rel="icon" type="image/png" sizes="192x192" href="channels4profile.jpg">
+    <script src="accounts.js"></script>
+    <style>
+        :root { --bg:#081119; --panel:rgba(10,22,30,.9); --line:rgba(255,255,255,.1); --text:#f4f1e8; --muted:#bfd0d8; --accent:#f2c35e; --good:#67d7a7; --bad:#ff8c7f; --busy:#ffb347; }
+        * { box-sizing:border-box; }
+        body { margin:0; min-height:100vh; font-family:"Trebuchet MS",sans-serif; color:var(--text); background:linear-gradient(rgba(5,10,15,.76), rgba(5,10,15,.88)), url("assets/profile-bg.svg") center/cover no-repeat fixed; padding:20px; }
+        .shell { width:min(1280px,100%); margin:0 auto; display:grid; gap:20px; }
+        .panel { background:var(--panel); border:1px solid var(--line); border-radius:28px; box-shadow:0 24px 80px rgba(0,0,0,.35); backdrop-filter:blur(16px); padding:24px; }
+        .eyebrow { margin:0 0 10px; color:var(--accent); text-transform:uppercase; letter-spacing:.14em; font-size:.78rem; }
+        h1,h2,h3 { margin-top:0; }
+        h1 { font-family:Georgia,serif; font-size:clamp(2.4rem,5vw,4rem); }
+        p { color:var(--muted); line-height:1.7; }
+        .hero { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; flex-wrap:wrap; }
+        .hero-actions, .mini-actions { display:flex; flex-wrap:wrap; gap:10px; }
+        .back-link, button { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 16px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.08); color:var(--text); text-decoration:none; font:inherit; cursor:pointer; }
+        button.primary { background:linear-gradient(135deg,var(--accent),#ffae42); color:#111; border:0; font-weight:bold; }
+        button.danger { background:rgba(255,140,127,.2); border-color:rgba(255,140,127,.35); }
+        input, textarea, select { width:100%; font:inherit; padding:12px 14px; border-radius:16px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.05); color:var(--text); }
+        textarea { min-height:110px; resize:vertical; }
+        .layout { display:grid; grid-template-columns:360px 1fr; gap:20px; }
+        .stack { display:grid; gap:14px; }
+        .status-row { display:flex; flex-wrap:wrap; gap:10px; }
+        .pill { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.05); color:var(--muted); font-size:.92rem; }
+        .badge-online { color:var(--good); }
+        .badge-busy { color:var(--busy); }
+        .badge-offline { color:var(--muted); }
+        .list { display:grid; gap:12px; }
+        .card { padding:16px; border-radius:20px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04); }
+        .friend-card { cursor:pointer; transition:transform .18s ease, border-color .18s ease; }
+        .friend-card:hover, .friend-card.is-active { transform:translateY(-2px); border-color:rgba(242,195,94,.32); }
+        .friend-top, .chat-top { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+        .friend-meta, .small { color:var(--muted); font-size:.92rem; line-height:1.6; }
+        .chat-thread { display:grid; gap:12px; max-height:52vh; overflow:auto; padding-right:4px; }
+        .chat-bubble { padding:14px; border-radius:18px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04); }
+        .chat-bubble.mine { background:rgba(101,209,183,.1); border-color:rgba(101,209,183,.22); }
+        .quote { margin:0 0 10px; padding:10px 12px; border-radius:14px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.06); color:var(--muted); font-size:.92rem; }
+        .composer { display:grid; gap:12px; }
+        .hidden { display:none !important; }
+        .message.success,.message.error { position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:1000; padding:10px 16px; border-radius:16px; }
+        @media (max-width:960px) { .layout { grid-template-columns:1fr; } }
+    </style>
+    <style>
+      body {
+        background-image: url("channels4profile.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <section class="panel">
+            <div class="hero">
+                <div>
+                    <p class="eyebrow">Friends and chat</p>
+                    <h1>Friend chat</h1>
+                    <p>Messages still work for anyone. Chat only works after a friend request gets accepted.</p>
+                </div>
+                <div class="hero-actions">
+                    <a class="back-link" href="index.html">Back to launchpad</a>
+                    <a class="back-link" href="Message.html">Open messages</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel layout">
+            <aside class="stack">
+                <div class="card">
+                    <h2>Your status</h2>
+                    <div class="status-row">
+                        <button type="button" onclick="changePresence('online')">Online</button>
+                        <button type="button" onclick="changePresence('busy')">Busy</button>
+                        <button type="button" onclick="changePresence('offline')">Offline</button>
+                    </div>
+                    <p id="presenceText" class="small">Checking your status.</p>
+                </div>
+
+                <div class="card">
+                    <h2>Add friend</h2>
+                    <input id="friendUsernameInput" type="text" placeholder="Username to friend">
+                    <div class="mini-actions">
+                        <button type="button" class="primary" onclick="sendFriendRequestNow()">Send request</button>
+                    </div>
+                </div>
+
+                <div class="card hidden" id="ceoInspectCard">
+                    <h2>CEO friend view</h2>
+                    <input id="inspectUsernameInput" type="text" placeholder="Username to inspect">
+                    <div class="mini-actions">
+                        <button type="button" onclick="inspectFriendsNow()">Load friend list</button>
+                    </div>
+                    <p id="inspectMeta" class="small">AZHA can inspect another user’s friend list here.</p>
+                </div>
+
+                <div class="card">
+                    <h2>Incoming requests</h2>
+                    <div id="incomingRequests" class="list"></div>
+                </div>
+
+                <div class="card">
+                    <h2>Outgoing requests</h2>
+                    <div id="outgoingRequests" class="list"></div>
+                </div>
+            </aside>
+
+            <section class="stack">
+                <div class="card">
+                    <div class="friend-top">
+                        <div>
+                            <h2>Friends</h2>
+                            <p id="friendListMeta" class="small">Loading your friend list.</p>
+                        </div>
+                        <span id="friendCountPill" class="pill">0 friends</span>
+                    </div>
+                    <div id="friendsList" class="list"></div>
+                </div>
+
+                <div class="card">
+                    <div class="chat-top">
+                        <div>
+                            <h2 id="chatTitle">Select a friend</h2>
+                            <p id="chatMeta" class="small">Choose a friend to start chatting.</p>
+                        </div>
+                        <span id="chatStatusPill" class="pill">No chat</span>
+                    </div>
+                    <div id="replyPreview" class="quote hidden"></div>
+                    <div id="forwardPreview" class="quote hidden"></div>
+                    <div id="chatThread" class="chat-thread"></div>
+                    <div class="composer">
+                        <textarea id="chatInput" placeholder="Write a chat message"></textarea>
+                        <div class="mini-actions">
+                            <button type="button" class="primary" onclick="sendChatNow()">Send chat</button>
+                            <button type="button" onclick="clearComposerMeta()">Clear reply/forward</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <script>
+        let currentUsername = '';
+        let selectedFriend = '';
+        let replyToMessage = null;
+        let forwardedMessage = null;
+        let friendsSnapshot = [];
+        let chatRefreshHandle = null;
+        let friendsRefreshHandle = null;
+        let inspectingUsername = '';
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;' }[char]));
+        }
+
+        function presenceBadge(status) {
+            const safe = String(status || 'offline').toLowerCase();
+            const cls = safe === 'online' ? 'badge-online' : safe === 'busy' ? 'badge-busy' : 'badge-offline';
+            return `<span class="${cls}">${safe}</span>`;
+        }
+
+        function renderRequestLists(view) {
+            const incoming = document.getElementById('incomingRequests');
+            const outgoing = document.getElementById('outgoingRequests');
+            incoming.innerHTML = (view.incomingRequests || []).length
+                ? view.incomingRequests.map((request) => `
+                    <div class="card">
+                        <strong>@${escapeHtml(request.from)}</strong>
+                        <div class="small">${new Date(request.createdAt).toLocaleString()}</div>
+                        <div class="mini-actions">
+                            <button type="button" class="primary" onclick="acceptRequestNow('${escapeHtml(request.from)}')">Accept</button>
+                            <button type="button" class="danger" onclick="rejectRequestNow('${escapeHtml(request.from)}')">Reject</button>
+                        </div>
+                    </div>
+                `).join('')
+                : '<div class="small">No incoming requests.</div>';
+            outgoing.innerHTML = (view.outgoingRequests || []).length
+                ? view.outgoingRequests.map((request) => `
+                    <div class="card">
+                        <strong>@${escapeHtml(request.to)}</strong>
+                        <div class="small">Pending since ${new Date(request.createdAt).toLocaleString()}</div>
+                    </div>
+                `).join('')
+                : '<div class="small">No outgoing requests.</div>';
+        }
+
+        function renderFriends(view) {
+            const list = document.getElementById('friendsList');
+            const targetName = view.username === currentUsername ? 'your' : `${view.username}'s`;
+            friendsSnapshot = Array.isArray(view.friends) ? view.friends : [];
+            document.getElementById('friendCountPill').textContent = `${friendsSnapshot.length} friends`;
+            document.getElementById('friendListMeta').textContent = `Showing ${targetName} friend list.`;
+            if (!friendsSnapshot.length) {
+                list.innerHTML = '<div class="small">No friends yet.</div>';
+                return;
+            }
+            list.innerHTML = friendsSnapshot.map((friend) => `
+                <article class="card friend-card ${selectedFriend === friend.username ? 'is-active' : ''}" onclick="openFriendChat('${escapeHtml(friend.username)}')">
+                    <div class="friend-top">
+                        <div>
+                            <strong>${escapeHtml(friend.fullName || friend.username)}</strong>
+                            <div class="small">@${escapeHtml(friend.username)}</div>
+                        </div>
+                        <span class="pill">${presenceBadge(friend.status)}</span>
+                    </div>
+                    <div class="friend-meta">
+                        Membership: ${escapeHtml(friend.membershipLabel)}<br>
+                        AZHA: ${escapeHtml(friend.balance)}<br>
+                        Last seen: ${friend.lastSeenAt ? escapeHtml(new Date(friend.lastSeenAt).toLocaleString()) : 'unknown'}
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        function renderComposerMeta() {
+            const reply = document.getElementById('replyPreview');
+            const forward = document.getElementById('forwardPreview');
+            if (replyToMessage) {
+                reply.classList.remove('hidden');
+                reply.innerHTML = `<strong>Replying to @${escapeHtml(replyToMessage.from)}</strong><br>${escapeHtml(replyToMessage.text || '')}`;
+            } else {
+                reply.classList.add('hidden');
+                reply.textContent = '';
+            }
+            if (forwardedMessage) {
+                forward.classList.remove('hidden');
+                forward.innerHTML = `<strong>Forwarding from @${escapeHtml(forwardedMessage.from)}</strong><br>${escapeHtml(forwardedMessage.text || '')}`;
+            } else {
+                forward.classList.add('hidden');
+                forward.textContent = '';
+            }
+        }
+
+        async function renderChat() {
+            const thread = document.getElementById('chatThread');
+            if (!selectedFriend) {
+                document.getElementById('chatTitle').textContent = 'Select a friend';
+                document.getElementById('chatMeta').textContent = 'Choose a friend to start chatting.';
+                document.getElementById('chatStatusPill').textContent = 'No chat';
+                thread.innerHTML = '<div class="small">No chat open yet.</div>';
+                return;
+            }
+            const friend = friendsSnapshot.find((entry) => entry.username === selectedFriend);
+            document.getElementById('chatTitle').textContent = friend?.fullName || selectedFriend;
+            document.getElementById('chatMeta').textContent = `Chatting with @${selectedFriend}`;
+            document.getElementById('chatStatusPill').innerHTML = presenceBadge(friend?.status || 'offline');
+            const messages = await getChatThread(selectedFriend, currentUsername);
+            if (!messages.length) {
+                thread.innerHTML = '<div class="small">No chat messages yet.</div>';
+                return;
+            }
+            thread.innerHTML = messages.map((message) => `
+                <article class="chat-bubble ${message.from === currentUsername ? 'mine' : ''}">
+                    <div class="small">${message.from === currentUsername ? 'You' : '@' + escapeHtml(message.from)} • ${new Date(message.timestamp).toLocaleString()}</div>
+                    ${message.replyTo ? `<div class="quote"><strong>Reply to @${escapeHtml(message.replyTo.from)}</strong><br>${escapeHtml(message.replyTo.text)}</div>` : ''}
+                    ${message.forwardedFrom ? `<div class="quote"><strong>Forwarded from @${escapeHtml(message.forwardedFrom.from)}</strong><br>${escapeHtml(message.forwardedFrom.text)}</div>` : ''}
+                    <div>${escapeHtml(message.text)}</div>
+                    <div class="mini-actions" style="margin-top:10px;">
+                        <button type="button" onclick="setReplyChat('${escapeHtml(message.id)}')">Reply</button>
+                        <button type="button" onclick="setForwardChat('${escapeHtml(message.id)}')">Forward</button>
+                    </div>
+                </article>
+            `).join('');
+            await Promise.all(messages.filter((message) => message.to === currentUsername && !message.read).map((message) => markChatRead(message.id, currentUsername)));
+        }
+
+        async function refreshFriendsPanel() {
+            const target = inspectingUsername || currentUsername;
+            const actor = currentUsername;
+            const view = await getFriendsView(target, actor);
+            document.getElementById('presenceText').innerHTML = `You are ${presenceBadge(view.username === currentUsername ? view.presence : 'online')}.`;
+            renderRequestLists(view);
+            renderFriends(view);
+            if (selectedFriend && !friendsSnapshot.some((entry) => entry.username === selectedFriend)) {
+                selectedFriend = '';
+                clearComposerMeta();
+            }
+            await renderChat();
+        }
+
+        async function changePresence(status) {
+            const ok = await setPresenceStatus(status);
+            if (ok) {
+                showMessage(`You now appear ${status}.`, true);
+                refreshFriendsPanel();
+            }
+        }
+
+        async function sendFriendRequestNow() {
+            const to = document.getElementById('friendUsernameInput').value.trim();
+            if (!to) {
+                showMessage('Enter a username first.', false);
+                return;
+            }
+            if (await sendFriendRequest(to)) {
+                document.getElementById('friendUsernameInput').value = '';
+                refreshFriendsPanel();
+            }
+        }
+
+        async function acceptRequestNow(fromUsername) {
+            if (await acceptFriendRequest(fromUsername)) {
+                refreshFriendsPanel();
+            }
+        }
+
+        async function rejectRequestNow(fromUsername) {
+            if (await rejectFriendRequest(fromUsername)) {
+                refreshFriendsPanel();
+            }
+        }
+
+        function openFriendChat(username) {
+            selectedFriend = username;
+            renderFriends({ username: inspectingUsername || currentUsername, friends: friendsSnapshot, incomingRequests: [], outgoingRequests: [] });
+            renderChat();
+        }
+
+        function clearComposerMeta() {
+            replyToMessage = null;
+            forwardedMessage = null;
+            renderComposerMeta();
+        }
+
+        async function sendChatNow() {
+            if (!selectedFriend) {
+                showMessage('Choose a friend first.', false);
+                return;
+            }
+            const text = document.getElementById('chatInput').value.trim();
+            if (!text) {
+                showMessage('Write a chat message first.', false);
+                return;
+            }
+            const ok = await sendChatMessage(selectedFriend, text, {
+                replyTo: replyToMessage,
+                forwardedFrom: forwardedMessage
+            });
+            if (!ok) return;
+            document.getElementById('chatInput').value = '';
+            clearComposerMeta();
+            renderChat();
+        }
+
+        async function setReplyChat(messageId) {
+            const messages = await getChatThread(selectedFriend, currentUsername);
+            const match = messages.find((entry) => entry.id === messageId);
+            if (!match) return;
+            replyToMessage = { id: match.id, from: match.from, text: match.text };
+            forwardedMessage = null;
+            renderComposerMeta();
+        }
+
+        async function setForwardChat(messageId) {
+            const messages = await getChatThread(selectedFriend, currentUsername);
+            const match = messages.find((entry) => entry.id === messageId);
+            if (!match) return;
+            forwardedMessage = { id: match.id, from: match.from, to: match.to, text: match.text };
+            replyToMessage = null;
+            renderComposerMeta();
+        }
+
+        async function inspectFriendsNow() {
+            if (currentUsername !== 'AZHA') return;
+            const target = document.getElementById('inspectUsernameInput').value.trim();
+            if (!target) {
+                inspectingUsername = '';
+                document.getElementById('inspectMeta').textContent = 'AZHA can inspect another user’s friend list here.';
+            } else {
+                inspectingUsername = target;
+                document.getElementById('inspectMeta').textContent = `Inspecting ${target}'s friends.`;
+            }
+            selectedFriend = '';
+            clearComposerMeta();
+            refreshFriendsPanel();
+        }
+
+        async function init() {
+            // Add a small delay to ensure localStorage is synced after login
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            if (!checkLogin()) return;
+            currentUsername = localStorage.getItem('currentUsername') || '';
+            if (!currentUsername) {
+                window.location.href = 'Getin.html';
+                return;
+            }
+            if (currentUsername === 'AZHA') {
+                document.getElementById('ceoInspectCard').classList.remove('hidden');
+            }
+            startPresenceHeartbeat('online');
+            await refreshFriendsPanel();
+            if (friendsRefreshHandle) clearInterval(friendsRefreshHandle);
+            if (chatRefreshHandle) clearInterval(chatRefreshHandle);
+            friendsRefreshHandle = window.setInterval(refreshFriendsPanel, 4000);
+            chatRefreshHandle = window.setInterval(renderChat, 2000);
+        }
+
+        let chatWebSocket = null;
+
+        async function connectWebSocketChat() {
+            return new Promise((resolve) => {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${protocol}//${window.location.host}`;
+                
+                try {
+                    chatWebSocket = new WebSocket(wsUrl);
+                    
+                    chatWebSocket.onopen = () => {
+                        const username = localStorage.getItem('currentUsername');
+                        if (username) {
+                            chatWebSocket.send(JSON.stringify({
+                                type: 'register-user',
+                                username: username
+                            }));
+                            console.log('WebSocket chat connection established for:', username);
+                        }
+                        resolve();
+                    };
+                    
+                    chatWebSocket.onmessage = (event) => {
+                        try {
+                            const message = JSON.parse(event.data);
+                            
+                            if (message.type === 'chat-message-received') {
+                                // Message arrived from a friend
+                                const from = message.from;
+                                const currentUser = localStorage.getItem('currentUsername');
+                                
+                                // Show browser notification
+                                if (Notification.permission === 'granted') {
+                                    new Notification('New Chat Message', {
+                                        body: `${from}: ${message.text.substring(0, 50)}${message.text.length > 50 ? '...' : ''}`,
+                                        icon: 'channels4profile.jpg'
+                                    });
+                                }
+                                
+                                // If the chat thread with this user is open, refresh it
+                                if (selectedFriend === from) {
+                                    renderChat();
+                                }
+                                
+                                // Refresh friends panel to show new unread count
+                                refreshFriendsPanel();
+                            }
+                        } catch (error) {
+                            console.error('Error processing WebSocket message:', error);
+                        }
+                    };
+                    
+                    chatWebSocket.onerror = (error) => {
+                        console.error('WebSocket error:', error);
+                        resolve();
+                    };
+                    
+                    chatWebSocket.onclose = () => {
+                        console.log('WebSocket chat connection closed');
+                        // Attempt to reconnect after 3 seconds
+                        setTimeout(() => {
+                            if (currentUsername) connectWebSocketChat();
+                        }, 3000);
+                    };
+                } catch (error) -> {
+                    console.error('Failed to connect WebSocket:', error);
+                    resolve();
+                }
+            });
+        }
+
+        window.changePresence = changePresence;
+        window.sendFriendRequestNow = sendFriendRequestNow;
+        window.acceptRequestNow = acceptRequestNow;
+        window.rejectRequestNow = rejectRequestNow;
+        window.openFriendChat = openFriendChat;
+        window.clearComposerMeta = clearComposerMeta;
+        window.sendChatNow = sendChatNow;
+        window.setReplyChat = setReplyChat;
+        window.setForwardChat = setForwardChat;
+        window.inspectFriendsNow = inspectFriendsNow;
+        
+        (async () => {
+            await connectWebSocketChat();
+            init();
+        })();
+    </script>
+</body>
+</html>

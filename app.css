@@ -27,10 +27,10 @@ body {
     min-height: 100vh;
     color: var(--text);
     font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-    background:
-        radial-gradient(circle at top left, rgba(246, 196, 83, 0.22), transparent 28%),
-        radial-gradient(circle at 85% 15%, rgba(101, 209, 183, 0.16), transparent 24%),
-        linear-gradient(180deg, #102735 0%, #071118 46%, #05090d 100%);
+    background-image: url("channels4profile.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 body::before {
@@ -39,7 +39,7 @@ body::before {
     inset: 0;
     background:
         linear-gradient(rgba(4, 9, 14, 0.32), rgba(4, 9, 14, 0.78)),
-        url("channels4_profile (2).jpg") center/cover no-repeat;
+        url("profile-bg.jpg") center/cover no-repeat;
     opacity: 0.22;
     pointer-events: none;
 }
@@ -434,3 +434,5 @@ a {
 .status-card p {
     margin-bottom: 0;
 }
+
+

@@ -3,48 +3,414 @@
     "username": "AZHA",
     "password": "AZ MOH",
     "fullName": "AZHAFUDDiN MOHAMMED",
+    "profilePic": "",
+    "email": "",
+    "authProvider": "local",
     "isAdmin": true,
     "warnings": 0,
-    "status": "active"
+    "orgWarnings": 0,
+    "status": "active",
+    "organizationId": "",
+    "presenceStatus": "online",
+    "lastSeenAt": "2026-05-23T15:38:38.835Z",
+    "membership": {
+      "planKey": "",
+      "status": "none",
+      "expiresAt": "",
+      "nextRewardAt": "",
+      "rewardInterval": "",
+      "rewardAmount": 0,
+      "features": [],
+      "azincCost": 0,
+      "grantedBy": "",
+      "source": "",
+      "purchasedAt": ""
+    },
+    "storagePreference": {
+      "mode": "shared",
+      "supabaseUrl": "",
+      "supabaseKey": "",
+      "status": "shared",
+      "lastCheckedAt": "",
+      "lastError": ""
+    },
+    "browserProfile": {
+      "homeUrl": "https://start.coderazhaf.local",
+      "searchEngine": "azha",
+      "theme": "midnight",
+      "tabs": [
+        {
+          "id": "home-tab",
+          "title": "Start",
+          "url": "https://start.coderazhaf.local"
+        }
+      ],
+      "activeTabId": "home-tab",
+      "bookmarks": [],
+      "history": [],
+      "organization": {
+        "name": "",
+        "type": "personal",
+        "emailDomain": "",
+        "logoText": "AZHA",
+        "managed": {
+          "enabled": false,
+          "by": ""
+        },
+        "managedBookmarks": []
+      },
+      "controls": {
+        "blockedDomains": [],
+        "allowedDomains": [],
+        "strictMode": false,
+        "studentSafeMode": false
+      },
+      "updatedAt": ""
+    }
   },
   "Vivvan Dash": {
     "username": "Vivvan Dash",
     "password": "dashpro",
     "fullName": "Vivvan Dash",
+    "profilePic": "",
+    "email": "",
+    "authProvider": "local",
     "isAdmin": true,
     "warnings": 0,
-    "status": "active"
+    "orgWarnings": 0,
+    "status": "active",
+    "organizationId": "",
+    "presenceStatus": "offline",
+    "lastSeenAt": "",
+    "membership": {
+      "planKey": "",
+      "status": "none",
+      "expiresAt": "",
+      "nextRewardAt": "",
+      "rewardInterval": "",
+      "rewardAmount": 0,
+      "features": [],
+      "azincCost": 0,
+      "grantedBy": "",
+      "source": "",
+      "purchasedAt": ""
+    },
+    "storagePreference": {
+      "mode": "shared",
+      "supabaseUrl": "",
+      "supabaseKey": "",
+      "status": "shared",
+      "lastCheckedAt": "",
+      "lastError": ""
+    },
+    "browserProfile": {
+      "homeUrl": "https://start.coderazhaf.local",
+      "searchEngine": "azha",
+      "theme": "midnight",
+      "tabs": [
+        {
+          "id": "home-tab",
+          "title": "Start",
+          "url": "https://start.coderazhaf.local"
+        }
+      ],
+      "activeTabId": "home-tab",
+      "bookmarks": [],
+      "history": [],
+      "organization": {
+        "name": "",
+        "type": "personal",
+        "emailDomain": "",
+        "logoText": "AZHA",
+        "managed": {
+          "enabled": false,
+          "by": ""
+        },
+        "managedBookmarks": []
+      },
+      "controls": {
+        "blockedDomains": [],
+        "allowedDomains": [],
+        "strictMode": false,
+        "studentSafeMode": false
+      },
+      "updatedAt": ""
+    }
   },
   "Alyanuddin": {
     "username": "Alyanuddin",
     "password": "alyanpro",
     "fullName": "Alyanuddin Mohammed",
+    "profilePic": "",
+    "email": "",
+    "authProvider": "local",
     "isAdmin": true,
     "warnings": 0,
-    "status": "active"
+    "orgWarnings": 0,
+    "status": "active",
+    "organizationId": "",
+    "presenceStatus": "offline",
+    "lastSeenAt": "",
+    "membership": {
+      "planKey": "",
+      "status": "none",
+      "expiresAt": "",
+      "nextRewardAt": "",
+      "rewardInterval": "",
+      "rewardAmount": 0,
+      "features": [],
+      "azincCost": 0,
+      "grantedBy": "",
+      "source": "",
+      "purchasedAt": ""
+    },
+    "storagePreference": {
+      "mode": "shared",
+      "supabaseUrl": "",
+      "supabaseKey": "",
+      "status": "shared",
+      "lastCheckedAt": "",
+      "lastError": ""
+    },
+    "browserProfile": {
+      "homeUrl": "https://start.coderazhaf.local",
+      "searchEngine": "azha",
+      "theme": "midnight",
+      "tabs": [
+        {
+          "id": "home-tab",
+          "title": "Start",
+          "url": "https://start.coderazhaf.local"
+        }
+      ],
+      "activeTabId": "home-tab",
+      "bookmarks": [],
+      "history": [],
+      "organization": {
+        "name": "",
+        "type": "personal",
+        "emailDomain": "",
+        "logoText": "AZHA",
+        "managed": {
+          "enabled": false,
+          "by": ""
+        },
+        "managedBookmarks": []
+      },
+      "controls": {
+        "blockedDomains": [],
+        "allowedDomains": [],
+        "strictMode": false,
+        "studentSafeMode": false
+      },
+      "updatedAt": ""
+    }
   },
   "Hacker": {
     "username": "Hacker",
     "password": "Hacker",
     "fullName": "Hacker",
+    "profilePic": "",
+    "email": "",
+    "authProvider": "local",
     "isAdmin": false,
     "warnings": 0,
-    "status": "active"
+    "orgWarnings": 0,
+    "status": "active",
+    "organizationId": "",
+    "presenceStatus": "offline",
+    "lastSeenAt": "",
+    "membership": {
+      "planKey": "",
+      "status": "none",
+      "expiresAt": "",
+      "nextRewardAt": "",
+      "rewardInterval": "",
+      "rewardAmount": 0,
+      "features": [],
+      "azincCost": 0,
+      "grantedBy": "",
+      "source": "",
+      "purchasedAt": ""
+    },
+    "storagePreference": {
+      "mode": "shared",
+      "supabaseUrl": "",
+      "supabaseKey": "",
+      "status": "shared",
+      "lastCheckedAt": "",
+      "lastError": ""
+    },
+    "browserProfile": {
+      "homeUrl": "https://start.coderazhaf.local",
+      "searchEngine": "azha",
+      "theme": "midnight",
+      "tabs": [
+        {
+          "id": "home-tab",
+          "title": "Start",
+          "url": "https://start.coderazhaf.local"
+        }
+      ],
+      "activeTabId": "home-tab",
+      "bookmarks": [],
+      "history": [],
+      "organization": {
+        "name": "",
+        "type": "personal",
+        "emailDomain": "",
+        "logoText": "AZHA",
+        "managed": {
+          "enabled": false,
+          "by": ""
+        },
+        "managedBookmarks": []
+      },
+      "controls": {
+        "blockedDomains": [],
+        "allowedDomains": [],
+        "strictMode": false,
+        "studentSafeMode": false
+      },
+      "updatedAt": ""
+    }
   },
   "Umar": {
     "username": "Umar",
     "password": "Umar",
     "fullName": "Umar Suhail",
+    "profilePic": "",
+    "email": "",
+    "authProvider": "local",
     "isAdmin": false,
     "warnings": 0,
-    "status": "active"
+    "orgWarnings": 0,
+    "status": "active",
+    "organizationId": "",
+    "presenceStatus": "offline",
+    "lastSeenAt": "",
+    "membership": {
+      "planKey": "",
+      "status": "none",
+      "expiresAt": "",
+      "nextRewardAt": "",
+      "rewardInterval": "",
+      "rewardAmount": 0,
+      "features": [],
+      "azincCost": 0,
+      "grantedBy": "",
+      "source": "",
+      "purchasedAt": ""
+    },
+    "storagePreference": {
+      "mode": "shared",
+      "supabaseUrl": "",
+      "supabaseKey": "",
+      "status": "shared",
+      "lastCheckedAt": "",
+      "lastError": ""
+    },
+    "browserProfile": {
+      "homeUrl": "https://start.coderazhaf.local",
+      "searchEngine": "azha",
+      "theme": "midnight",
+      "tabs": [
+        {
+          "id": "home-tab",
+          "title": "Start",
+          "url": "https://start.coderazhaf.local"
+        }
+      ],
+      "activeTabId": "home-tab",
+      "bookmarks": [],
+      "history": [],
+      "organization": {
+        "name": "",
+        "type": "personal",
+        "emailDomain": "",
+        "logoText": "AZHA",
+        "managed": {
+          "enabled": false,
+          "by": ""
+        },
+        "managedBookmarks": []
+      },
+      "controls": {
+        "blockedDomains": [],
+        "allowedDomains": [],
+        "strictMode": false,
+        "studentSafeMode": false
+      },
+      "updatedAt": ""
+    }
   },
   "Suleman": {
     "username": "Suleman",
     "password": "Suleman",
     "fullName": "Suleman Ahsan",
+    "profilePic": "",
+    "email": "",
+    "authProvider": "local",
     "isAdmin": false,
     "warnings": 0,
-    "status": "active"
+    "orgWarnings": 0,
+    "status": "active",
+    "organizationId": "",
+    "presenceStatus": "offline",
+    "lastSeenAt": "",
+    "membership": {
+      "planKey": "",
+      "status": "none",
+      "expiresAt": "",
+      "nextRewardAt": "",
+      "rewardInterval": "",
+      "rewardAmount": 0,
+      "features": [],
+      "azincCost": 0,
+      "grantedBy": "",
+      "source": "",
+      "purchasedAt": ""
+    },
+    "storagePreference": {
+      "mode": "shared",
+      "supabaseUrl": "",
+      "supabaseKey": "",
+      "status": "shared",
+      "lastCheckedAt": "",
+      "lastError": ""
+    },
+    "browserProfile": {
+      "homeUrl": "https://start.coderazhaf.local",
+      "searchEngine": "azha",
+      "theme": "midnight",
+      "tabs": [
+        {
+          "id": "home-tab",
+          "title": "Start",
+          "url": "https://start.coderazhaf.local"
+        }
+      ],
+      "activeTabId": "home-tab",
+      "bookmarks": [],
+      "history": [],
+      "organization": {
+        "name": "",
+        "type": "personal",
+        "emailDomain": "",
+        "logoText": "AZHA",
+        "managed": {
+          "enabled": false,
+          "by": ""
+        },
+        "managedBookmarks": []
+      },
+      "controls": {
+        "blockedDomains": [],
+        "allowedDomains": [],
+        "strictMode": false,
+        "studentSafeMode": false
+      },
+      "updatedAt": ""
+    }
   }
 }
