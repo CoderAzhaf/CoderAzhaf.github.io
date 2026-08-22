@@ -1,1359 +1,926 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <link rel="icon" type="image/png" href="Azha LanchPad Icon..png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="CoderAzhaf is a personal launchpad for projects, games, videos, and account access.">
-    <meta name="theme-color" content="#06131a">
-    <link rel="manifest" href="./manifest.json">
-<link rel="apple-touch-icon" href="channels4profile.png"/>
+    <link rel="stylesheet" href="app.css">
+    <title>AZHA LanchPad</title>
+    <link rel="icon" type="image/png" href="Azha LanchPad Icon..png">
 
-    <title>CoderAzhaf | Launchpad</title>
-    <link rel="icon" type="image/jpeg" sizes="192x192" href="channels4profile.png"/>
-    <link rel="icon" type="image/png" sizes="512x512" href="channels4profile.png"/>
     <style>
-:root {
-    --bg: #06131a;
-    --bg-soft: #0d1f28;
-    --panel: rgba(8, 18, 26, 0.84);
-    --panel-strong: rgba(10, 18, 28, 0.96);
-    --line: rgba(255, 255, 255, 0.12);
-    --text: #f4f2ea;
-    --muted: #bfd0d8;
-    --gold: #f6c453;
-    --teal: #65d1b7;
-    --red: #ff7b6b;
-    --blue: #70b8ff;
-    --violet: #c6a3ff;
-    --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
-}
-
-* {
-    box-sizing: border-box;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    margin: 0;
-    min-height: 100vh;
-    color: var(--text);
-    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-    background:
-        radial-gradient(circle at top left, rgba(246, 196, 83, 0.22), transparent 28%),
-        radial-gradient(circle at 85% 15%, rgba(101, 209, 183, 0.16), transparent 24%),
-        linear-gradient(180deg, #102735 0%, #071118 46%, #05090d 100%);
-}
-
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-background:
-        linear-gradient(rgba(4, 9, 14, 0.32), rgba(4, 9, 14, 0.78)),
-        url("./assets/profile-bg.svg") center/cover no-repeat;
-    opacity: 0.22;
-    pointer-events: none;
-}
-
-.app-loader {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background:
-        radial-gradient(circle at top left, rgba(246, 196, 83, 0.2), transparent 30%),
-        radial-gradient(circle at 80% 20%, rgba(101, 209, 183, 0.16), transparent 24%),
-        linear-gradient(180deg, rgba(9, 20, 30, 0.98), rgba(4, 10, 14, 0.98));
-    transition: opacity 260ms ease, visibility 260ms ease;
-}
-
-.app-loader.is-hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
-
-.app-loader-card {
-    display: grid;
-    justify-items: center;
-    gap: 16px;
-    padding: 26px 28px;
-    border-radius: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(8, 18, 26, 0.82);
-    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
-}
-
-.app-loader-card img {
-    width: 104px;
-    height: 104px;
-    border-radius: 28px;
-    object-fit: cover;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.35);
-}
-
-.app-loader-card strong {
-    font-size: 1.15rem;
-    letter-spacing: 0.08em;
-}
-
-.app-loader-card span {
-    color: var(--muted);
-    font-size: 0.94rem;
-}
-
-img,
-video {
-    max-width: 100%;
-    display: block;
-}
-
-button,
-a {
-    font: inherit;
-}
-
-.home-page .page-shell {
-    position: relative;
-    z-index: 1;
-    width: min(1180px, calc(100% - 32px));
-    margin: 0 auto;
-    padding: 28px 0 56px;
-}
-
-.hero-panel,
-.content-section,
-.tool-card,
-.launch-card,
-.game-card,
-.media-card {
-    backdrop-filter: blur(18px);
-}
-
-.hero-panel {
-    display: grid;
-    grid-template-columns: 1.4fr 0.8fr;
-    gap: 24px;
-    padding: 32px;
-    background: linear-gradient(145deg, rgba(11, 23, 32, 0.94), rgba(18, 40, 52, 0.78));
-    border: 1px solid var(--line);
-    border-radius: 32px;
-    box-shadow: var(--shadow);
-}
-
-.eyebrow,
-.section-kicker,
-.profile-label,
-.launch-label,
-.launch-arrow,
-.tool-title,
-.profile-stats span {
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-}
-
-.eyebrow,
-.section-kicker,
-.profile-label,
-.launch-label,
-.launch-arrow {
-    color: var(--gold);
-    font-size: 0.74rem;
-}
-
-.hero-copy h1,
-.section-heading h2,
-.profile-card h2 {
-    margin: 0;
-    font-family: Georgia, "Times New Roman", serif;
-    line-height: 0.96;
-}
-
-.hero-copy h1 {
-    font-size: clamp(3rem, 7vw, 5.6rem);
-    margin-top: 10px;
-}
-
-.hero-text,
-.section-heading p,
-.profile-card p,
-.launch-card p,
-.game-card p,
-.tool-copy {
-    color: var(--muted);
-    line-height: 1.7;
-}
-
-.hero-text {
-    max-width: 56ch;
-    margin: 18px 0 0;
-    font-size: 1.05rem;
-}
-
-.hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 24px;
-}
-
-.button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 48px;
-    padding: 0 18px;
-    border-radius: 999px;
-    border: 1px solid transparent;
-    cursor: pointer;
-    text-decoration: none;
-    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
-}
-
-.button:hover,
-.launch-card:hover,
-.game-card:hover,
-.tool-card:hover {
-    transform: translateY(-3px);
-}
-
-.button-primary {
-    background: linear-gradient(135deg, var(--gold), #f8a835);
-    color: #111;
-    box-shadow: 0 16px 35px rgba(248, 168, 53, 0.26);
-}
-
-.button-secondary {
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--text);
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-.button-ghost {
-    background: transparent;
-    color: var(--muted);
-    border-color: rgba(255, 255, 255, 0.16);
-}
-
-.button-install {
-    background: linear-gradient(135deg, var(--teal), #39a489);
-    color: #082018;
-    box-shadow: 0 16px 35px rgba(57, 164, 137, 0.24);
-}
-
-.profile-card {
-    padding: 24px;
-    background: rgba(4, 12, 18, 0.72);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 26px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 12px;
-}
-
-.profile-logos {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.profile-logo {
-    width: 92px;
-    height: 92px;
-    border-radius: 24px;
-    object-fit: cover;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
-}
-
-.profile-user-pic {
-    width: 74px;
-    height: 74px;
-    border-radius: 22px;
-    object-fit: cover;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.04);
-    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
-}
-
-.profile-card h2 {
-    font-size: 2rem;
-}
-
-.profile-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-top: 4px;
-}
-
-.profile-stats div {
-    padding: 14px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.profile-stats strong {
-    display: block;
-    margin-top: 6px;
-    font-size: 1.1rem;
-}
-
-.content-section {
-    margin-top: 24px;
-    padding: 28px;
-    border-radius: 28px;
-    border: 1px solid var(--line);
-    background: var(--panel);
-    box-shadow: var(--shadow);
-}
-
-.alt-surface {
-    background: linear-gradient(160deg, rgba(13, 31, 40, 0.92), rgba(7, 16, 24, 0.9));
-}
-
-.section-heading {
-    max-width: 52rem;
-    margin-bottom: 20px;
-}
-
-.section-heading.compact {
-    margin-bottom: 16px;
-}
-
-.section-heading h2 {
-    margin-top: 8px;
-    font-size: clamp(2rem, 4vw, 3rem);
-}
-
-.card-grid,
-.feature-grid,
-.tool-row {
-    display: grid;
-    gap: 18px;
-}
-
-.card-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-}
-
-.feature-grid,
-.tool-row {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-}
-
-.launch-card,
-.game-card,
-.tool-card {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-height: 100%;
-    padding: 20px;
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    text-decoration: none;
-    color: inherit;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
-    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
-}
-
-.launch-card h3,
-.game-card h3 {
-    margin: 0;
-    font-size: 1.45rem;
-}
-
-.launch-card p,
-.game-card p,
-.tool-copy {
-    margin: 0;
-}
-
-.launch-arrow {
-    margin-top: auto;
-}
-
-.accent-gold {
-    box-shadow: inset 0 0 0 1px rgba(246, 196, 83, 0.22);
-}
-
-.accent-green {
-    box-shadow: inset 0 0 0 1px rgba(101, 209, 183, 0.22);
-}
-
-.accent-red {
-    box-shadow: inset 0 0 0 1px rgba(255, 123, 107, 0.22);
-}
-
-.accent-blue {
-    box-shadow: inset 0 0 0 1px rgba(112, 184, 255, 0.22);
-}
-
-.accent-violet {
-    box-shadow: inset 0 0 0 1px rgba(198, 163, 255, 0.22);
-}
-
-.game-card {
-    overflow: hidden;
-    padding: 0;
-}
-
-.game-card img {
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-}
-
-.game-card-copy {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    gap: 12px;
-    padding: 18px 20px 20px;
-}
-
-.game-card-copy span,
-.tool-title {
-    color: var(--gold);
-}
-
-.media-layout {
-    display: grid;
-    gap: 18px;
-}
-
-.media-card {
-    border-radius: 24px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    background: var(--panel-strong);
-}
-
-.media-card video {
-    width: 100%;
-    max-height: 560px;
-    background: #000;
-}
-
-.tool-card {
-    justify-content: space-between;
-    min-height: 180px;
-}
-
-.tool-top {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.tool-avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 18px;
-    object-fit: cover;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.04);
-}
-
-.tool-title {
-    font-size: 0.82rem;
-}
-
-@media (max-width: 900px) {
-    .hero-panel {
-        grid-template-columns: 1fr;
-        padding: 24px;
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            background-image: url('100_0066.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            color: white;
+        }
+
+        .nav-center {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .account-form {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: 20px auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            box-sizing: border-box;
+            color: black; /* Ensure text is visible */
+        }
+
+        button {
+            width: 50%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background: #000000;
+            color: gold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            background: #45a049;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            animation: fadeIn 0.3s ease-out;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .success {
+            background: rgba(76, 175, 80, 0.3);
+            border: 1px solid #4CAF50;
+        }
+
+        .error {
+            background: rgba(244, 67, 54, 0.3);
+            border: 1px solid #f44336;
+        }
+
+        .username-display {
+            font-size: 1.2em;
+            margin: 10px 0;
+            color: #4CAF50;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Styles for the admin panel */
+        .admin-panel {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 20px auto;
+            color: white;
+        }
+
+        .account-list {
+            margin-top: 20px;
+        }
+
+        .account-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .account-item > div {
+            margin: 5px 0;
+        }
+
+        .admin-controls button {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 5px;
+            width: auto;
+        }
+
+        .admin-controls button:hover {
+            opacity: 0.9;
+        }
+
+        .warning {
+            color: yellow;
+            margin-left: 10px;
+        }
+
+        .banned {
+            color: red;
+            margin-left: 10px;
+        }
+
+        .admin {
+            color: green;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .search-bar {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: black;
+        }
+
+        .search-bar button {
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+        }
+
+        .logout-button, .delete-button {
+            background-color: #f44336;
+            color: white;
+            width: auto;
+            margin-left: 10px;
+        }
+
+        .logout-button:hover, .delete-button:hover {
+            background-color: #d32f2f;
+        }
+
+        .nav-center button {
+            width: auto;
+            margin: 5px;
+        }
+
+        .admin-toggle {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        background: #222;
+        color: #fff;
+        padding: 10px 14px;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        z-index: 1200;
+        cursor: pointer;
+        font-weight: bold;
+        display: none; /* shown via script for admins */
     }
-
-    .profile-stats {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 640px) {
-    .home-page .page-shell {
-        width: min(100% - 20px, 1180px);
-        padding-top: 16px;
-        padding-bottom: 28px;
-    }
-
-    .hero-panel,
-    .content-section {
-        padding: 20px;
-        border-radius: 24px;
-    }
-
-    .hero-copy h1 {
-        font-size: 2.8rem;
-    }
-
-    .profile-stats {
-        grid-template-columns: 1fr;
-    }
-
-    .button {
-        width: 100%;
-    }
-}
-
-.status-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 18px;
-}
-
-.status-card {
-    padding: 20px;
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-}
-
-.notification-center {
-    display: grid;
-    gap: 16px;
-}
-
-.notification-list {
-    display: grid;
-    gap: 12px;
-}
-
-.notification-item {
-    display: grid;
-    gap: 10px;
-    padding: 16px;
-    border-radius: 22px;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-}
-
-.notification-item.unread {
-    box-shadow: inset 0 0 0 1px rgba(246, 196, 83, 0.18);
-}
-
-.notification-top {
-    display:flex;
-    justify-content:space-between;
-    gap:12px;
-    align-items:flex-start;
-}
-
-.notification-top strong {
-    display:block;
-}
-
-.notification-meta {
-    color: var(--muted);
-    font-size: 0.92rem;
-    line-height: 1.6;
-}
-
-.notification-actions {
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-}
-
-.mini-badge {
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    min-width:30px;
-    min-height:30px;
-    padding:0 10px;
-    border-radius:999px;
-    background:rgba(246,196,83,0.14);
-    border:1px solid rgba(246,196,83,0.24);
-    color:var(--gold);
-    font-size:0.86rem;
-}
-
-.status-card span {
-    display: block;
-    color: var(--gold);
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    font-size: 0.72rem;
-}
-
-.status-card strong {
-    display: block;
-    margin-top: 10px;
-    font-size: 2rem;
-}
-
-.status-card p {
-    margin-bottom: 0;
-}
-
-.system-shutdown-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 9998;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, rgba(5, 10, 15, 0.98), rgba(15, 25, 35, 0.98));
-    padding: 20px;
-    animation: fadeIn 0.4s ease-in-out;
-}
-
-.system-shutdown-overlay.is-visible {
-    display: flex;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.shutdown-message-card {
-    max-width: 500px;
-    text-align: center;
-    padding: 40px;
-    border-radius: 20px;
-    border: 2px solid rgba(255, 123, 107, 0.3);
-    background: rgba(255, 123, 107, 0.05);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    animation: slideUp 0.6s ease-out;
-}
-
-@keyframes slideUp {
-    from {
-        transform: translateY(30px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.shutdown-icon {
-    font-size: 4rem;
-    margin-bottom: 20px;
-    animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.7; transform: scale(1.1); }
-}
-
-.shutdown-message-card h1 {
-    color: #ff7b6b;
-    font-size: 2.5rem;
-    margin: 0 0 15px;
-    font-family: Georgia, serif;
-}
-
-.shutdown-message-card p {
-    color: #bfd0d8;
-    font-size: 1.1rem;
-    line-height: 1.8;
-    margin: 15px 0;
-}
-
-.shutdown-details {
-    background: rgba(255, 255, 255, 0.05);
-    border-left: 3px solid #ff7b6b;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 20px;
-    text-align: left;
-    color: #65d1b7;
-    font-size: 0.9rem;
-}
-
-.shutdown-details strong {
-    color: #f6c453;
-}
-
-.shutdown-login-button {
-    display: inline-block;
-    margin-top: 25px;
-    padding: 12px 30px;
-    background: linear-gradient(135deg, #65d1b7, #4ecdc4);
-    color: #fff;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(101, 209, 183, 0.3);
-}
-
-.shutdown-login-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(101, 209, 183, 0.5);
-    background: linear-gradient(135deg, #4ecdc4, #45b8a8);
-}
-
-.shutdown-login-button:active {
-    transform: translateY(0);
-}
-</style>
-
-<!-- Video Modal -->
-<div id="videoModal" class="video-modal">
-    <div class="video-modal-content">
-        <span id="closeVideoModal" class="video-modal-close">&times;</span>
-        <video id="introVideo" controls preload="metadata" poster="channels4profile.png">
-            <source src="./assets/intro-video.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </div>
-</div>
-
-<style>
-/* Video Modal Styles */
-.video-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-}
-
-.video-modal.is-visible {
-    display: flex;
-}
-
-.video-modal-content {
-    position: relative;
-    width: 80%;
-    max-width: 800px;
-    background: #000;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.video-modal video {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-.video-modal-close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    color: #fff;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 10001;
-    background: rgba(0, 0, 0, 0.7);
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    transition: background 0.2s;
-}
-
-.video-modal-close:hover {
-    background: rgba(255, 0, 0, 0.8);
-}
-</style>
-
-
-
-<!-- Ensure all elements are properly closed and formatted -->
-    <style>
-      body {
-        background-image: url("channels4profile.png");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-      }
+    .admin-toggle:hover { opacity: 0.95; transform: translateY(-1px); }
     </style>
 </head>
-<body class="home-page">
-    <div id="appLoader" class="app-loader" aria-hidden="true">
-        <div class="app-loader-card">
-<img src="channels4profile.png" alt="AZHA Launchpad loading icon">
-            <strong>AZHA Launchpad</strong>
-            <span>Loading your space...</span>
-        </div>
+
+<body>
+    <div class="nav-center">
+        <img src="Azha LanchPad Icon..png" alt="Icon"
+            style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+        <h1>CoderAzhaf</h1>
+        <div id="username" class="username-display"></div>
+        <button onclick="logout()" class="logout-button" style="display: none;">Logout</button>
+    <h1 class="section-title">Websites</h1>
+    <div class="nav-center">
+        <a href="https://www.google.com" target="_blank">
+            <button style="background-color: rgb(69, 67, 15);color: aquamarine;">Go To Google!</button>
+        </a>
+        <a href="https://launchpad.classlink.com/" target="_blank">
+            <button style="background-color: rgb(131, 127, 29);color: rgb(38, 207, 151);">Go to Classlink!</button>
+        </a>
     </div>
-    
-    <!-- System Shutdown Overlay -->
-    <div id="systemShutdownOverlay" class="system-shutdown-overlay">
-        <div class="shutdown-message-card">
-            <div class="shutdown-icon">⚠️</div>
-            <h1>System Shutdown</h1>
-            <p>The AZHA Launchpad servers are currently offline for maintenance.</p>
-            <p id="shutdownMessageText" style="font-style: italic; color: #f6c453;">Checking server status...</p>
-            <div class="shutdown-details">
-                <p><strong>Status:</strong> <span id="shutdownStatus">Offline</span></p>
-                <p><strong>Reason:</strong> <span id="shutdownReason">Scheduled Maintenance</span></p>
-                <p><strong>Time:</strong> <span id="shutdownTime">-</span></p>
-            </div>
-            <a href="Getin.html" class="shutdown-login-button">Log In to Your Account</a>
-        </div>
+
+    <h1 class="section-title">Games</h1>
+    <div class="nav-center game-container">
+        <a href="https://www.minecraft.net/en-us" target="_blank">
+            <img src="Minecraft.gif" height="100" title="Minecraft" alt="Minecraft">
+        </a>
+        <a href="https://www.roblox.com" target="_blank">
+            <img src="tenor.gif" height="100" title="Roblox" alt="Roblox">
+        </a>
+        <a href="https://www.fortnite.com/" target="_blank">
+            <img src="tenor 2.gif" height="100" title="Fortnite" alt="Fortnite">
+        </a>
+        <a href="https://amogus.io/" target="_blank">
+            <img src="tenor 3.gif" height="100" title="Among Us" alt="Among Us">
+        </a>
     </div>
-    
-    <div class="page-shell">
-        <header class="hero-panel">
-            <div class="hero-copy">
-                <p class="eyebrow">Personal launchpad</p>
-                <h1>CoderAzhaf</h1>
-                <p class="hero-text">A cleaner home for your favorite links, projects, and account tools, now connected to a real Vercel-ready backend with live summary data.</p>
-                <div class="hero-actions" id="heroActions">
-                    <a class="button button-primary" href="Getin.html">Open Account</a>
-                    <a class="button button-secondary" href="Message.html">Messages</a>
-                    <a class="button button-secondary" href="Chat.html">Chat</a>
-                    <a class="button button-secondary" href="Friends.html">Friends</a>
-                    <a class="button button-secondary" href="Meetings.html">Meetings</a>
-                    <a class="button button-secondary" href="Clubs.html">Clubs</a>
-                    <a class="button button-secondary" href="Shop.html">Shop</a>
-                    <a class="button button-secondary" href="Announcements.html">Announcements</a>
-                    <a class="button button-secondary" href="Browser.html">Browser</a>
-                    <a class="button button-secondary" href="OrganizationAdmin.html">Organization</a>
-                    <a class="button button-secondary" href="Profile.html">Profile</a>
-                    <a class="button button-secondary" href="Settings.html">Settings</a>
-                    <a class="button button-secondary" href="contact.html">Website Info</a>
-                    <a class="button button-secondary" href="Legacy.html">Legacy Mode</a>
-                    <button id="appInstallerButton" class="button button-install" type="button" hidden>Install App</button>
-                    <button id="installButton" class="button button-install" type="button" hidden>Install Web App</button>
-                    <button id="logoutButton" class="button button-ghost" type="button" hidden>Log Out</button>
-                </div>
-            </div>
-            <aside class="profile-card">
-                <div class="profile-logos">
-                    <img id="profileLogo" class="profile-logo" src="channels4profile.png" alt="CoderAzhaf logo"/>
-                    <img id="userProfilePic" class="profile-user-pic" src="channels4profile.png" alt="Your profile picture" hidden/>
-                </div>
-                <p class="profile-label">Current status</p>
-                <h2 id="welcomeName">Visitor</h2>
-                <p id="welcomeMeta">Browse the launchpad or sign in to use account and messaging features.</p>
-                <div class="profile-stats">
-                    <div>
-                        <span>Projects</span>
-                        <strong id="projectCount">3</strong>
-                    </div>
-                    <div>
-                        <span>Accounts</span>
-                        <strong id="userCount">-</strong>
-                    </div>
-                    <div>
-                        <span>Storage</span>
-                        <strong id="storageMode">Checking</strong>
-                    </div>
-                </div>
-            </aside>
-        </header>
 
-        <main>
-            <section class="content-section status-panel">
-                <div class="section-heading compact">
-                    <p class="section-kicker">Backend status</p>
-                    <h2>Live site summary</h2>
-                    <p>The card below reads from your backend so the homepage reflects what is really happening on the server.</p>
-                </div>
-                <div class="status-grid">
-                    <article class="status-card">
-                        <span>Total messages</span>
-                        <strong id="messageCount">-</strong>
-                        <p>Messages stored by the current backend.</p>
-                    </article>
-                    <article class="status-card">
-                        <span>Unread for you</span>
-                        <strong id="unreadCount">-</strong>
-                        <p>Unread inbox messages for the signed-in user.</p>
-                    </article>
-                    <article class="status-card">
-                        <span>Your AZHA</span>
-                        <strong id="azhaBalance">-</strong>
-                        <p>This is the signed-in account's real AZHA balance from the backend.</p>
-                    </article>
-                </div>
-            </section>
+    <h1 class="section-title">Coder azhaf Website Video</h1>
+    <div class="nav-center">
+        <video controls loop src="Azhaf video web ..mp4" width="500"
+            style="display: block; margin: 20px auto; border-radius: 10px;"></video>
+    </div>
 
-            <section class="content-section alt-surface notification-center">
-                <div class="section-heading compact">
-                    <p class="section-kicker">Notification center</p>
-                    <h2>What is new for you <span id="notificationBadge" class="mini-badge">0</span></h2>
-                    <p>Messages and meeting invites that come into your signed-in account show up here.</p>
-                </div>
-                <div class="hero-actions">
-                    <button id="enableHomeNotifications" class="button button-secondary" type="button">Enable notifications</button>
-                </div>
-                <div id="notificationList" class="notification-list">
-                    <article class="notification-item">
-                        <strong>No notifications yet.</strong>
-                        <span class="notification-meta">New messages and meeting invites will appear here.</span>
-                    </article>
-                </div>
-            </section>
+    <div class="nav-center">
+        <button><a href="contact.html">Info Of website</a></button>
+        <button><a href="Getin.html">Sign up or Log in</a></button>
+        <button><a href="Download.html">Download</a></button>
+        <button><a href="Game.py">Game</a></button>
+         <!-- Admin Panel toggle button (fixed bottom-right) -->
+    <button id="adminToggleBtn" class="admin-toggle" title="Open Admin Panel">Admin Panel</button>
 
-            <section class="content-section">
-                <div class="section-heading">
-                    <p class="section-kicker">Quick access</p>
-                    <h2>Favorite websites</h2>
-                    <p>Everything you open often, organized into proper cards instead of a wall of buttons.</p>
-                </div>
-                <div id="linksGrid" class="card-grid"></div>
-            </section>
+    <script>
+    // show/hide and click behavior for Admin Panel button
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('adminToggleBtn');
+        if (!btn) return;
 
-            <section class="content-section alt-surface">
-                <div class="section-heading">
-                    <p class="section-kicker">Games</p>
-                    <h2>AZHA game worlds</h2>
-                    <p>Featured game builds and experiments with clear previews and direct launch links.</p>
-                </div>
-                <div id="gamesGrid" class="feature-grid"></div>
-            </section>
+        function updateAdminBtn() {
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            const loggedIn = !!localStorage.getItem('currentUsername');
+            btn.style.display = (isAdmin && loggedIn) ? 'block' : 'none';
+        }
 
-            <section class="content-section media-layout">
-                <div class="section-heading compact">
-                    <p class="section-kicker">Featured video</p>
-                    <h2>AZHA intro and outro</h2>
-                    <p>Your updated AZHA intro/outro video is now featured here.</p>
-                </div>
-<div class="media-card">
-                    <video controls preload="metadata" poster="channels4profile.png" src="./assets/intro-video.mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                </div>
-            </section>
+        btn.addEventListener('click', () => {
+            const current = localStorage.getItem('currentUsername');
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            if (!current) { if (typeof showMessage === 'function') showMessage('Please login first.', false); return; }
+            if (!isAdmin) { if (typeof showMessage === 'function') showMessage('You are not an admin.', false); return; }
+            if (typeof showAdminPanel === 'function') showAdminPanel();
+            const pane = document.getElementById('adminPanel');
+            if (pane) pane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
 
-            <section class="content-section tool-row">
-                <a class="tool-card" href="contact.html">
-                    <div class="tool-top">
-                        <img id="infoToolAvatar" class="tool-avatar" src="channels4profile.png" alt="Website info icon"/>
-                        <span class="tool-title">Website Info</span>
-                    </div>
-                    <span class="tool-copy">Version notes, creator details, and deployment guidance.</span>
-                </a>
-                <a class="tool-card" href="Getin.html">
-                    <div class="tool-top">
-                        <img id="accountToolAvatar" class="tool-avatar" src="channels4profile.png" alt="Account profile picture"/>
-                        <span class="tool-title">Sign Up or Log In</span>
-                    </div>
-                    <span class="tool-copy">Use the account page powered by backend-first auth helpers.</span>
-                </a>
-                <a class="tool-card" href="Download.html">
-                    <div class="tool-top">
-                        <img id="downloadToolAvatar" class="tool-avatar" src="channels4profile.png" alt="Downloads icon"/>
-                        <span class="tool-title">Downloads</span>
-                    </div>
-                    <span class="tool-copy">Download your GIF assets from a cleaner media page.</span>
-                </a>
-                <a class="tool-card" href="Message.html">
-                    <div class="tool-top">
-                        <img id="messageToolAvatar" class="tool-avatar" src="channels4profile.png" alt="Message profile picture">
-                        <span class="tool-title">Messages</span>
-                    </div>
-                    <span class="tool-copy">Open the dedicated inbox page and send messages from the backend.</span>
-                </a>
-                <a class="tool-card" href="Chat.html">
-                    <div class="tool-top">
-<img class="tool-avatar" src="channels4profile.png" alt="Chat icon">
-                        <span class="tool-title">Chat</span>
-                    </div>
-                    <span class="tool-copy">Friend people, see who is online, and chat once they accept.</span>
-                </a>
-                <a class="tool-card" href="Meetings.html">
-                    <div class="tool-top">
-<img class="tool-avatar" src="channels4profile.png" alt="Meeting icon">
-                        <span class="tool-title">Meetings</span>
-                    </div>
-                    <span class="tool-copy">Launch in-site calls, quick meeting links, and focused rooms from one page.</span>
-                </a>
-                <a class="tool-card" href="Browser.html">
-                    <div class="tool-top">
-<img class="tool-avatar" src="channels4profile.png" alt="Browser icon">
-                        <span class="tool-title">AZHA Browser</span>
-                    </div>
-                    <span class="tool-copy">Use your own signed-in browser space with search, bookmarks, and history tied to your account.</span>
-                </a>
-                <a class="tool-card" href="Friends.html">
-                    <div class="tool-top">
-<img class="tool-avatar" src="channels4profile.png" alt="Friends icon">
-                        <span class="tool-title">Friends</span>
-                    </div>
-                    <span class="tool-copy">Send friend requests, manage your friend list, and set your online status.</span>
-                </a>
-                <a class="tool-card" href="Clubs.html">
-                    <div class="tool-top">
-<img class="tool-avatar" src="channels4profile.png" alt="Clubs icon">
-                        <span class="tool-title">Clubs & Groups</span>
-                    </div>
-                    <span class="tool-copy">Create or join clubs, chat with members, and manage group activities.</span>
-                </a>
-                <a class="tool-card" href="Shop.html">
-                    <div class="tool-top">
-<img class="tool-avatar" src="channels4profile.png" alt="Shop icon">
-                        <span class="tool-title">Shop</span>
-                    </div>
-                    <span class="tool-copy">Browse and purchase exclusive items using your AZHA balance.</span>
-                </a>
-                <a class="tool-card" href="Announcements.html">
-                    <div class="tool-top">
-<img class="tool-avatar" src="channels4profile.png" alt="Announcements icon">
-                        <span class="tool-title">Announcements</span>
-                    </div>
-                    <span class="tool-copy">Stay updated with community announcements and important updates.</span>
-                </a>
-                <a class="tool-card" href="OrganizationAdmin.html">
-                    <div class="tool-top">
-<img class="tool-avatar" src="channels4profile.png" alt="Organization icon">
-                        <span class="tool-title">Organization Admin</span>
-                    </div>
-                    <span class="tool-copy">Manage your organization, members, warnings, bans, and browser policies.</span>
-                </a>
-            </section>
-        </main>
+        // update on load and when other tabs change login/admin status
+        updateAdminBtn();
+        window.addEventListener('storage', updateAdminBtn);
+    });
+    </script>
+    </div>
+
+    <div id="adminPanel" class="admin-panel" style="display: none;">
+        <h2>Admin Panel</h2>
+        <div class="search-bar">
+            <input type="text" id="searchUsername" placeholder="Search by username">
+            <button onclick="searchUsers()">Search</button>
+        </div>
+        <div class="account-list">
+            <h3>Manage User Accounts</h3>
+            <div id="accountsList"></div>
+        </div>
     </div>
 
     <script>
-        const quickLinks = [
-            { title: 'Google', description: 'Search, browse, and jump into everyday web tasks quickly.', href: 'https://www.google.com', accent: 'gold' },
-            { title: 'ClassLink', description: 'Open your learning dashboard without digging through bookmarks.', href: 'https://launchpad.classlink.com/', accent: 'green' },
-            { title: 'YouTube Channel', description: 'Visit the BrosMaxGamerz channel and jump right to your uploads.', href: 'https://www.youtube.com/@BrosMaxGamerz', accent: 'red' },
-            { title: 'YouTube', description: 'Open the main YouTube homepage for videos, playlists, and search.', href: 'https://www.youtube.com/', accent: 'blue' },
-            { title: 'LaunchPad Pro-Open', description: 'This is an website made when the owner of this web was yonger', href: 'https://coderazhaf.github.io/Pro-Open/', accent: 'violet' }
-        ];
+        // These functions (showMessage, checkLogin, logout) are now centrally defined in accounts.js
+        // and are available because accounts.js is loaded later.
+        // We avoid duplicating them here.
 
-        const games = [
-            { title: 'Owners House', description: 'A house-themed experience hosted on Vercel.', href: 'https://azhaownershouse.vercel.app', image: './assets/owners-house.png' },
-            { title: 'Hiding Monsters', description: 'A spooky project with a dramatic creature-style preview.', href: 'https://azhahidingmonsters.base44.app', image: './hiding-monsters.png' },
-            { title: 'Aviation Build', description: 'An aviation-themed build with its own custom logo and feel.', href: 'https://azhaaviationbuil.base44.app', image: './aviation-logo.png' },
-            { title: 'Aviation Build Lite', description: 'A lighter aviation build that launches straight from the AZHA games list.', href: 'https://azhaaviationbuillite.bolt.host', image: './aviation-logo.png' }
-        ];
+        function makeAdmin(username) {
+            const accounts = JSON.parse(localStorage.getItem('accounts'));
+            if (accounts[username]) {
+                accounts[username].isAdmin = true;
+                localStorage.setItem('accounts', JSON.stringify(accounts));
 
-        function openLaunchLink(url) {
-            if (/^https?:\/\//i.test(url)) {
-                window.open(url, '_blank', 'noopener,noreferrer');
-                return false;
-            }
-            return true;
-        }
+                // Refresh the admin panel to show the updated status
+                showAdminPanel(); // Calling showAdminPanel will re-fetch all users and display them
 
-        function createLinkCard(item) {
-            const escapedHref = item.href.replace(/'/g, "\\'");
-            return `
-                <a class="launch-card accent-${item.accent}" href="${item.href}" target="_blank" rel="noreferrer" onclick="return openLaunchLink('${escapedHref}')">
-                    <span class="launch-label">Open</span>
-                    <h3>${item.title}</h3>
-                    <p>${item.description}</p>
-                    <span class="launch-arrow">Visit site</span>
-                </a>
-            `;
-        }
-
-        function createGameCard(item) {
-            return `
-                <a class="game-card" href="${item.href}" target="_blank" rel="noreferrer">
-                    <img src="${item.image}" alt="${item.title} preview">
-                    <div class="game-card-copy">
-                        <h3>${item.title}</h3>
-                        <p>${item.description}</p>
-                        <span>Play now</span>
-                    </div>
-                </a>
-            `;
-        }
-
-        document.getElementById('linksGrid').innerHTML = quickLinks.map(createLinkCard).join('');
-        document.getElementById('gamesGrid').innerHTML = games.map(createGameCard).join('');
-
-        const currentUser = localStorage.getItem('currentUser');
-        const currentUsername = localStorage.getItem('currentUsername');
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        const isAdmin = localStorage.getItem('isAdmin') === 'true';
-        const welcomeName = document.getElementById('welcomeName');
-        const welcomeMeta = document.getElementById('welcomeMeta');
-        const logoutButton = document.getElementById('logoutButton');
-        const heroActions = document.getElementById('heroActions');
-        const profileLogo = document.getElementById('profileLogo');
-        const userProfilePic = document.getElementById('userProfilePic');
-        const installButton = document.getElementById('installButton');
-        let deferredInstallPrompt = null;
-        const loaderStartedAt = Date.now();
-
-        if (isLoggedIn && currentUsername) {
-            welcomeName.textContent = currentUsername;
-            welcomeMeta.textContent = isAdmin
-                ? `Signed in as ${currentUser || currentUsername}. Admin tools are available in the admin panel.`
-                : `Signed in as ${currentUser || currentUsername}. Your inbox and account tools are ready.`;
-            logoutButton.hidden = false;
-
-            if (isAdmin) {
-                const adminLink = document.createElement('a');
-                adminLink.className = 'button button-secondary';
-                adminLink.href = 'Admin.html';
-                adminLink.textContent = 'Admin Panel';
-                heroActions.insertBefore(adminLink, logoutButton);
+                showMessage(`${username} is now an admin!`, true);
             }
         }
 
-        logoutButton?.addEventListener('click', () => {
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('currentUsername');
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('isAdmin');
-            window.location.reload();
-        });
+        function showAdminPanel() {
+            const currentUsername = localStorage.getItem('currentUsername');
+            const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
 
-        window.addEventListener('beforeinstallprompt', (event) => {
-            event.preventDefault();
-            deferredInstallPrompt = event;
-            installButton.hidden = false;
-        });
+            if (accounts[currentUsername]?.isAdmin) {
+                const adminPanel = document.getElementById('adminPanel');
+                if (adminPanel) {
+                    adminPanel.style.display = 'block';
 
-        installButton?.addEventListener('click', async () => {
-            if (!deferredInstallPrompt) return;
-            deferredInstallPrompt.prompt();
-            await deferredInstallPrompt.userChoice;
-            deferredInstallPrompt = null;
-            installButton.hidden = true;
-        });
+                    // Get all accounts as an array, excluding the current admin
+                    const allAccountsArray = Object.entries(accounts).filter(([u, acc]) => u !== currentUsername);
+                    displayAccounts(allAccountsArray); // Display all accounts initially
 
-        // App Installer Button
-        const appInstallerButton = document.getElementById('appInstallerButton');
-        appInstallerButton?.addEventListener('click', () => {
-            const link = document.createElement('a');
-            link.href = './AZHA-Launchpad-Installer.exe';
-            link.download = 'AZHA-Launchpad-Installer.exe';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        });
-
-        // Show app installer button on Windows
-        if (navigator.platform && navigator.platform.includes('Win')) {
-            appInstallerButton.hidden = false;
-        }
-
-        // --- Video Modal Management ---
-        const videoModal = document.getElementById('videoModal');
-        const closeVideoModal = document.getElementById('closeVideoModal');
-        const introVideo = document.getElementById('introVideo');
-
-        function showIntroVideo() {
-            if (videoModal && introVideo) {
-                videoModal.style.display = 'flex';
-                introVideo.play().catch(err => console.error('Video play error:', err));
-            }
-        }
-
-        function hideIntroVideo() {
-            if (videoModal && introVideo) {
-                videoModal.style.display = 'none';
-                introVideo.pause();
-            }
-        }
-        
-        // Make function available for other scripts if needed (e.g. after login)
-        window.showVideoAfterAuth = showIntroVideo;
-
-        if (videoModal && closeVideoModal && introVideo) {
-            closeVideoModal.addEventListener('click', hideIntroVideo);
-            introVideo.addEventListener('ended', hideIntroVideo);
-
-            // Show intro video on first visit OR after login
-            const shouldShowIntroVideo = !sessionStorage.getItem('introVideoShown') || sessionStorage.getItem('showIntroVideoOnLoad') === 'true';
-            if (shouldShowIntroVideo) {
-                // Use DOMContentLoaded for faster trigger than 'load' for perceived performance
-                document.addEventListener('DOMContentLoaded', () => {
-                    showIntroVideo();
-                    sessionStorage.setItem('introVideoShown', 'true');
-                    sessionStorage.removeItem('showIntroVideoOnLoad');
-                });
-            }
-        }
-
-        window.addEventListener('appinstalled', () => {
-            installButton.hidden = true;
-        });
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
-                    .then(async (registration) => {
-                        await registration.update();
-                        const promoteWorker = (worker) => {
-                            if (!worker) return;
-                            worker.postMessage({ type: 'SKIP_WAITING' });
-                        };
-                        if (registration.waiting) promoteWorker(registration.waiting);
-                        if (registration.installing) promoteWorker(registration.installing);
-                        registration.addEventListener('updatefound', () => {
-                            promoteWorker(registration.installing);
-                        });
-                        navigator.serviceWorker.addEventListener('controllerchange', () => {
-                            if (sessionStorage.getItem('swReloadedHome') === 'true') return;
-                            sessionStorage.setItem('swReloadedHome', 'true');
-                            window.location.reload();
-                        });
-                    })
-                    .catch((error) => {
-                        console.error('Service worker registration failed', error);
+                    // Add event listener for Enter key in search bar
+                    const searchInput = document.getElementById('searchUsername');
+                    searchInput.addEventListener('keypress', (event) => {
+                        if (event.key === 'Enter') {
+                            searchUsers();
+                        }
                     });
+                }
+            } else {
+                const adminPanel = document.getElementById('adminPanel');
+                if (adminPanel) {
+                    adminPanel.style.display = 'none';
+                }
+            }
+        }
+
+        function searchUsers() {
+            const searchTerm = document.getElementById('searchUsername').value.toLowerCase();
+            const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+            const currentUsername = localStorage.getItem('currentUsername');
+
+            // Filter accounts that are not the current admin and match the search term
+            const filteredAccounts = Object.entries(accounts).filter(([username, account]) =>
+                username !== currentUsername && username.toLowerCase().includes(searchTerm)
+            );
+            displayAccounts(filteredAccounts);
+        }
+
+        function displayAccounts(accountsToDisplay) {
+            const accountsList = document.getElementById('accountsList');
+            accountsList.innerHTML = ''; // Clear the previous list
+
+            if (accountsToDisplay.length === 0) {
+                accountsList.innerHTML = '<p>No accounts found matching your search or no other users.</p>';
+                return;
+            }
+
+            accountsToDisplay.forEach(([username, account]) => {
+                const accountDiv = document.createElement('div');
+                accountDiv.className = 'account-item';
+                accountDiv.innerHTML = `
+                    <div>
+                        <strong>${account.fullName}</strong> (${username})
+                        ${account.isAdmin ? `<span class="admin">ADMIN</span>` : ''}
+                        ${account.warnings > 0 ? `<span class="warning">Warnings: ${account.warnings}</span>` : ''}
+                        ${account.status === 'banned' ? `<span class="banned">BANNED</span>` : ''}
+                    </div>
+                    <div class="admin-controls">
+                        <button onclick="warnUser('${username}')">Warn</button>
+                        <button onclick="toggleBan('${username}')">${account.status === 'banned' ? 'Unban' : 'Ban'}</button>
+                        <button onclick="deleteUserAccount('${username}')">Delete</button>
+                        ${!account.isAdmin ? `<button onclick="makeAdmin('${username}')">Make Admin</button>` : ''}
+                    </div>
+                `;
+                accountsList.appendChild(accountDiv);
             });
         }
 
-        async function loadSummary() {
-            const query = currentUsername ? `?username=${encodeURIComponent(currentUsername)}` : '';
-            try {
-                if (currentUsername && typeof getAllUsers === 'function') {
-                    const users = await getAllUsers();
-                    const currentAccount = users.find((user) => user.username === currentUsername);
-                    if (currentAccount?.profilePic) {
-                        userProfilePic.src = currentAccount.profilePic;
-                        userProfilePic.hidden = false;
-                        ['accountToolAvatar', 'messageToolAvatar'].forEach((id) => {
-                            const node = document.getElementById(id);
-                            if (node) node.src = currentAccount.profilePic;
-                        });
-                    } else {
-                        userProfilePic.hidden = true;
-                    }
-                }
-                const response = await fetch(`./api/site-summary${query}`, { cache: 'no-store' });
-                if (!response.ok) throw new Error('Unable to load summary');
-                const summary = await response.json();
-                document.getElementById('projectCount').textContent = summary.featuredProjects;
-                document.getElementById('userCount').textContent = summary.users;
-                document.getElementById('storageMode').textContent = summary.storage;
-                document.getElementById('storageMode').title = summary.storageDetail || '';
-                document.getElementById('messageCount').textContent = summary.messages;
-                document.getElementById('unreadCount').textContent = summary.unreadCount;
-                document.getElementById('azhaBalance').textContent = summary.currentUserBalance ?? '-';
-            } catch (error) {
-                document.getElementById('storageMode').textContent = 'offline';
-                document.getElementById('storageMode').title = '';
-                document.getElementById('messageCount').textContent = '0';
-                document.getElementById('unreadCount').textContent = '0';
-                document.getElementById('azhaBalance').textContent = '-';
+        function warnUser(username) {
+            const accounts = JSON.parse(localStorage.getItem('accounts'));
+            if (accounts[username]) {
+                accounts[username].warnings = (accounts[username].warnings || 0) + 1;
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                // Re-display all accounts after warning
+                showAdminPanel();
+                showMessage(`Warning issued to ${username}. Total warnings: ${accounts[username].warnings}`, true);
             }
         }
 
-        function escapeText(value) {
-            return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;' }[char]));
+        function toggleBan(username) {
+            const accounts = JSON.parse(localStorage.getItem('accounts'));
+            if (accounts[username]) {
+                const newStatus = accounts[username].status === 'banned' ? 'active' : 'banned';
+                accounts[username].status = newStatus;
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                // Re-display all accounts after banning/unbanning
+                showAdminPanel();
+                showMessage(`${username} has been ${newStatus}.`, true);
+            }
         }
 
-        function renderNotificationCenter(feed = []) {
-            const badge = document.getElementById('notificationBadge');
-            const list = document.getElementById('notificationList');
-            const unread = feed.filter((entry) => entry.unread).length;
-            badge.textContent = unread;
-            if (!feed.length) {
-                list.innerHTML = `
-                    <article class="notification-item">
-                        <strong>No notifications yet.</strong>
-                        <span class="notification-meta">New messages and meeting invites will appear here.</span>
-                    </article>
-                `;
+        function deleteUserAccount(username) {
+            if (confirm(`Are you sure you want to delete ${username}'s account? This cannot be undone.`)) {
+                const accounts = JSON.parse(localStorage.getItem('accounts'));
+                delete accounts[username];
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                // Re-display all accounts after deletion
+                showAdminPanel();
+                showMessage(`${username}'s account has been deleted.`, true);
+            }
+        }
+
+        // Add a delete account function for the currently logged-in user
+        function deleteAccount() {
+            const currentUsername = localStorage.getItem('currentUsername');
+            if (confirm(`Are you sure you want to delete your account (${currentUsername})? This cannot be undone.`)) {
+                const accounts = JSON.parse(localStorage.getItem('accounts'));
+                delete accounts[currentUsername];
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+                showMessage('Your account has been deleted. Redirecting...', true);
+                setTimeout(() => {
+                    logout(); // Log out after deleting the account
+                }, 1500);
+            }
+        }
+
+        // Call checkLogin and then potentially showAdminPanel on load
+        window.onload = function () {
+            // Check if user is logged in. If not, checkLogin will redirect.
+            if (!checkLogin()) {
                 return;
             }
-            list.innerHTML = feed.slice(0, 8).map((entry) => `
-                <article class="notification-item ${entry.unread ? 'unread' : ''}">
-                    <div class="notification-top">
-                        <div>
-                            <strong>${escapeText(entry.title)}</strong>
-                            <span class="notification-meta">${escapeText(entry.body)}<br>${new Date(entry.timestamp).toLocaleString()}</span>
-                        </div>
-                        ${entry.unread ? '<span class="mini-badge">new</span>' : ''}
-                    </div>
-                    <div class="notification-actions">
-                        <a class="button button-secondary" href="${entry.url || 'Message.html'}" onclick="markCenterRead('${escapeText(entry.id)}')">Open</a>
-                        <button class="button button-ghost" type="button" onclick="dismissCenterItem('${escapeText(entry.id)}')">Dismiss</button>
-                    </div>
-                </article>
-            `).join('');
+
+            const currentUsername = localStorage.getItem('currentUsername');
+            const currentUserFullName = localStorage.getItem('currentUser');
+            const isAdmin = localStorage.getItem('isAdmin') === 'true'; // Get isAdmin status
+
+            // Display welcome message
+            if (currentUserFullName) {
+                document.getElementById('username').textContent = `Welcome back, ${currentUserFullName}!`;
+                // Show logout and delete account buttons if logged in
+                document.querySelector('.logout-button').style.display = 'inline-block';
+                document.querySelector('.delete-button').style.display = 'inline-block';
+            }
+
+            // Only show admin panel if the current user is an admin
+            if (isAdmin) {
+                showAdminPanel();
+            }
+        };
+    </script>
+    <script src="accounts.js"></script>
+
+    <script>
+    // Initialize balances if none exist
+    if (!localStorage.getItem('balances')) {
+        const defaultBalances = { "AZHA": "INF" };
+        localStorage.setItem('balances', JSON.stringify(defaultBalances));
+    }
+
+    function getBalance(username) {
+        const balances = JSON.parse(localStorage.getItem('balances')) || {};
+        const b = balances[username];
+        return b === "INF" ? "INF" : Number(b || 0);
+    }
+
+    function setBalance(username, value) {
+        const balances = JSON.parse(localStorage.getItem('balances')) || {};
+        if (username === "AZHA") balances["AZHA"] = "INF";
+        else balances[username] = Number(value) || 0;
+        localStorage.setItem('balances', JSON.stringify(balances));
+    }
+
+    function giveAZINC(targetUsername, amount) {
+        const current = localStorage.getItem('currentUsername');
+        if (current !== 'AZHA') { showMessage('Only AZHA can give AZINC.', false); return false; }
+        if (!targetUsername || isNaN(Number(amount)) || Number(amount) <= 0) { showMessage('Invalid amount.', false); return false; }
+        const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+        if (!accounts[targetUsername]) { showMessage('Target user does not exist.', false); return false; }
+        const balances = JSON.parse(localStorage.getItem('balances')) || {};
+        if (balances[targetUsername] === "INF") { showMessage(`${targetUsername} already has infinite AZINC.`, false); return false; }
+        balances[targetUsername] = (Number(balances[targetUsername] || 0) + Number(amount));
+        localStorage.setItem('balances', JSON.stringify(balances));
+        showMessage(`Gave ${amount} AZINC to ${targetUsername}.`, true);
+        return true;
+    }
+    </script>
+    <script src="accounts.js"></script>
+
+    <script>
+        // update welcome + balance display
+        function updateBalanceDisplay() {
+            const currentUsername = localStorage.getItem('currentUsername');
+            const currentUserFullName = localStorage.getItem('currentUser') || currentUsername;
+            if (!currentUsername) return;
+            const bal = (typeof getBalance === 'function') ? getBalance(currentUsername) : 0;
+            const balDisplay = bal === "INF" ? '∞ AZINC' : `${bal} AZINC`;
+            const el = document.getElementById('username');
+            if (el) el.textContent = `Welcome back, ${currentUserFullName}! (${balDisplay})`;
+            const logoutBtn = document.querySelector('.logout-button');
+            const delBtn = document.querySelector('.delete-button');
+            if (logoutBtn) logoutBtn.style.display = 'inline-block';
+            if (delBtn) delBtn.style.display = 'inline-block';
         }
 
-        function markCenterRead(id) {
-            if (!currentUsername || typeof markNotificationAsRead !== 'function') return true;
-            markNotificationAsRead(currentUsername, id);
-            renderNotificationCenter(getNotificationFeed(currentUsername));
-            return true;
-        }
-
-        function dismissCenterItem(id) {
-            if (!currentUsername || typeof clearNotificationItem !== 'function') return;
-            clearNotificationItem(currentUsername, id);
-            renderNotificationCenter(getNotificationFeed(currentUsername));
-        }
-
-        async function enableHomeNotifications() {
-            if (typeof requestNotificationAccess !== 'function') return;
-            const permission = await requestNotificationAccess();
-            if (permission === 'granted') {
-                alert('Notifications are enabled on this device.');
-            } else if (permission === 'denied') {
-                alert('Notifications are blocked in this browser right now.');
+        function promptGiveAZINC(targetUsername) {
+            const current = localStorage.getItem('currentUsername');
+            if (current !== 'AZHA') { showMessage('Only AZHA can give AZINC.', false); return; }
+            const raw = prompt(`Enter AZINC amount to give to ${targetUsername}:`, "100");
+            if (raw === null) return;
+            const amt = Number(raw);
+            if (isNaN(amt) || amt <= 0) { showMessage('Invalid amount.', false); return; }
+            if (typeof giveAZINC === 'function' && giveAZINC(targetUsername, amt)) {
+                updateBalanceDisplay();
+                if (typeof showAdminPanel === 'function') showAdminPanel();
             }
         }
 
-        async function checkSystemStatus() {
-            try {
-                const response = await fetch('./api/system/status', { cache: 'no-store' });
-                if (!response.ok) throw new Error('Failed to check system status');
-                
-                const status = await response.json();
-                const isCeo = currentUsername === 'AZHA';
-                const overlay = document.getElementById('systemShutdownOverlay');
-                const pageShell = document.querySelector('.page-shell');
-                
-                if (status.isShutdown && !isCeo) {
-                    // Show shutdown message for regular users
-                    overlay.classList.add('is-visible');
-                    if (pageShell) pageShell.style.display = 'none';
-                    
-                    // Update shutdown details
-                    document.getElementById('shutdownMessageText').textContent = status.shutdownMessage || 'System is undergoing maintenance.';
-                    document.getElementById('shutdownReason').textContent = status.shutdownBy || 'Scheduled Maintenance';
-                    if (status.shutdownAt) {
-                        document.getElementById('shutdownTime').textContent = new Date(status.shutdownAt).toLocaleString();
-                    }
-                } else {
-                    // Show page normally for CEO or when system is online
-                    overlay.classList.remove('is-visible');
-                    if (pageShell) pageShell.style.display = '';
-                }
-            } catch (error) {
-                console.error('Error checking system status:', error);
-            }
-        }
-
-        // --- Page Load and Initialization ---
-        checkSystemStatus();
-        setInterval(checkSystemStatus, 60000); // Check every 60 seconds
-        loadSummary();
-
-        window.addEventListener('load', () => {
-            const loader = document.getElementById('appLoader');
-            if (loader) {
-                loader.classList.add('is-hidden');
-                // Remove from DOM after transition for a cleaner DOM
-                loader.addEventListener('transitionend', () => loader.remove(), { once: true });
-            }
+        window.addEventListener('DOMContentLoaded', () => {
+            updateBalanceDisplay();
         });
     </script>
+// ...existing code...
+    <!-- Messaging UI -->
+    <div id="messagingPanel" style="max-width:800px;margin:20px auto;display:none;">
+        <h2>Messages</h2>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:240px;">
+                <h3>Compose</h3>
+                <select id="msgRecipient" style="width:100%;padding:8px;margin-bottom:8px;"></select>
+                <textarea id="msgText" placeholder="Write message..." style="width:100%;height:80px;padding:8px;"></textarea>
+                <button id="sendMsgBtn" style="margin-top:8px;">Send</button>
+            </div>
+            <div style="flex:2;min-width:300px;">
+                <h3>Inbox</h3>
+                <div id="inboxList" style="max-height:220px;overflow:auto;background:rgba(0,0,0,0.5);padding:8px;border-radius:6px;"></div>
+                <h3 style="margin-top:12px;">Sent</h3>
+                <div id="sentList" style="max-height:160px;overflow:auto;background:rgba(0,0,0,0.5);padding:8px;border-radius:6px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // messaging UI logic
+    function openMessaging() {
+        const panel = document.getElementById('messagingPanel');
+        panel.style.display = 'block';
+        populateRecipients();
+        renderMessages();
+    }
+
+    function closeMessaging() {
+        const panel = document.getElementById('messagingPanel');
+        panel.style.display = 'none';
+    }
+
+    function populateRecipients() {
+        const select = document.getElementById('msgRecipient');
+        select.innerHTML = '';
+        const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+        const current = localStorage.getItem('currentUsername');
+        Object.keys(accounts).forEach(u => {
+            if (u === current) return; // don't send to self
+            const opt = document.createElement('option');
+            opt.value = u;
+            opt.textContent = `${accounts[u].fullName} (${u})`;
+            select.appendChild(opt);
+        });
+    }
+
+    function renderMessages() {
+        const current = localStorage.getItem('currentUsername');
+        const inbox = getInbox(current) || [];
+        const sent = getSent(current) || [];
+
+        const inboxEl = document.getElementById('inboxList');
+        inboxEl.innerHTML = inbox.length ? '' : '<em>No messages</em>';
+        inbox.forEach(m => {
+            const div = document.createElement('div');
+            div.style.padding = '6px';
+            div.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            div.innerHTML = `<strong>${m.from}</strong> <small>${new Date(m.timestamp).toLocaleString()}</small>
+                             <p style="margin:6px 0;color:#ddd">${escapeHtml(m.text)}</p>
+                             <button onclick="markAndRefresh('${m.id}')">Mark Read</button>
+                             <button onclick="deleteAndRefresh('${m.id}')">Delete</button>
+                             ${m.read ? '<span style="color:lightgreen;margin-left:8px">Read</span>' : '<span style="color:yellow;margin-left:8px">Unread</span>'}`;
+            inboxEl.appendChild(div);
+        });
+
+        const sentEl = document.getElementById('sentList');
+        sentEl.innerHTML = sent.length ? '' : '<em>No sent messages</em>';
+        sent.forEach(m => {
+            const div = document.createElement('div');
+            div.style.padding = '6px';
+            div.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            div.innerHTML = `<strong>To: ${m.to}</strong> <small>${new Date(m.timestamp).toLocaleString()}</small>
+                             <p style="margin:6px 0;color:#ddd">${escapeHtml(m.text)}</p>
+                             <button onclick="deleteAndRefresh('${m.id}')">Delete</button>`;
+            sentEl.appendChild(div);
+        });
+    }
+
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
+    }
+
+    function markAndRefresh(id) {
+        const current = localStorage.getItem('currentUsername');
+        if (markMessageRead(id, current)) renderMessages();
+    }
+
+    function deleteAndRefresh(id) {
+        const current = localStorage.getItem('currentUsername');
+        if (deleteMessage(id, current)) renderMessages();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const sendBtn = document.getElementById('sendMsgBtn');
+        if (sendBtn) {
+            sendBtn.addEventListener('click', () => {
+                const to = document.getElementById('msgRecipient').value;
+                const text = document.getElementById('msgText').value.trim();
+                const from = localStorage.getItem('currentUsername');
+                if (!from) { showMessage('You must be logged in to send messages.', false); return; }
+                if (!to || !text) { showMessage('Choose recipient and enter a message.', false); return; }
+                const ok = sendMessage(from, to, text);
+                if (ok) {
+                    document.getElementById('msgText').value = '';
+                    renderMessages();
+                    showMessage('Message sent.', true);
+                } else {
+                    showMessage('Failed to send message.', false);
+                }
+            });
+        }
+
+        // optional: add a quick open button in header
+        const header = document.querySelector('.nav-center');
+        if (header) {
+            const btn = document.createElement('button');
+            btn.textContent = 'Messages';
+            btn.style.marginLeft = '8px';
+            btn.onclick = openMessaging;
+            header.appendChild(btn);
+        }
+    });
+    </script>
+```
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, query, where, orderBy, getDocs, updateDoc, doc, deleteDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+// TODO: replace with your Firebase config
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  // ...other fields from Firebase console
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const messagesCol = collection(db, "messages");
+
+// sendMessage(from, to, text) -> returns true/false
+window.sendMessage = async function(from, to, text) {
+  if (!from || !to || !text) return false;
+  try {
+    await addDoc(messagesCol, {
+      from,
+      to,
+      text: String(text),
+      timestamp: serverTimestamp(),
+      read: false
+    });
+    return true;
+  } catch (err) {
+    console.error("sendMessage error", err);
+    return false;
+  }
+};
+
+// getInbox(username) -> returns array of messages (newest first)
+window.getInbox = async function(username) {
+  if (!username) return [];
+  try {
+    const q = query(messagesCol, where("to", "==", username), orderBy("timestamp", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    console.error("getInbox error", err);
+    return [];
+  }
+};
+
+// getSent(username)
+window.getSent = async function(username) {
+  if (!username) return [];
+  try {
+    const q = query(messagesCol, where("from", "==", username), orderBy("timestamp", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    console.error("getSent error", err);
+    return [];
+  }
+};
+
+// markMessageRead(messageId, username)
+window.markMessageRead = async function(messageId, username) {
+  try {
+    const mDoc = doc(db, "messages", messageId);
+    await updateDoc(mDoc, { read: true });
+    return true;
+  } catch (err) {
+    console.error("markMessageRead error", err);
+    return false;
+  }
+};
+
+// deleteMessage(messageId, username)
+window.deleteMessage = async function(messageId, username) {
+  try {
+    const mDoc = doc(db, "messages", messageId);
+    await deleteDoc(mDoc);
+    return true;
+  } catch (err) {
+    console.error("deleteMessage error", err);
+    return false;
+  }
+}
+</script>
+
+    <!-- Entrance Overlay + Animations -->
+   
+
+
+    
+<style>
+/* Entrance overlay + animations */
+#entranceOverlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg, rgba(0,0,0,0.95), rgba(0,0,0,0.7));
+    z-index:2500;
+    opacity:1;
+    transition:opacity 600ms ease, transform 600ms ease;
+    pointer-events:auto;
+}
+#entranceOverlay.hidden{
+    opacity:0;
+    pointer-events:none;
+    transform:scale(1.02);
+}
+#entranceContent{
+    text-align:center;
+    color:#fff;
+    transform:translateY(6px);
+    opacity:0;
+    animation: entranceText 700ms ease forwards 200ms;
+}
+#entranceContent .logo{
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    margin:0 auto 12px;
+    background:url('Azha LanchPad Icon..png') center/cover no-repeat;
+    box-shadow:0 8px 30px rgba(0,0,0,0.6),0 2px 6px rgba(0,0,0,0.4);
+    transform:scale(.86);
+    animation: logoPop 700ms cubic-bezier(.2,.9,.2,1) forwards;
+}
+#entranceContent h1{
+    margin:0;
+    font-size:1.6rem;
+    letter-spacing:0.6px;
+}
+@keyframes logoPop{
+    from{ transform: scale(.6); opacity:0 }
+    to{ transform: scale(1); opacity:1 }
+}
+@keyframes entranceText{
+    from{ transform: translateY(8px); opacity:0 }
+    to{ transform: translateY(0); opacity:1 }
+}
+
+/* animate-in class for page elements */
+.animate-in .nav-center, .animate-in .admin-panel, .animate-in .game-container {
+    transform: translateY(0);
+    opacity: 1;
+}
+.nav-center, .admin-panel, .game-container {
+    transform: translateY(10px);
+    opacity: 0;
+    transition: transform 520ms ease, opacity 520ms ease;
+}
+</style>
+<head>
+    ...existing code...
+    <style>
+    /* Entrance overlay + animations */
+    #entranceOverlay{
+        position:fixed;
+        inset:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background:linear-gradient(135deg, rgba(0,0,0,0.95), rgba(0,0,0,0.7));
+        z-index:2500;
+        opacity:1;
+        transition:opacity 600ms ease, transform 600ms ease;
+        pointer-events:auto;
+    }
+    #entranceOverlay.hidden{
+        opacity:0;
+        pointer-events:none;
+        transform:scale(1.02);
+    }
+    #entranceContent{
+        text-align:center;
+        color:#fff;
+        transform:translateY(6px);
+        opacity:0;
+        animation: entranceText 700ms ease forwards 200ms;
+    }
+    #entranceContent .logo{
+        width:110px;
+        height:110px;
+        border-radius:50%;
+        margin:0 auto 12px;
+        background:url('Azha LanchPad Icon..png') center/cover no-repeat;
+        box-shadow:0 8px 30px rgba(0,0,0,0.6),0 2px 6px rgba(0,0,0,0.4);
+        transform:scale(.86);
+        animation: logoPop 700ms cubic-bezier(.2,.9,.2,1) forwards;
+    }
+    #entranceContent h1{
+        margin:0;
+        font-size:1.6rem;
+        letter-spacing:0.6px;
+    }
+    @keyframes logoPop{
+        from{ transform: scale(.6); opacity:0 }
+        to{ transform: scale(1); opacity:1 }
+    }
+    @keyframes entranceText{
+        from{ transform: translateY(8px); opacity:0 }
+        to{ transform: translateY(0); opacity:1 }
+    }
+
+    /* animate-in class for page elements */
+    .animate-in .nav-center, .animate-in .admin-panel, .animate-in .game-container {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    .nav-center, .admin-panel, .game-container {
+        transform: translateY(10px);
+        opacity: 0;
+        transition: transform 520ms ease, opacity 520ms ease;
+    }
+    </style>
+
+    <body>
+ 
+
+    <!-- Entrance overlay (insert right after <body>) -->
+    <div id="entranceOverlay" aria-hidden="true">
+        <div id="entranceContent" role="img" aria-label="Welcome">
+            <div class="logo" aria-hidden="true"></div>
+            <h1>Welcome to CoderAzhaf</h1>
+        </div>
+    </div>
+
+</head>
+ <script>
+    // Entrance overlay logic: hide after animation and enable page animations
+    document.addEventListener('DOMContentLoaded', () => {
+        const overlay = document.getElementById('entranceOverlay');
+        // small delay so users see it briefly
+        const showTime = 900; // ms (adjust)
+        setTimeout(() => {
+            if (!overlay) return;
+            overlay.classList.add('hidden');
+            // remove from DOM after transition to avoid blocking interactions
+            overlay.addEventListener('transitionend', () => {
+                if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            }, { once: true });
+            // add animate-in class to body so sections fade/slide in
+            document.documentElement.classList.add('animate-in');
+        }, showTime);
+    });
+    </script>
+
 </body>
 </html>
